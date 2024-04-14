@@ -3,7 +3,13 @@ import { Image, Text, View } from 'tamagui';
 import { AuthContext } from '@/context/AuthContext';
 import { colors } from '@/constants';
 import { Dimensions, ScrollView } from 'react-native';
-
+import evt from '@/assets/icons/evt.png';
+import home from '@/assets/icons/home.png';
+import points from '@/assets/icons/points.png';
+import profile from '@/assets/icons/profile.png';
+import kc from '@/assets/icons/kc.png';
+import earn from '@/assets/icons/earn.png';
+import rem from '@/assets/icons/rem.png';
 import ankit from '@/assets/images/Ankit.png';
 import globe from '@/assets/images/Globe.png';
 import logo from '@/assets/images/Logo_GreenBlack.png';
@@ -217,12 +223,23 @@ export default function HomeScreen() {
 							height={100}
 							backgroundColor={colors.primaryDark}
 						>
-							<Text
-								textAlign='center'
-								fontSize={20}
+							<View
+								flexDirection='row'
+								alignItems='center'
+								gap={10}
 							>
-								{userProfile.earnmonth}
-							</Text>
+								<Image
+									source={earn}
+									height={30}
+									width={30}
+								/>
+								<Text
+									textAlign='center'
+									fontSize={20}
+								>
+									{userProfile.earnmonth}
+								</Text>
+							</View>
 							<Text
 								textAlign='center'
 								fontSize={16}
@@ -241,12 +258,23 @@ export default function HomeScreen() {
 							height={100}
 							backgroundColor={colors.primaryDark}
 						>
-							<Text
-								textAlign='center'
-								fontSize={20}
+							<View
+								flexDirection='row'
+								alignItems='center'
+								gap={10}
 							>
-								{userProfile.points}
-							</Text>
+								<Image
+									source={rem}
+									height={30}
+									width={30}
+								/>
+								<Text
+									textAlign='center'
+									fontSize={20}
+								>
+									{userProfile.points}
+								</Text>
+							</View>
 							<Text
 								textAlign='center'
 								fontSize={16}
@@ -386,35 +414,70 @@ export default function HomeScreen() {
 					onPress={() => {
 						scrollTo(offsetY.home);
 					}}
+					justifyContent='center'
+					alignItems='center'
 				>
+					<Image
+						source={home}
+						height={30}
+						width={30}
+					/>
 					<Text>Home</Text>
 				</View>
 				<View
 					onPress={() => {
 						scrollTo(offsetY.evt);
 					}}
+					justifyContent='center'
+					alignItems='center'
 				>
+					<Image
+						source={evt}
+						height={30}
+						width={30}
+					/>
 					<Text>Events</Text>
 				</View>
 				<View
 					onPress={() => {
 						scrollTo(offsetY.kc);
 					}}
+					justifyContent='center'
+					alignItems='center'
 				>
+					<Image
+						source={kc}
+						height={30}
+						width={30}
+					/>
 					<Text>KC</Text>
 				</View>
 				<View
 					onPress={() => {
 						scrollTo(offsetY.pts);
 					}}
+					justifyContent='center'
+					alignItems='center'
 				>
+					<Image
+						source={points}
+						height={30}
+						width={30}
+					/>
 					<Text>Points</Text>
 				</View>
 				<View
 					onPress={() => {
 						router.push('/authUser/pro');
 					}}
+					justifyContent='center'
+					alignItems='center'
 				>
+					<Image
+						source={profile}
+						height={30}
+						width={30}
+					/>
 					<Text>Profile</Text>
 				</View>
 			</View>
