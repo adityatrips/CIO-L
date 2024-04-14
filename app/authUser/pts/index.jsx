@@ -30,7 +30,6 @@ export default function PointsScreen() {
 				}
 			);
 			setData(res.data.results);
-			console.log(res.data.results);
 		} catch (error) {
 			console.log('PointsScreen::getPoints::error:: ', error);
 		}

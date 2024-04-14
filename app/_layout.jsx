@@ -72,7 +72,24 @@ function RootLayoutNav() {
 			>
 				<StatusBar style='dark' />
 				<ThemeProvider value={DarkTheme}>
-					<Slot />
+					<Stack
+						screenOptions={{
+							headerShown: false,
+						}}
+					>
+						<Stack.Screen name='index' />
+						<Stack.Screen name='authUser/home/index' />
+						<Stack.Screen name='screenFeedback/index' />
+						<Stack.Screen name='screenLogin/index' />
+						<Stack.Screen name='screenPassword/index' />
+						<Stack.Screen name='screenRegister/index' />
+						<Stack.Screen
+							name='modal'
+							options={{
+								presentation: 'modal',
+							}}
+						/>
+					</Stack>
 				</ThemeProvider>
 			</TamaguiProvider>
 		</AuthProvider>

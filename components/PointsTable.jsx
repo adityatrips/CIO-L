@@ -25,8 +25,6 @@ const PointsTable = ({ data, isOnHome = false }) => {
 			data = data;
 		}
 		setLoading(false);
-
-		console.log(data);
 	}, []);
 
 	return loading ? (

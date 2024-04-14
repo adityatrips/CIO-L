@@ -116,6 +116,9 @@ export default function HomeScreen() {
 						},
 					}
 				);
+
+				console.log(res.data);
+
 				setUserProfile(res.data);
 			} catch (error) {
 				console.log('HomeScreen::getUserProfile::error:: ', error);
@@ -131,7 +134,12 @@ export default function HomeScreen() {
 		getUpcomingEvents();
 		getKnowledgeCards();
 		getPoints();
-		setIsLoading(false);
+
+		if (userProfile.status === '2' || userProfile.status === '3') {
+			router.push('modal');
+		} else {
+			setIsLoading(false);
+		}
 	}, []);
 
 	return !isLoading ? (
@@ -167,7 +175,6 @@ export default function HomeScreen() {
 					height={height * 0.7}
 					ref={homeRef}
 					onLayout={(e) => {
-						console.log(e.nativeEvent.layout.y);
 						setOffsetY({
 							...offsetY,
 							home: e.nativeEvent.layout.y,
@@ -318,7 +325,6 @@ export default function HomeScreen() {
 				<View
 					ref={eventRef}
 					onLayout={(e) => {
-						console.log(e.nativeEvent.layout.y);
 						setOffsetY({
 							...offsetY,
 							evt: e.nativeEvent.layout.y,
@@ -340,7 +346,6 @@ export default function HomeScreen() {
 				<View
 					ref={kcRef}
 					onLayout={(e) => {
-						console.log(e.nativeEvent.layout.y);
 						setOffsetY({
 							...offsetY,
 							kc: e.nativeEvent.layout.y,
@@ -380,7 +385,6 @@ export default function HomeScreen() {
 				<View
 					ref={ptsRef}
 					onLayout={(e) => {
-						console.log(e.nativeEvent.layout.y);
 						setOffsetY({
 							...offsetY,
 							pts: e.nativeEvent.layout.y,

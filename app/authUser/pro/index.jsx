@@ -68,7 +68,6 @@ export default function ProfileScreen() {
 					},
 				}
 			);
-			console.log(res.data);
 			setPastEvents(res.data);
 		} catch (error) {
 			console.log('ProfileScreen::getPastEvents::error:: ', error);

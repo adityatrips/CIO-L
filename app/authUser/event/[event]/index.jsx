@@ -49,7 +49,6 @@ const dummyData = [
 
 const EventScreen = () => {
 	const { event } = useLocalSearchParams();
-	console.log(event);
 	const { userToken } = useContext(AuthContext);
 	const [loading, setLoading] = useState(true);
 	const [evtData, setEvtData] = useState({});
@@ -66,7 +65,6 @@ const EventScreen = () => {
 				}
 			);
 			setEvtData(res.data);
-			console.log(res.data);
 		} catch (error) {
 			console.log('Event::getOneEvent::error::', error);
 		} finally {

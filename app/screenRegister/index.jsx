@@ -27,7 +27,7 @@ const ScreenRegister = () => {
 				{
 					account: {
 						username: mobile,
-						password,
+						password: pword,
 					},
 					fname,
 					lname,
@@ -85,6 +85,7 @@ const ScreenRegister = () => {
 					</View>
 					<Input
 						borderWidth={0}
+						color='#000'
 						width={Dimensions.get('window').width * 0.9}
 						borderRadius={100 / 2}
 						elevate
@@ -100,6 +101,7 @@ const ScreenRegister = () => {
 					/>
 					<Input
 						borderWidth={0}
+						color='#000'
 						width={Dimensions.get('window').width * 0.9}
 						borderRadius={100 / 2}
 						elevate
@@ -115,6 +117,7 @@ const ScreenRegister = () => {
 					/>
 					<Input
 						borderWidth={0}
+						color='#000'
 						width={Dimensions.get('window').width * 0.9}
 						borderRadius={100 / 2}
 						elevate
@@ -130,6 +133,7 @@ const ScreenRegister = () => {
 					/>
 					<Input
 						borderWidth={0}
+						color='#000'
 						width={Dimensions.get('window').width * 0.9}
 						borderRadius={100 / 2}
 						elevate
@@ -145,6 +149,7 @@ const ScreenRegister = () => {
 					/>
 					<Input
 						borderWidth={0}
+						color='#000'
 						width={Dimensions.get('window').width * 0.9}
 						borderRadius={100 / 2}
 						elevate
@@ -161,6 +166,7 @@ const ScreenRegister = () => {
 					/>
 					<Input
 						borderWidth={0}
+						color='#000'
 						width={Dimensions.get('window').width * 0.9}
 						borderRadius={100 / 2}
 						elevate
@@ -176,6 +182,7 @@ const ScreenRegister = () => {
 					/>
 					<Input
 						borderWidth={0}
+						color='#000'
 						width={Dimensions.get('window').width * 0.9}
 						borderRadius={100 / 2}
 						elevate
