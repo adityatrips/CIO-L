@@ -38,9 +38,8 @@ export const AuthProvider = ({ children }) => {
 				setUserInfo(res.data);
 				await SecureStore.setItemAsync('userInfo', JSON.stringify(res.data));
 			}
-		} catch (error) {
-			setError(error);
-			console.log('AuthCtx:lookupUser::error:: ', error);
+		} catch (e) {
+			throw new Error(JSON.parse(JSON.stringify(e)).status);
 		} finally {
 			setLoading(false);
 		}
@@ -49,6 +48,7 @@ export const AuthProvider = ({ children }) => {
 	const login = async (username, password) => {
 		setLoading(true);
 		console.log('AuthCtx:login:: ', username, password);
+
 		try {
 			const res = await axios.post(
 				`https://cioleader.azurewebsites.net/api-token-auth/`,
@@ -63,9 +63,8 @@ export const AuthProvider = ({ children }) => {
 				console.log('AuthCtx:login:: ', res.data);
 				await SecureStore.setItemAsync('userToken', res.data.token);
 			}
-		} catch (error) {
-			setError(error);
-			console.log('AuthCtx:login::error:: ', error);
+		} catch (e) {
+			throw new Error(JSON.parse(JSON.stringify(e)).status);
 		} finally {
 			setLoading(false);
 		}

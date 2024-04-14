@@ -21,6 +21,8 @@ import KnowledgeCard from '@/components/KnowledgeCard';
 import PointsTable from '@/components/PointsTable';
 import { useRouter } from 'expo-router';
 import LoadingComp from '../../../components/Loading';
+import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -32,6 +34,7 @@ export default function HomeScreen() {
 	const [upcomingEvents, setUpcomingEvents] = useState([]);
 	const [knowledgeCards, setKnowledgeCards] = useState([]);
 	const [pointsData, setPoints] = useState([]);
+	const [resourceData, setResourceData] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [offsetY, setOffsetY] = useState({
 		home: 0,
@@ -73,7 +76,7 @@ export default function HomeScreen() {
 		if (userToken !== '' || userToken !== null || userToken !== undefined) {
 			try {
 				const res = await axios.get(
-					'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=3',
+					'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=5',
 					{
 						headers: {
 							Authorization: `Token ${userToken}`,
@@ -83,6 +86,24 @@ export default function HomeScreen() {
 				setPoints(res.data.results);
 			} catch (error) {
 				console.log('HomeScreen::getPoints::error:: ', error);
+			}
+		}
+	};
+
+	const getResourceList = async () => {
+		if (userToken !== '' || userToken !== null || userToken !== undefined) {
+			try {
+				const res = await axios.get(
+					'https://cioleader.azurewebsites.net/api/resource/all/',
+					{
+						headers: {
+							Authorization: `Token ${userToken}`,
+						},
+					}
+				);
+				setResourceData(res.data);
+			} catch (error) {
+				console.log('HomeScreen::getResourceList::error:: ', error);
 			}
 		}
 	};
@@ -117,9 +138,12 @@ export default function HomeScreen() {
 					}
 				);
 
-				console.log(res.data);
-
-				setUserProfile(res.data);
+				if (res.data.status === '2' || res.data.status === '3') {
+					router.push('modal');
+				} else {
+					setIsLoading(false);
+					setUserProfile(res.data);
+				}
 			} catch (error) {
 				console.log('HomeScreen::getUserProfile::error:: ', error);
 				setUserProfile({});
@@ -133,13 +157,8 @@ export default function HomeScreen() {
 		getUserProfile();
 		getUpcomingEvents();
 		getKnowledgeCards();
+		getResourceList();
 		getPoints();
-
-		if (userProfile.status === '2' || userProfile.status === '3') {
-			router.push('modal');
-		} else {
-			setIsLoading(false);
-		}
 	}, []);
 
 	return !isLoading ? (
@@ -147,8 +166,8 @@ export default function HomeScreen() {
 			edges={['top', 'bottom', 'right', 'left']}
 			flex={1}
 		>
+			<StatusBar style='dark' />
 			<View
-				height={Dimensions.get('screen').height * 0.1}
 				backgroundColor={'#fff'}
 				flexDirection='row'
 				justifyContent='space-between'
@@ -160,7 +179,7 @@ export default function HomeScreen() {
 						uri: logo,
 					}}
 					height={Dimensions.get('screen').height * 0.08}
-					width={Dimensions.get('screen').width * 0.5}
+					width={Dimensions.get('screen').width * 0.4}
 					resizeMode='contain'
 				/>
 			</View>
@@ -190,26 +209,43 @@ export default function HomeScreen() {
 						overflow='visible'
 						backgroundColor={colors.primary}
 					>
-						<Image
+						<View
+							top={Dimensions.get('screen').height * 0.1}
 							position='absolute'
-							source={globe}
-							resizeMode='contain'
-						/>
-						<Text fontSize={40}>WELCOME!!</Text>
+						>
+							<Image
+								source={globe}
+								resizeMode='contain'
+							/>
+						</View>
+						<Text
+							fontSize={35}
+							fontFamily={'InterBold'}
+						>
+							WELCOME!!
+						</Text>
 						<Image
-							height={100}
-							width={100}
+							height={110}
+							width={120}
 							borderRadius={20}
 							source={{
 								uri: userProfile.profilepicture || ankit,
 							}}
+							marginBottom={10}
 						/>
-						<Text fontSize={20}>
+						<Text
+							fontSize={18}
+							fontFamily={'InterBold'}
+						>
 							{`${userProfile.fname} ${userProfile.lname}` || 'Ankit'}
 						</Text>
-						<Text fontSize={16}>{userProfile.designation || 'Founder'}</Text>
+						<Text
+							fontSize={15}
+							fontFamily={'InterMedium'}
+						>
+							{userProfile.designation || 'Founder'}
+						</Text>
 					</View>
-
 					<View
 						position='absolute'
 						bottom={20}
@@ -226,7 +262,7 @@ export default function HomeScreen() {
 							borderRadius={20}
 							elevationAndroid={10}
 							flexDirection='column'
-							width={width * 0.4}
+							width={width * 0.425}
 							height={100}
 							backgroundColor={colors.primaryDark}
 						>
@@ -237,21 +273,24 @@ export default function HomeScreen() {
 							>
 								<Image
 									source={earn}
-									height={30}
-									width={30}
+									height={35}
+									width={'auto'}
+									aspectRatio={0.837}
 								/>
 								<Text
 									textAlign='center'
-									fontSize={20}
+									fontSize={32}
+									fontFamily={'InterBold'}
 								>
 									{userProfile.earnmonth}
 								</Text>
 							</View>
 							<Text
 								textAlign='center'
-								fontSize={16}
+								fontSize={13}
+								fontFamily={'InterSemiBold'}
 							>
-								Total earned in the last month
+								Total Earned
 							</Text>
 						</View>
 						<View
@@ -261,7 +300,7 @@ export default function HomeScreen() {
 							padding={10}
 							borderRadius={20}
 							elevationAndroid={10}
-							width={width * 0.4}
+							width={width * 0.425}
 							height={100}
 							backgroundColor={colors.primaryDark}
 						>
@@ -272,19 +311,22 @@ export default function HomeScreen() {
 							>
 								<Image
 									source={rem}
-									height={30}
-									width={30}
+									height={40}
+									width={'auto'}
+									aspectRatio={1.04}
 								/>
 								<Text
 									textAlign='center'
-									fontSize={20}
+									fontSize={32}
+									fontFamily={'InterBold'}
 								>
 									{userProfile.points}
 								</Text>
 							</View>
 							<Text
 								textAlign='center'
-								fontSize={16}
+								fontSize={13}
+								fontFamily={'InterSemiBold'}
 							>
 								Remaining points
 							</Text>
@@ -293,9 +335,11 @@ export default function HomeScreen() {
 				</View>
 				<View>
 					<Text
-						color='#000'
+						color='#616161'
 						textAlign='center'
 						textTransform='uppercase'
+						fontSize={15}
+						fontFamily={'InterBold'}
 					>
 						Your unique QR code
 					</Text>
@@ -309,19 +353,34 @@ export default function HomeScreen() {
 					/>
 
 					<Text
-						color={'#000'}
+						color={'#616161'}
+						fontSize={15}
+						fontFamily={'InterSemiBold'}
+						textTransform='uppercase'
 						textAlign='center'
 					>
 						CIO&L Privilege Code
 					</Text>
 					<Text
-						color={'#000'}
+						color={'#6BB943'}
+						fontSize={21}
+						fontFamily={'InterBold'}
+						textTransform='uppercase'
 						textAlign='center'
 					>
 						{userProfile.code}
 					</Text>
 				</View>
 				<Divider />
+				<Text
+					fontSize={16}
+					fontFamily={'InterBold'}
+					color={'#616161'}
+					width={'90%'}
+					marginBottom={20}
+				>
+					Upcoming Events
+				</Text>
 				<View
 					ref={eventRef}
 					onLayout={(e) => {
@@ -355,16 +414,20 @@ export default function HomeScreen() {
 
 				<Text
 					width={'90%'}
-					color='#000'
+					color='#616161'
+					fontSize={16}
+					fontFamily={'InterBold'}
 				>
 					Knowledge Center
 				</Text>
 				<Text
 					width={'90%'}
-					color='#000'
+					color='#616161'
 					marginBottom={20}
+					fontSize={14}
+					fontFamily={'InterMedium'}
 				>
-					Whitepaper Reports
+					Whitepaper & Reports
 				</Text>
 				<ScrollView
 					horizontal
@@ -380,8 +443,59 @@ export default function HomeScreen() {
 					))}
 				</ScrollView>
 
-				<Divider />
+				<Text
+					width={'90%'}
+					color='#616161'
+					marginBottom={20}
+					fontSize={14}
+					fontFamily={'InterMedium'}
+				>
+					Editorial Magazines
+				</Text>
 
+				<Text
+					width={'90%'}
+					color='#616161'
+					marginBottom={20}
+					fontSize={14}
+					fontFamily={'InterMedium'}
+				>
+					Podcast
+				</Text>
+
+				<Text
+					width={'90%'}
+					color='#616161'
+					marginBottom={20}
+					fontSize={14}
+					fontFamily={'InterMedium'}
+				>
+					Resource Libraries
+				</Text>
+
+				<ScrollView
+					horizontal
+					gap={10}
+					marginBottom={10}
+					width='90%'
+				>
+					{resourceData.map((item, index) => (
+						<KnowledgeCard
+							key={index}
+							data={item}
+						/>
+					))}
+				</ScrollView>
+
+				<Divider />
+				<Text
+					width={'90%'}
+					color='#616161'
+					fontSize={14}
+					fontFamily={'InterSemiBold'}
+				>
+					CIO&Leader Loyalty Point History
+				</Text>
 				<View
 					ref={ptsRef}
 					onLayout={(e) => {
@@ -392,7 +506,6 @@ export default function HomeScreen() {
 					}}
 					marginLeft={Dimensions.get('screen').width * 0.1}
 					width={'100%'}
-					marginBottom={10}
 				>
 					<PointsTable
 						isOnHome
@@ -406,7 +519,7 @@ export default function HomeScreen() {
 				bottom={0}
 				left={0}
 				width={width}
-				backgroundColor={colors.primary}
+				backgroundColor={'#6BB943'}
 				flexDirection='row'
 				justifyContent='space-between'
 				paddingHorizontal={20}
@@ -423,10 +536,17 @@ export default function HomeScreen() {
 				>
 					<Image
 						source={home}
-						height={30}
-						width={30}
+						height={25}
+						width={'auto'}
+						aspectRatio={0.89}
 					/>
-					<Text>Home</Text>
+					<Text
+						fontSize={10}
+						fontFamily={'InterSemiBold'}
+						textTransform='uppercase'
+					>
+						Home
+					</Text>
 				</View>
 				<View
 					onPress={() => {
@@ -437,10 +557,16 @@ export default function HomeScreen() {
 				>
 					<Image
 						source={evt}
-						height={30}
-						width={30}
+						height={25}
+						width={25}
 					/>
-					<Text>Events</Text>
+					<Text
+						fontSize={10}
+						fontFamily={'InterSemiBold'}
+						textTransform='uppercase'
+					>
+						Events
+					</Text>
 				</View>
 				<View
 					onPress={() => {
@@ -451,10 +577,16 @@ export default function HomeScreen() {
 				>
 					<Image
 						source={kc}
-						height={30}
-						width={30}
+						height={25}
+						width={25}
 					/>
-					<Text>KC</Text>
+					<Text
+						fontSize={10}
+						fontFamily={'InterSemiBold'}
+						textTransform='uppercase'
+					>
+						KC
+					</Text>
 				</View>
 				<View
 					onPress={() => {
@@ -465,10 +597,17 @@ export default function HomeScreen() {
 				>
 					<Image
 						source={points}
-						height={30}
-						width={30}
+						height={25}
+						width={'auto'}
+						aspectRatio={1.25}
 					/>
-					<Text>Points</Text>
+					<Text
+						fontSize={10}
+						fontFamily={'InterSemiBold'}
+						textTransform='uppercase'
+					>
+						Points
+					</Text>
 				</View>
 				<View
 					onPress={() => {
@@ -479,10 +618,17 @@ export default function HomeScreen() {
 				>
 					<Image
 						source={profile}
-						height={30}
-						width={30}
+						height={25}
+						width={'auto'}
+						aspectRatio={0.87}
 					/>
-					<Text>Profile</Text>
+					<Text
+						fontSize={10}
+						fontFamily={'InterSemiBold'}
+						textTransform='uppercase'
+					>
+						Profile
+					</Text>
 				</View>
 			</View>
 		</SafeAreaView>

@@ -16,11 +16,14 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 	const [NotoLoaded, NotoError] = useFonts({
-		InterDev: require('@/assets/fonts/noto-sans-devanagari-600.ttf'),
-		Inter: require('@/assets/fonts/noto-sans-regular.ttf'),
-		Inter500: require('@/assets/fonts/noto-sans-500.ttf'),
-		Inter600: require('@/assets/fonts/noto-sans-600.ttf'),
-		Inter700: require('@/assets/fonts/noto-sans-700.ttf'),
+		InterBlack: require('@/assets/fonts/NotoSans-Black.ttf'),
+		InterExtraBold: require('@/assets/fonts/NotoSans-ExtraBold.ttf'),
+		InterBold: require('@/assets/fonts/NotoSans-Bold.ttf'),
+		InterSemiBold: require('@/assets/fonts/NotoSans-SemiBold.ttf'),
+		InterMedium: require('@/assets/fonts/NotoSans-Medium.ttf'),
+		Inter: require('@/assets/fonts/NotoSans-Regular.ttf'),
+		InterExtraLight: require('@/assets/fonts/NotoSans-ExtraLight.ttf'),
+		InterThin: require('@/assets/fonts/NotoSans-Thin.ttf'),
 	});
 
 	useEffect(() => {

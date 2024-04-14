@@ -7,14 +7,14 @@ import { colors } from '@/constants';
 import { Link, useRouter } from 'expo-router';
 import ImageTriangles from '@/components/ImageTriangles';
 import logo from '@/assets/images/Logo_White.png';
-import { Dimensions } from 'react-native';
+import { Dimensions, KeyboardAvoidingView } from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
 
 const ScreenLogin = () => {
 	const router = useRouter();
 	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
 		useContext(AuthContext);
-	const [username, setUsername] = useState('');
+	const [username, setUsername] = useState('yashdakshita123@gmail.com');
 
 	const handleLookupUser = async () => {
 		if (username.length === 0) {
@@ -66,8 +66,9 @@ const ScreenLogin = () => {
 					>
 						<Text
 							textTransform='uppercase'
-							fontSize={35}
 							padding={0}
+							fontSize={35}
+							fontFamily={'InterSemiBold'}
 						>
 							WELCOME
 						</Text>
@@ -99,6 +100,8 @@ const ScreenLogin = () => {
 							backgroundColor={colors.primary}
 							height={50}
 							value={username}
+							fontSize={14}
+							fontFamily={'InterMedium'}
 							onChangeText={(text) => setUsername(text)}
 						/>
 						<Button
@@ -115,7 +118,12 @@ const ScreenLogin = () => {
 							height={50}
 							onPress={handleLookupUser}
 						>
-							NEXT
+							<Text
+								fontSize={14}
+								fontFamily={'InterBold'}
+							>
+								LOGIN
+							</Text>
 						</Button>
 					</View>
 					<Text

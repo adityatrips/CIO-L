@@ -13,8 +13,8 @@ const KnowledgeCard = ({ data }) => {
 			backgroundColor={colors.primary}
 			borderRadius={20}
 			overflow='hidden'
-			height={wH * 0.5}
-			width={wW * 0.7}
+			height={wH * 0.4}
+			width={wW * 0.6}
 			paddingBottom={10}
 			justifyContent='space-between'
 			marginRight={10}
@@ -32,9 +32,9 @@ const KnowledgeCard = ({ data }) => {
 				transform={'rotate(45deg)'}
 			>
 				<Text
-					fontSize={12}
+					fontSize={8}
+					fontFamily={'InterBold'}
 					color={'#fff'}
-					fontWeight={'bold'}
 					paddingBottom={7}
 				>
 					NEW
@@ -46,26 +46,28 @@ const KnowledgeCard = ({ data }) => {
 				top={10}
 				left={10}
 				zIndex={2}
-				fontSize={12}
+				fontSize={11}
 				color={'#fff'}
 				textAlign={'center'}
 				textTransform={'uppercase'}
-				fontWeight={'bold'}
+				fontFamily={'InterBold'}
 			>
-				{data.name}
+				{data.name || data.title}
 			</Text>
 			<Image
 				width={'100%'}
 				height={'50%'}
 				borderRadius={20}
 				objectFit={'cover'}
-				src='https://dummyimage.com/600x400/000/fff&text=One'
+				src={data.image}
 			/>
 
 			<View padding={10}>
 				<Text
 					color={'#fff'}
 					textAlign={'center'}
+					fontSize={12}
+					fontFamily={'InterMedium'}
 				>
 					{data.heading}
 				</Text>
@@ -83,9 +85,34 @@ const KnowledgeCard = ({ data }) => {
 						borderColor: colors.primaryDark,
 					}}
 					borderRadius={100 / 2}
-					width={wW * 0.6}
+					width={'85%'}
+					height={30}
+					justifyContent='space-between'
+					onPress={() => Linking.openURL(data.file)}
 				>
-					<Text>Read More</Text>
+					<Text
+						fontSize={10}
+						fontFamily={'InterBold'}
+						textTransform='uppercase'
+					>
+						Download
+					</Text>
+					<View
+						flexDirection='row'
+						alignItems='center'
+					>
+						<Image
+							src={coin}
+							height={25}
+							width={25}
+						/>
+						<Text
+							fontSize={11}
+							fontFamily='InterSemiBold'
+						>
+							+{data.viewingpoints}
+						</Text>
+					</View>
 				</Button>
 				<Button
 					backgroundColor={colors.primaryDark}
@@ -95,9 +122,32 @@ const KnowledgeCard = ({ data }) => {
 						borderColor: colors.primaryDark,
 					}}
 					borderRadius={100 / 2}
-					width={wW * 0.6}
+					justifyContent='space-between'
+					width={'85%'}
+					height={30}
 				>
-					<Text>Share</Text>
+					<Text
+						fontSize={10}
+						fontFamily={'InterBold'}
+					>
+						MCQ
+					</Text>
+					<View
+						flexDirection='row'
+						alignItems='center'
+					>
+						<Image
+							src={coin}
+							height={25}
+							width={25}
+						/>
+						<Text
+							fontSize={11}
+							fontFamily='InterSemiBold'
+						>
+							+0
+						</Text>
+					</View>
 				</Button>
 			</View>
 		</View>

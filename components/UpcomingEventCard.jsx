@@ -3,15 +3,17 @@ import { Dimensions } from 'react-native';
 import { Button, Image, Text, View } from 'tamagui';
 import { colors } from '@/constants';
 
-import Hybrid from '@/assets/images/Hybrid.png';
-import Online from '@/assets/images/Online.png';
-import Offline from '@/assets/images/Offline.png';
+import Hybrid from '@/assets/images/hybrid.png';
+import Online from '@/assets/images/online.png';
+import Offline from '@/assets/images/offline.png';
 import { useRouter } from 'expo-router';
+import moment from 'moment';
 
 const UpcomingEventCard = ({ data }) => {
 	const router = useRouter();
 	return (
 		<View
+			elevationAndroid={5}
 			minHeight={Dimensions.get('screen').height * 0.3}
 			borderRadius={20}
 			width={Dimensions.get('screen').width * 0.9}
@@ -19,6 +21,7 @@ const UpcomingEventCard = ({ data }) => {
 			position={'relative'}
 		>
 			<View
+				elevationAndroid={5}
 				position={'absolute'}
 				top={0}
 				left={0}
@@ -26,12 +29,27 @@ const UpcomingEventCard = ({ data }) => {
 				width={'50%'}
 				borderRadius={20}
 				backgroundColor={'#000'}
+				justifyContent='center'
+				alignItems='center'
+				flex={1}
 			>
+				<Text
+					position='absolute'
+					top={'5%'}
+					fontSize={11}
+					marginVertical={5}
+					backgroundColor={'#6BB943'}
+					paddingVertical={5}
+					width={'75%'}
+					textAlign='center'
+					fontFamily={'InterMedium'}
+				>
+					In Partnership With
+				</Text>
 				<Image
 					src={data.sponsorpicture}
-					borderRadius={20}
-					width={'100%'}
-					height={'100%'}
+					width={'90%'}
+					aspectRatio={16 / 9}
 					resizeMode='contain'
 				/>
 			</View>
@@ -44,6 +62,7 @@ const UpcomingEventCard = ({ data }) => {
 				width={'50%'}
 				padding={10}
 				borderRadius={20}
+				flex={1}
 			>
 				<View
 					flexDirection='row'
@@ -53,52 +72,83 @@ const UpcomingEventCard = ({ data }) => {
 					marginBottom={10}
 					padding={10}
 					borderRadius={10}
+					elevationAndroid={10}
 					backgroundColor={
-						data.type === '1'
-							? colors.primaryDark
-							: data.type === '2'
-							? colors.primary
-							: '#444'
+						data.type === '2'
+							? '#3E821B'
+							: data.type === '1'
+							? '#DF3803'
+							: '#4D5791'
 					}
 				>
 					<Image
 						source={
-							data.type === '1' ? Online : data.type === '2' ? Offline : Hybrid
+							data.type === '2' ? Online : data.type === '1' ? Offline : Hybrid
 						}
-						width={50}
-						height={50}
+						width={35}
+						height={35}
 					/>
-					<Text>
-						{data.type === '1'
+					<Text
+						textTransform='uppercase'
+						fontSize={17}
+						fontFamily={'InterBold'}
+					>
+						{data.type === '2'
 							? 'Online'
-							: data.type === '2'
+							: data.type === '1'
 							? 'Offline'
 							: 'Hybrid'}
 					</Text>
 				</View>
-				<Text>{data.name}</Text>
-				<View
-					flexDirection='row'
-					alignItems='center'
-					justifyContent='space-between'
-					marginTop={10}
+				<Text
+					fontSize={13}
+					fontFamily={'InterMedium'}
+					flexShrink={1}
 				>
+					{String(data.name).length > 40
+						? String(data.name).slice(0, 40) + '...'
+						: data.name}
+				</Text>
+				<View flexGrow={1}>
 					<View
-						height={2}
-						width={'50%'}
-						backgroundColor={'#fff'}
-					></View>
-					<View
-						height={5}
-						width={'50%'}
-						backgroundColor={'#fff'}
-					></View>
-				</View>
-				<View>
-					<Text>
-						{data.venue} | {data.time}
-					</Text>
-					<Text>{data.date}</Text>
+						flexDirection='row'
+						alignItems='center'
+						justifyContent='space-between'
+					>
+						<View
+							height={1}
+							width={'50%'}
+							backgroundColor={'#fff'}
+						></View>
+						<View
+							height={3}
+							width={'50%'}
+							backgroundColor={'#fff'}
+						></View>
+					</View>
+					<View>
+						<Text
+							marginVertical={5}
+							fontSize={11}
+							fontFamily={'InterBold'}
+						>
+							{moment(data.date, 'YYYY-MM-DD').format('MMM DD, YYYY')} |&nbsp;
+							{moment(data.time, 'HH:mm:ss').format('hh:mm A')}
+						</Text>
+						<View
+							height={1}
+							opacity={0.5}
+							width={'75%'}
+							backgroundColor={'#fff'}
+						></View>
+						<Text
+							fontSize={11}
+							fontFamily={'InterBold'}
+						>
+							{data.venue}
+						</Text>
+						<Text fontSize={10}>{data.address}</Text>
+					</View>
 				</View>
 				<Button
 					borderRadius={100 / 2}
@@ -108,12 +158,18 @@ const UpcomingEventCard = ({ data }) => {
 						backgroundColor: colors.primary,
 						borderColor: colors.primaryDark,
 					}}
+					height={30}
 					onPress={() => {
 						console.log(`/authUser/event/${data.id}`);
 						router.push(`/authUser/event/${data.id}`);
 					}}
 				>
-					<Text>View Details</Text>
+					<Text
+						fontSize={10}
+						fontFamily={'InterBold'}
+					>
+						KNOW MORE
+					</Text>
 				</Button>
 			</View>
 		</View>

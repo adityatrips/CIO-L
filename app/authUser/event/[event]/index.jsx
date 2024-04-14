@@ -8,6 +8,7 @@ import { useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
 import LoadingComp from '../../../../components/Loading';
+import moment from 'moment';
 const dummyData = [
 	{
 		name: 'Ankit Sharma',
@@ -111,7 +112,7 @@ const EventScreen = () => {
 								textTransform: 'uppercase',
 							}}
 						>
-							{evtData.id}
+							{evtData.meta || ''}
 						</Text>
 						<Text
 							style={{
@@ -141,20 +142,20 @@ const EventScreen = () => {
 								<Text
 									style={{
 										color: '#FFF',
-										fontWeight: 'bold',
+										fontFamily: 'InterBold',
 										fontSize: 13,
 									}}
 								>
-									{evtData.date}
+									{moment(evtData.date, 'YYYY-MM-DD').format('MMM DD, YYYY')}
 								</Text>
 								<Text
 									style={{
 										color: '#FFF',
-										fontWeight: 'bold',
+										fontFamily: 'InterBold',
 										fontSize: 13,
 									}}
 								>
-									{evtData.time}
+									{moment(evtData.time, 'HH:mm:ss').format('hh:mm A')}
 								</Text>
 							</View>
 							<View
@@ -178,7 +179,7 @@ const EventScreen = () => {
 								<Text
 									style={{
 										color: '#FFF',
-										fontSize: 13,
+										fontSize: 12,
 									}}
 								>
 									{evtData.address}
@@ -201,12 +202,24 @@ const EventScreen = () => {
 								}}
 								width={wW * 0.4}
 								borderRadius={100 / 2}
+								height={30}
+								fontSize={10}
+								fontFamily={'InterBold'}
 							>
-								<Text>Register</Text>
+								<Text
+									fontSize={10}
+									fontFamily={'InterBold'}
+									textTransform='uppercase'
+								>
+									Register
+								</Text>
 							</Button>
 							<Button
 								width={wW * 0.4}
 								borderRadius={100 / 2}
+								height={30}
+								fontSize={10}
+								fontFamily={'InterBold'}
 								backgroundColor={colors.primary}
 								borderColor={colors.primary}
 								pressStyle={{
@@ -217,7 +230,13 @@ const EventScreen = () => {
 									Linking.openURL(evtData.agenda);
 								}}
 							>
-								View Agenda
+								<Text
+									fontSize={10}
+									fontFamily={'InterBold'}
+									textTransform='uppercase'
+								>
+									View Agenda
+								</Text>
 							</Button>
 						</View>
 					</View>
@@ -225,14 +244,14 @@ const EventScreen = () => {
 						style={{
 							backgroundColor: '#FFF',
 							padding: 20,
-							paddingVertical: 40,
+							paddingVertical: 20,
 						}}
 					>
 						<Text
 							style={{
 								fontSize: 16,
 								fontWeight: 'bold',
-								color: '#000',
+								color: '#616161',
 							}}
 						>
 							Speaker / Panellists
@@ -262,13 +281,13 @@ const EventScreen = () => {
 									>
 										<Image
 											source={{ uri: speaker.profile }}
-											width={wW / 3 - 25}
+											width={'80%'}
 											aspectRatio={1 / 1}
 										/>
 									</View>
 									<View
 										style={{
-											width: '100%',
+											width: '80%',
 											marginTop: 5,
 										}}
 									>
@@ -276,7 +295,7 @@ const EventScreen = () => {
 											style={{
 												fontSize: 12,
 												fontWeight: 'bold',
-												color: '#000',
+												color: '#616161',
 											}}
 										>
 											{speaker.name}
@@ -284,7 +303,7 @@ const EventScreen = () => {
 										<Text
 											style={{
 												fontSize: 9,
-												color: '#000',
+												color: '#616161',
 											}}
 										>
 											{speaker.designation}
@@ -292,7 +311,7 @@ const EventScreen = () => {
 										<Text
 											style={{
 												fontSize: 9,
-												color: '#000',
+												color: '#616161',
 											}}
 										>
 											{speaker.company}
@@ -319,10 +338,12 @@ const EventScreen = () => {
 						</Text>
 						<Text
 							style={{
-								marginBottom: 10,
 								color: '#fff',
 								fontSize: 11,
+								textAlign: 'justify',
+								marginBottom: 30,
 							}}
+							width={'100%'}
 						>
 							{evtData.description}
 						</Text>
@@ -344,8 +365,15 @@ const EventScreen = () => {
 									borderColor: colors.primary,
 								}}
 								borderRadius={100 / 2}
+								height={30}
 							>
-								Share Event
+								<Text
+									fontSize={10}
+									fontFamily={'InterBold'}
+									textTransform='uppercase'
+								>
+									Share Event
+								</Text>
 							</Button>
 							<Button
 								backgroundColor={colors.primary}
@@ -356,8 +384,17 @@ const EventScreen = () => {
 								}}
 								width={wW * 0.4}
 								borderRadius={100 / 2}
+								height={30}
+								fontSize={10}
+								fontFamily={'InterBold'}
 							>
-								Share Selfie
+								<Text
+									fontSize={10}
+									fontFamily={'InterBold'}
+									textTransform='uppercase'
+								>
+									Share Selfie
+								</Text>
 							</Button>
 							<Button
 								backgroundColor={colors.primary}
@@ -368,8 +405,17 @@ const EventScreen = () => {
 								}}
 								width={wW * 0.4}
 								borderRadius={100 / 2}
+								height={30}
+								fontSize={10}
+								fontFamily={'InterBold'}
 							>
-								Share Feedback
+								<Text
+									fontSize={10}
+									fontFamily={'InterBold'}
+									textTransform='uppercase'
+								>
+									Share Feedback
+								</Text>
 							</Button>
 						</View>
 					</View>

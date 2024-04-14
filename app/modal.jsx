@@ -25,32 +25,29 @@ export default function Modal() {
 			flex={1}
 			alignItems={'center'}
 			justifyContent={'center'}
-			backgroundColor={colors.primaryDark}
+			backgroundColor={'#fff'}
 		>
-			<View
-				backgroundColor={'#fff'}
-				height={Dimensions.get('window').height * 0.75}
+			<Image
+				src={logo}
+				resizeMode='contain'
 				width={Dimensions.get('window').width * 0.75}
-				alignItems='center'
-				gap={20}
-				borderRadius={20}
+				height={Dimensions.get('window').height * 0.15}
+			/>
+			<Image
+				width={Dimensions.get('window').width * 0.6}
+				height={Dimensions.get('window').height * 0.3}
+				resizeMode='contain'
+				source={hourglass}
+				marginVertical={20}
+			/>
+			<Text
+				fontSize={17}
+				fontFamily={'InterBold'}
+				color='#000'
 			>
-				<Image
-					src={logo}
-					resizeMode='contain'
-					width={Dimensions.get('window').width * 0.6}
-					height={Dimensions.get('window').height * 0.2}
-				/>
-				<Image
-					width={Dimensions.get('window').width * 0.6}
-					height={Dimensions.get('window').height * 0.3}
-					resizeMode='contain'
-					source={hourglass}
-				/>
-				<Text color='#000'>Approval Pending, please wait.</Text>
-				<Text color='#000'>Redirecting to login page in 5 seconds.</Text>
-			</View>
-
+				Approval Pending, please wait.
+			</Text>
+			<Text color='#000'>Redirecting to login page in 5 seconds.</Text>
 			<StatusBar style='light' />
 		</View>
 	);
