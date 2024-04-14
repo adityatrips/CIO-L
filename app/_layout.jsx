@@ -1,6 +1,5 @@
 import { ThemeProvider } from '@react-navigation/native';
 import { Slot, SplashScreen, Stack } from 'expo-router';
-import { useColorScheme } from 'react-native';
 import { TamaguiProvider, createFont, createTamagui } from 'tamagui';
 import * as SecureStore from 'expo-secure-store';
 import { AuthProvider } from '@/context/AuthContext';
@@ -9,6 +8,7 @@ import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
 import config from '@/tamagui.config';
 import { colors } from '@/constants';
+import { StatusBar } from 'expo-status-bar';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -70,6 +70,7 @@ function RootLayoutNav() {
 				config={config}
 				defaultTheme='dark'
 			>
+				<StatusBar style='dark' />
 				<ThemeProvider value={DarkTheme}>
 					<Slot />
 				</ThemeProvider>

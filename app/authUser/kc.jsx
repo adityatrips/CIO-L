@@ -1,6 +1,6 @@
 import { Text, View } from 'tamagui';
 
-export default function TabTwoScreen() {
+export default function KnowledgeCenterScreen() {
 	return (
 		<View
 			flex={1}

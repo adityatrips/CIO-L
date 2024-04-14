@@ -21,7 +21,7 @@ const ScreenPassword = () => {
 			await login(userInfo?.username, pword);
 			router.push('/authUser');
 		} catch (error) {
-			console.log(error);
+			console.log('ScreenPassword::loginHandler::error:: ', error);
 		}
 	};
 
@@ -83,14 +83,8 @@ const ScreenPassword = () => {
 							borderRadius={75}
 							src={userInfo?.profilepicture || ankit}
 						/>
-						<Text
-						fontSize={22}
-						fontWeight={'bold'}
-						>{userInfo?.name || 'Ankit Sharma'}</Text>
-						<Text
-						fontSize={17}
-						fontWeight={'500'}
-						>{userInfo?.designation || 'Ankit Sharma'}</Text>
+						<Text>{userInfo?.name || 'Ankit Sharma'}</Text>
+						<Text>{userInfo?.designation || 'Ankit Sharma'}</Text>
 
 						<Input
 							borderWidth={0}
@@ -98,8 +92,7 @@ const ScreenPassword = () => {
 							borderRadius={100 / 2}
 							elevate
 							elevation={5}
-							placeholder='ENTER PASSWORD'
-							secureTextEntry
+							placeholder='ENTER OTP'
 							placeholderTextColor={'#fff'}
 							textAlign='center'
 							backgroundColor={colors.primary}
@@ -109,8 +102,6 @@ const ScreenPassword = () => {
 						/>
 						<Button
 							backgroundColor={colors.primary}
-							fontSize={14}
-							fontWeight={'bold'}
 							borderRadius={100 / 2}
 							width={Dimensions.get('window').width * 0.75}
 							elevate
@@ -118,13 +109,11 @@ const ScreenPassword = () => {
 							height={50}
 							onPress={loginHandler}
 						>
-							LOGIN
+							NEXT
 						</Button>
 						<Text
 							position='absolute'
 							bottom={30}
-							fontSize={15}
-							fontWeight={'500'}
 						>
 							Don't have any account?
 							<Link

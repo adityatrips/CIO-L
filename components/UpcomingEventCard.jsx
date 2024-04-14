@@ -74,7 +74,7 @@ const UpcomingEventCard = ({ data }) => {
 							: 'Hybrid'}
 					</Text>
 				</View>
-				<Text fontSize={13} fontWeight={'600'}>{data.name}</Text>
+				<Text>{data.name}</Text>
 				<View
 					flexDirection='row'
 					alignItems='center'
@@ -93,13 +93,12 @@ const UpcomingEventCard = ({ data }) => {
 					></View>
 				</View>
 				<View>
-					<Text fontSize={11} fontWeight={'bold'}>
+					<Text>
 						{data.venue} | {data.time}
 					</Text>
-					<Text fontSize={11} fontWeight={'bold'}>{data.date}</Text>
+					<Text>{data.date}</Text>
 				</View>
-				<Button
-				>
+				<Button>
 					<Text>View Details</Text>
 				</Button>
 			</View>

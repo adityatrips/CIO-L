@@ -14,14 +14,14 @@ const ScreenLogin = () => {
 	const router = useRouter();
 	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
 		useContext(AuthContext);
-	const [username, setUsername] = useState('yashdakshita123@gmail.com');
+	const [username, setUsername] = useState('adityatripathi@gmail.com');
 
 	const handleLookupUser = async () => {
 		try {
 			await lookupUser(username);
 			router.push('/screenPassword');
 		} catch (error) {
-			console.log(error);
+			console.log('ScreenLogin::handleLookupUser::error:: ', error);
 		}
 	};
 
@@ -55,7 +55,7 @@ const ScreenLogin = () => {
 					/>
 					<Text
 						textTransform='uppercase'
-						fontSize={35}
+						fontSize={30}
 					>
 						WELCOME
 					</Text>
@@ -67,7 +67,6 @@ const ScreenLogin = () => {
 					</Text>
 					<Input
 						borderWidth={0}
-						fontSize={14}
 						width={Dimensions.get('window').width * 0.75}
 						borderRadius={100 / 2}
 						elevate
@@ -82,8 +81,6 @@ const ScreenLogin = () => {
 					/>
 					<Button
 						backgroundColor={colors.primary}
-						fontSize={14}
-						fontWeight={'bold'}
 						borderRadius={100 / 2}
 						width={Dimensions.get('window').width * 0.75}
 						elevate
@@ -91,18 +88,16 @@ const ScreenLogin = () => {
 						height={50}
 						onPress={handleLookupUser}
 					>
-						LOGIN
+						NEXT
 					</Button>
 					<Text
 						position='absolute'
 						bottom={30}
-						fontSize={15}
 					>
 						Don't have any account?
 						<Link
 							style={{
 								fontWeight: 900,
-								
 							}}
 							href='/screenRegister'
 						>

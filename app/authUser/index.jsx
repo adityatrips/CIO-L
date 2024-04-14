@@ -18,8 +18,7 @@ import { useRouter } from 'expo-router';
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
 
-export default function TabOneScreen() {
-	const router = useRouter();
+export default function HomeScreen() {
 	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
 		useContext(AuthContext);
 	const [userProfile, setUserProfile] = useState({});
@@ -29,8 +28,7 @@ export default function TabOneScreen() {
 	const [isLoading, setIsLoading] = useState();
 
 	const getUpcomingEvents = async () => {
-		setIsLoading(true);
-		if (!loading && userToken) {
+		if (userToken !== '' || userToken !== null || userToken !== undefined) {
 			try {
 				const res = await axios.get(
 					'https://cioleader.azurewebsites.net/api/event/all/',
@@ -43,47 +41,49 @@ export default function TabOneScreen() {
 				setUpcomingEvents(res.data);
 			} catch (error) {
 				setUserProfile([]);
-				console.log(error);
+				console.log('HomeScreen::getUpcomingEvents::error:: ', error);
 			}
 		}
 	};
 
 	const getPoints = async () => {
-		setIsLoading(true);
-		try {
-			const res = await axios.get(
-				'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=3',
-				{
-					headers: {
-						Authorization: `Token ${userToken}`,
-					},
-				}
-			);
-			setPoints(res.data.results);
-		} catch (error) {
-			console.log(error);
+		if (userToken !== '' || userToken !== null || userToken !== undefined) {
+			try {
+				const res = await axios.get(
+					'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=3',
+					{
+						headers: {
+							Authorization: `Token ${userToken}`,
+						},
+					}
+				);
+				setPoints(res.data.results);
+			} catch (error) {
+				console.log('HomeScreen::getPoints::error:: ', error);
+			}
 		}
-		setIsLoading(false);
 	};
 
 	const getKnowledgeCards = async () => {
-		setIsLoading(true);
-		try {
-			const res = await axios.get(
-				'https://cioleader.azurewebsites.net/api/whitepaper/all/',
-				{
-					headers: {
-						Authorization: `Token ${userToken}`,
-					},
-				}
-			);
-			setKnowledgeCards(res.data);
-		} catch (error) {}
+		if (userToken !== '' || userToken !== null || userToken !== undefined) {
+			try {
+				const res = await axios.get(
+					'https://cioleader.azurewebsites.net/api/whitepaper/all/',
+					{
+						headers: {
+							Authorization: `Token ${userToken}`,
+						},
+					}
+				);
+				setKnowledgeCards(res.data);
+			} catch (error) {
+				console.log('HomeScreen::getKnowledgeCards::error:: ', error);
+			}
+		}
 	};
 
 	const getUserProfile = async () => {
-		setIsLoading(true);
-		if (!loading && userToken) {
+		if (userToken !== '' || userToken !== null || userToken !== undefined) {
 			try {
 				const res = await axios.get(
 					'https://cioleader.azurewebsites.net/api/member/',
@@ -95,13 +95,15 @@ export default function TabOneScreen() {
 				);
 				setUserProfile(res.data);
 			} catch (error) {
-				console.log(error);
+				console.log('HomeScreen::getUserProfile::error:: ', error);
 				setUserProfile({});
 			}
 		}
 	};
 
 	useEffect(() => {
+		console.log('HomeScreen::useEffect:: ', userToken);
+		setIsLoading(true);
 		getUserProfile();
 		getUpcomingEvents();
 		getKnowledgeCards();
@@ -134,19 +136,19 @@ export default function TabOneScreen() {
 							source={globe}
 							resizeMode='contain'
 						/>
-						<Text fontSize={35} fontWeight={'bold'}>WELCOME!!</Text>
+						<Text fontSize={40}>WELCOME!!</Text>
 						<Image
-							height={110}
-							width={120}
+							height={100}
+							width={100}
 							borderRadius={20}
 							source={{
 								uri: userProfile.profilepicture || ankit,
 							}}
 						/>
-						<Text fontSize={18} fontWeight={'bold'}>
+						<Text fontSize={20}>
 							{`${userProfile.fname} ${userProfile.lname}` || 'Ankit'}
 						</Text>
-						<Text fontSize={15} fontWeight={'500'}>{userProfile.designation || 'Founder'}</Text>
+						<Text fontSize={16}>{userProfile.designation || 'Founder'}</Text>
 					</View>
 
 					<View
@@ -171,17 +173,15 @@ export default function TabOneScreen() {
 						>
 							<Text
 								textAlign='center'
-								fontSize={32}
-								fontWeight={'bold'}
+								fontSize={20}
 							>
 								{userProfile.earnmonth}
 							</Text>
 							<Text
 								textAlign='center'
-								fontSize={13}
-								fontWeight={'600'}
+								fontSize={16}
 							>
-								Total Earned
+								Total earned in the last month
 							</Text>
 						</View>
 						<View
@@ -197,15 +197,13 @@ export default function TabOneScreen() {
 						>
 							<Text
 								textAlign='center'
-								fontSize={32}
-								fontWeight={'bold'}
+								fontSize={20}
 							>
 								{userProfile.points}
 							</Text>
 							<Text
 								textAlign='center'
-								fontSize={13}
-								fontWeight={'600'}
+								fontSize={16}
 							>
 								Remaining points
 							</Text>
@@ -214,11 +212,9 @@ export default function TabOneScreen() {
 				</View>
 				<View>
 					<Text
-						color='#616161'
+						color='#000'
 						textAlign='center'
 						textTransform='uppercase'
-						fontSize={15}
-						fontWeight={'bold'}
 					>
 						Your unique QR code
 					</Text>
@@ -232,34 +228,19 @@ export default function TabOneScreen() {
 					/>
 
 					<Text
-						color={'#616161'}
-						fontSize={15}
-						fontWeight={'600'}
+						color={'#000'}
 						textAlign='center'
 					>
 						CIO&L Privilege Code
 					</Text>
 					<Text
-						color={'#6BB943'}
+						color={'#000'}
 						textAlign='center'
-						textTransform='uppercase'
-						fontSize={21}
-						fontWeight={'bold'}
 					>
 						{userProfile.code}
 					</Text>
 				</View>
 				<Divider />
-				<Text
-					width={'90%'}
-					color='#616161'
-					fontSize={16}
-					fontWeight={'bold'}
-					marginBottom={10}
-				>
-					Upcoming Events
-				</Text>
-
 				<View
 					gap={10}
 					marginBottom={10}
@@ -275,21 +256,16 @@ export default function TabOneScreen() {
 
 				<Text
 					width={'90%'}
-					color='#616161'
-					fontSize={16}
-					fontWeight={'bold'}
-					marginBottom={20}
+					color='#000'
 				>
 					Knowledge Center
 				</Text>
 				<Text
 					width={'90%'}
-					color='#616161'
+					color='#000'
 					marginBottom={20}
-					fontSize={14}
-					fontWeight={'600'}
 				>
-					Whitepaper & Reports
+					Whitepaper Reports
 				</Text>
 				<ScrollView
 					horizontal
@@ -298,68 +274,18 @@ export default function TabOneScreen() {
 					width='90%'
 				>
 					{knowledgeCards.map((item, index) => (
-						<>
-							<KnowledgeCard
-								key={index}
-								data={item}
-							/>
-							<KnowledgeCard
-								key={index + 1}
-								data={item}
-							/>
-							<KnowledgeCard
-								key={index + 2}
-								data={item}
-							/>
-						</>
+						<KnowledgeCard
+							key={index}
+							data={item}
+						/>
 					))}
 				</ScrollView>
 
-				<Text
-					width={'90%'}
-					color='#616161'
-					marginBottom={20}
-					fontSize={14}
-					fontWeight={'600'}
-				>
-					Editorial Magazines
-				</Text>
-
-				<Text
-					width={'90%'}
-					color='#616161'
-					marginBottom={20}
-					fontSize={14}
-					fontWeight={'600'}
-				>
-					Podcasts
-				</Text>
-
-				<Text
-					width={'90%'}
-					color='#616161'
-					marginBottom={20}
-					fontSize={14}
-					fontWeight={'600'}
-				>
-					Resource Libraries
-				</Text>
-
 				<Divider />
-
-				<Text
-					width={'90%'}
-					color='#616161'
-					fontSize={16}
-					fontWeight={'bold'}
-					marginBottom={20}
-				>
-					CIO&Leader Loyalty Point History
-				</Text>
 
 				<PointsTable
 					isOnHome
-					data={pointsData}
+					data={pointsData.length === 0 ? [] : pointsData}
 				/>
 			</ScrollView>
 		</SafeAreaView>

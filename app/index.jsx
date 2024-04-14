@@ -44,16 +44,14 @@ const Component = () => {
 					<Text
 						textAlign='center'
 						textTransform='uppercase'
-						fontSize={14}
 					>
-						Explore the world by watching {'\n'} and creating live broadcasts
+						Explore the world by watching and creating live broadcasts
 					</Text>
 					<Button
 						iconAfter={<ChevronRight size='$1.5' />}
-						fontSize={14}
-						backgroundColor={'#8DC63F'}
+						backgroundColor={'#6EBA43'}
 						borderRadius={100 / 2}
-						width={Dimensions.get('window').width * 0.55}
+						width={Dimensions.get('window').width * 0.75}
 						elevate
 						elevation={5}
 						height={50}
@@ -67,9 +65,8 @@ const Component = () => {
 						position='absolute'
 						bottom={30}
 						textAlign='center'
-						fontSize={12}
 					>
-						By signing up you agree to our {'\n'} ToS, Privacy Policy and Cookie Policy
+						By signing up you agree to our ToS, Privacy Policy and Cookie Policy
 					</Text>
 				</View>
 			</SafeAreaView>
