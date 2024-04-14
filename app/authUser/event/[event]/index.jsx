@@ -1,11 +1,12 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Button, Image, Text, ScrollView } from 'tamagui';
-import { LinearGradient } from 'expo-linear-gradient';
 import Carousel from '@/components/Carousel';
-import { ActivityIndicator, Dimensions } from 'react-native';
+import { Dimensions, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors } from '@/constants';
+import { useLocalSearchParams } from 'expo-router';
+import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
-
 const dummyData = [
 	{
 		name: 'Ankit Sharma',
@@ -45,11 +46,51 @@ const dummyData = [
 	},
 ];
 
-const EventScreen = ({ navigation }) => {
-	return (
+const EventScreen = () => {
+	const { event } = useLocalSearchParams();
+	console.log(event);
+	const { userToken } = useContext(AuthContext);
+	const [loading, setLoading] = useState(true);
+	const [evtData, setEvtData] = useState({});
+
+	const getOneEvent = async () => {
+		setLoading(true);
+		try {
+			const res = await axios.get(
+				`https://cioleader.azurewebsites.net/api/event/${event}/`,
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setEvtData(res.data);
+			console.log(res.data);
+		} catch (error) {
+			console.log('Event::getOneEvent::error::', error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		getOneEvent();
+	}, [event]);
+
+	return loading ? (
+		<View
+			style={{
+				flex: 1,
+				justifyContent: 'center',
+				alignItems: 'center',
+			}}
+		>
+			<Text color='#000'>Loading...</Text>
+		</View>
+	) : (
 		<SafeAreaView
 			edges={['bottom', 'left', 'right']}
-			style={{ flexGrow: 1, backgroundColor: '#019348' }}
+			style={{ flexGrow: 1, backgroundColor: colors.primaryDark }}
 		>
 			<ScrollView
 				style={{
@@ -57,21 +98,11 @@ const EventScreen = ({ navigation }) => {
 				}}
 			>
 				<View style={{ flex: 1 }}>
-					<View
-						style={{
-							height: wH * 0.3,
-							width: wW,
-						}}
-					>
-						<Carousel
-							images={[
-								'https://dummyimage.com/600x400/fff/000&text=One',
-								'https://dummyimage.com/600x400/fff/000&text=Two',
-								'https://dummyimage.com/600x400/fff/000&text=Three',
-								'https://dummyimage.com/600x400/fff/000&text=Four',
-							]}
-						/>
-					</View>
+					<Image
+						src={evtData.picture}
+						width={wW}
+						height={wH * 0.3}
+					/>
 					<View
 						style={{
 							justifyContent: 'center',
@@ -89,7 +120,7 @@ const EventScreen = ({ navigation }) => {
 								textTransform: 'uppercase',
 							}}
 						>
-							Capitalland
+							{evtData.id}
 						</Text>
 						<Text
 							style={{
@@ -99,7 +130,7 @@ const EventScreen = ({ navigation }) => {
 								textTransform: 'uppercase',
 							}}
 						>
-							Cyber Security & Digital Transformations
+							{evtData.name}
 						</Text>
 						<View
 							style={{
@@ -123,7 +154,7 @@ const EventScreen = ({ navigation }) => {
 										fontSize: 13,
 									}}
 								>
-									14th Dec 2023
+									{evtData.date}
 								</Text>
 								<Text
 									style={{
@@ -132,7 +163,7 @@ const EventScreen = ({ navigation }) => {
 										fontSize: 13,
 									}}
 								>
-									5:00 PM
+									{evtData.time}
 								</Text>
 							</View>
 							<View
@@ -151,7 +182,7 @@ const EventScreen = ({ navigation }) => {
 										color: '#FFF',
 									}}
 								>
-									JW Marriot
+									{evtData.venue}
 								</Text>
 								<Text
 									style={{
@@ -159,7 +190,7 @@ const EventScreen = ({ navigation }) => {
 										fontSize: 13,
 									}}
 								>
-									Aerocity, New Delhi
+									{evtData.address}
 								</Text>
 							</View>
 						</View>
@@ -171,7 +202,12 @@ const EventScreen = ({ navigation }) => {
 							}}
 						>
 							<Button
-								backgroundColor={'#8DC63F'}
+								backgroundColor={colors.primary}
+								borderColor={colors.primary}
+								pressStyle={{
+									backgroundColor: colors.primaryDark,
+									borderColor: colors.primary,
+								}}
 								width={wW * 0.4}
 								borderRadius={100 / 2}
 							>
@@ -180,7 +216,15 @@ const EventScreen = ({ navigation }) => {
 							<Button
 								width={wW * 0.4}
 								borderRadius={100 / 2}
-								backgroundColor={'#8DC63F'}
+								backgroundColor={colors.primary}
+								borderColor={colors.primary}
+								pressStyle={{
+									backgroundColor: colors.primaryDark,
+									borderColor: colors.primary,
+								}}
+								onPress={() => {
+									Linking.openURL(evtData.agenda);
+								}}
 							>
 								View Agenda
 							</Button>
@@ -209,7 +253,7 @@ const EventScreen = ({ navigation }) => {
 								gap: 10,
 							}}
 						>
-							{dummyData.map((item, index) => (
+							{evtData.speakers.map((speaker, index) => (
 								<View
 									key={index}
 									style={{
@@ -219,16 +263,18 @@ const EventScreen = ({ navigation }) => {
 										alignItems: 'center',
 									}}
 								>
-									<Image
-										source={{ uri: item.img }}
-										style={{
-											width: wW / 3 - 25,
-											aspectRatio: 1 / 1,
-											borderRadius: 20,
-											borderWidth: 1,
-											borderColor: '#000',
-										}}
-									/>
+									<View
+										borderRadius={20}
+										borderWidth={1}
+										borderColor={'#000'}
+										overflow='hidden'
+									>
+										<Image
+											source={{ uri: speaker.profile }}
+											width={wW / 3 - 25}
+											aspectRatio={1 / 1}
+										/>
+									</View>
 									<View
 										style={{
 											width: '100%',
@@ -242,7 +288,7 @@ const EventScreen = ({ navigation }) => {
 												color: '#000',
 											}}
 										>
-											{item.name}
+											{speaker.name}
 										</Text>
 										<Text
 											style={{
@@ -250,7 +296,7 @@ const EventScreen = ({ navigation }) => {
 												color: '#000',
 											}}
 										>
-											{item.designation}
+											{speaker.designation}
 										</Text>
 										<Text
 											style={{
@@ -258,7 +304,7 @@ const EventScreen = ({ navigation }) => {
 												color: '#000',
 											}}
 										>
-											{item.company}
+											{speaker.company}
 										</Text>
 									</View>
 								</View>
@@ -287,62 +333,7 @@ const EventScreen = ({ navigation }) => {
 								fontSize: 11,
 							}}
 						>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda
-							voluptate laudantium rerum nemo voluptatem beatae expedita numquam
-							modi, a voluptatibus aliquid harum possimus amet perferendis dicta
-							molestiae voluptatum. Quia repudiandae iure dolore, maxime eaque,
-							illum eos magni dignissimos earum est totam expedita? Sunt
-							molestiae recusandae distinctio nam sapiente maxime totam.
-						</Text>
-						<Text
-							style={{
-								marginBottom: 10,
-								color: '#fff',
-								fontSize: 11,
-							}}
-						>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda
-							voluptate laudantium rerum nemo voluptatem beatae expedita numquam
-							modi, a voluptatibus aliquid harum possimus amet perferendis dicta
-							molestiae voluptatum. Quia repudiandae iure dolore, maxime eaque,
-							illum eos magni dignissimos earum est totam expedita? Sunt
-							molestiae recusandae distinctio nam sapiente maxime totam.
-						</Text>
-						<Text
-							style={{
-								marginBottom: 10,
-								color: '#fff',
-								fontSize: 11,
-							}}
-						>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda
-							voluptate laudantium rerum nemo voluptatem beatae expedita numquam
-							modi, a voluptatibus aliquid harum possimus amet perferendis dicta
-							molestiae voluptatum. Quia repudiandae iure dolore, maxime eaque,
-							illum eos magni dignissimos earum est totam expedita? Sunt
-							molestiae recusandae distinctio nam sapiente maxime totam.
-						</Text>
-						<Text
-							style={{
-								fontSize: 16,
-								fontWeight: 'bold',
-								color: '#fff',
-								marginBottom: 10,
-							}}
-						>
-							Points for the event:
-						</Text>
-						<Text
-							style={{
-								marginBottom: 10,
-								color: '#fff',
-								fontSize: 11,
-							}}
-						>
-							Lorem, ipsum dolor sit amet consectetur adipisicing elit. Saepe
-							libero fugiat perspiciatis dolorem cumque dolores voluptatem
-							sapiente, sequi omnis ipsam cum assumenda excepturi temporibus
-							vitae.
+							{evtData.description}
 						</Text>
 
 						<View
@@ -354,21 +345,36 @@ const EventScreen = ({ navigation }) => {
 							}}
 						>
 							<Button
-								backgroundColor={'#8DC63F'}
 								width={wW * 0.4}
+								backgroundColor={colors.primary}
+								borderColor={colors.primary}
+								pressStyle={{
+									backgroundColor: colors.primaryDark,
+									borderColor: colors.primary,
+								}}
 								borderRadius={100 / 2}
 							>
 								Share Event
 							</Button>
 							<Button
-								backgroundColor={'#8DC63F'}
+								backgroundColor={colors.primary}
+								borderColor={colors.primary}
+								pressStyle={{
+									backgroundColor: colors.primaryDark,
+									borderColor: colors.primary,
+								}}
 								width={wW * 0.4}
 								borderRadius={100 / 2}
 							>
 								Share Selfie
 							</Button>
 							<Button
-								backgroundColor={'#8DC63F'}
+								backgroundColor={colors.primary}
+								borderColor={colors.primary}
+								pressStyle={{
+									backgroundColor: colors.primaryDark,
+									borderColor: colors.primary,
+								}}
 								width={wW * 0.4}
 								borderRadius={100 / 2}
 							>

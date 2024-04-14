@@ -8,13 +8,13 @@ import { Link, useRouter } from 'expo-router';
 import ImageTriangles from '@/components/ImageTriangles';
 import logo from '@/assets/images/Logo_White.png';
 import { Dimensions } from 'react-native';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '@/context/AuthContext';
 
 const ScreenLogin = () => {
 	const router = useRouter();
 	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
 		useContext(AuthContext);
-	const [username, setUsername] = useState('adityatripathi@gmail.com');
+	const [username, setUsername] = useState('yashdakshita123@gmail.com');
 
 	const handleLookupUser = async () => {
 		try {
@@ -27,7 +27,7 @@ const ScreenLogin = () => {
 
 	return (
 		<LinearGradient
-			colors={['#6EBA43', '#019348']}
+			colors={[colors.primary, colors.primaryDark]}
 			start={{ x: 0, y: 0 }}
 			end={{ x: 1, y: 1 }}
 			style={{
@@ -44,23 +44,25 @@ const ScreenLogin = () => {
 				<View
 					height={'100%'}
 					alignItems='center'
-					justifyContent='center'
+					justifyContent='flex-start'
 					gap={20}
 				>
 					<Image
 						source={logo}
 						maxWidth={'90%'}
 						height={'10%'}
+						marginTop={Dimensions.get('window').height * 0.15}
 						resizeMode='contain'
 					/>
 					<Text
 						textTransform='uppercase'
-						fontSize={30}
+						fontSize={35}
+						padding={0}
 					>
 						WELCOME
 					</Text>
 					<Text
-						fontSize={14}
+						fontSize={13}
 						textTransform='uppercase'
 					>
 						Sign in to continue
@@ -93,6 +95,7 @@ const ScreenLogin = () => {
 					<Text
 						position='absolute'
 						bottom={30}
+						fontSize={15}
 					>
 						Don't have any account?
 						<Link

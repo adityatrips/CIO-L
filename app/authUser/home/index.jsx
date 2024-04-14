@@ -6,13 +6,14 @@ import { Dimensions, ScrollView } from 'react-native';
 
 import ankit from '@/assets/images/Ankit.png';
 import globe from '@/assets/images/Globe.png';
+import logo from '@/assets/images/Logo_GreenBlack.png';
 import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Divider from '@/components/Divider';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
-import { ActivityIndicator } from 'react-native-web';
-import KnowledgeCard from '../../components/KnowledgeCard';
-import PointsTable from '../../components/PointsTable';
+import { ActivityIndicator } from 'react-native';
+import KnowledgeCard from '@/components/KnowledgeCard';
+import PointsTable from '@/components/PointsTable';
 import { useRouter } from 'expo-router';
 
 const height = Dimensions.get('screen').height * 0.75;
@@ -26,6 +27,22 @@ export default function HomeScreen() {
 	const [knowledgeCards, setKnowledgeCards] = useState([]);
 	const [pointsData, setPoints] = useState([]);
 	const [isLoading, setIsLoading] = useState();
+	const [offsetY, setOffsetY] = useState({
+		home: 0,
+		evt: 0,
+		kc: 0,
+		pts: 0,
+	});
+	const router = useRouter();
+	const homeRef = React.useRef(null);
+	const eventRef = React.useRef(null);
+	const kcRef = React.useRef(null);
+	const ptsRef = React.useRef(null);
+	const scrollRef = React.useRef(null);
+
+	const scrollTo = (off) => {
+		scrollRef.current.scrollTo({ y: off, animated: true });
+	};
 
 	const getUpcomingEvents = async () => {
 		if (userToken !== '' || userToken !== null || userToken !== undefined) {
@@ -113,15 +130,44 @@ export default function HomeScreen() {
 
 	return !isLoading && !loading ? (
 		<SafeAreaView
-			edges={['right', 'left']}
+			edges={['top', 'bottom', 'right', 'left']}
 			flex={1}
 		>
+			<View
+				height={Dimensions.get('screen').height * 0.1}
+				backgroundColor={'#fff'}
+				flexDirection='row'
+				justifyContent='space-between'
+				alignItems='center'
+				paddingHorizontal={20}
+			>
+				<Image
+					source={{
+						uri: logo,
+					}}
+					height={Dimensions.get('screen').height * 0.08}
+					width={Dimensions.get('screen').width * 0.5}
+					resizeMode='contain'
+				/>
+			</View>
 			<ScrollView
+				ref={scrollRef}
 				contentContainerStyle={{
 					alignItems: 'center',
+					bottom: 60,
 				}}
 			>
-				<View height={height * 0.7}>
+				<View
+					height={height * 0.7}
+					ref={homeRef}
+					onLayout={(e) => {
+						console.log(e.nativeEvent.layout.y);
+						setOffsetY({
+							...offsetY,
+							home: e.nativeEvent.layout.y,
+						});
+					}}
+				>
 					<View
 						height={height * 0.6}
 						width={width}
@@ -242,6 +288,16 @@ export default function HomeScreen() {
 				</View>
 				<Divider />
 				<View
+					ref={eventRef}
+					onLayout={(e) => {
+						console.log(e.nativeEvent.layout.y);
+						setOffsetY({
+							...offsetY,
+							evt: e.nativeEvent.layout.y,
+						});
+					}}
+				></View>
+				<View
 					gap={10}
 					marginBottom={10}
 				>
@@ -253,6 +309,16 @@ export default function HomeScreen() {
 					))}
 				</View>
 				<Divider />
+				<View
+					ref={kcRef}
+					onLayout={(e) => {
+						console.log(e.nativeEvent.layout.y);
+						setOffsetY({
+							...offsetY,
+							kc: e.nativeEvent.layout.y,
+						});
+					}}
+				></View>
 
 				<Text
 					width={'90%'}
@@ -283,11 +349,75 @@ export default function HomeScreen() {
 
 				<Divider />
 
-				<PointsTable
-					isOnHome
-					data={pointsData.length === 0 ? [] : pointsData}
-				/>
+				<View
+					ref={ptsRef}
+					onLayout={(e) => {
+						console.log(e.nativeEvent.layout.y);
+						setOffsetY({
+							...offsetY,
+							pts: e.nativeEvent.layout.y,
+						});
+					}}
+					marginLeft={Dimensions.get('screen').width * 0.1}
+					width={'100%'}
+					marginBottom={10}
+				>
+					<PointsTable
+						isOnHome
+						data={pointsData.length === 0 ? [] : pointsData}
+					/>
+				</View>
 			</ScrollView>
+			<View
+				height={60}
+				position='absolute'
+				bottom={0}
+				left={0}
+				width={width}
+				backgroundColor={colors.primary}
+				flexDirection='row'
+				justifyContent='space-between'
+				paddingHorizontal={20}
+				alignItems='center'
+				borderTopLeftRadius={Dimensions.get('screen').width * 0.05}
+				borderTopRightRadius={Dimensions.get('screen').width * 0.05}
+			>
+				<View
+					onPress={() => {
+						scrollTo(offsetY.home);
+					}}
+				>
+					<Text>Home</Text>
+				</View>
+				<View
+					onPress={() => {
+						scrollTo(offsetY.evt);
+					}}
+				>
+					<Text>Events</Text>
+				</View>
+				<View
+					onPress={() => {
+						scrollTo(offsetY.kc);
+					}}
+				>
+					<Text>KC</Text>
+				</View>
+				<View
+					onPress={() => {
+						scrollTo(offsetY.pts);
+					}}
+				>
+					<Text>Points</Text>
+				</View>
+				<View
+					onPress={() => {
+						router.push('/authUser/pro');
+					}}
+				>
+					<Text>Profile</Text>
+				</View>
+			</View>
 		</SafeAreaView>
 	) : (
 		<View

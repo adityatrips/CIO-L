@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ImageTriangles from '../../components/ImageTriangles';
+import ImageTriangles from '@/components/ImageTriangles';
 import { Dimensions } from 'react-native';
 import { Button, Image, Input, ScrollView, Text, View } from 'tamagui';
 import { colors } from '@/constants';

@@ -44,7 +44,7 @@ function RootLayoutNav() {
 		const userInfo = await SecureStore.getItemAsync('userInfo');
 
 		if (userToken && userInfo) {
-			router.push('/authUser');
+			router.push('/authUser/home');
 		}
 	};
 

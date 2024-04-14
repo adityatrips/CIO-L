@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image, Text, Button, View } from 'tamagui';
@@ -7,13 +7,14 @@ import { useRouter } from 'expo-router';
 import ImageTriangles from '@/components/ImageTriangles';
 import logo from '@/assets/images/Logo_White.png';
 import { Dimensions } from 'react-native';
+import { colors } from '@/constants';
 
 const Component = () => {
 	const router = useRouter();
 
 	return (
 		<LinearGradient
-			colors={['#6EBA43', '#019348']}
+			colors={[colors.primary, colors.primaryDark]}
 			start={{ x: 0, y: 0 }}
 			end={{ x: 1, y: 1 }}
 			style={{
@@ -38,18 +39,24 @@ const Component = () => {
 					<Image
 						source={logo}
 						maxWidth={'90%'}
-						height={'10%'}
+						height={'40%'}
 						resizeMode='contain'
 					/>
 					<Text
 						textAlign='center'
 						textTransform='uppercase'
+						fontSize={14}
 					>
 						Explore the world by watching and creating live broadcasts
 					</Text>
 					<Button
 						iconAfter={<ChevronRight size='$1.5' />}
-						backgroundColor={'#6EBA43'}
+						backgroundColor={colors.primary}
+						borderColor={colors.primary}
+						pressStyle={{
+							backgroundColor: colors.primaryDark,
+							borderColor: colors.primary,
+						}}
 						borderRadius={100 / 2}
 						width={Dimensions.get('window').width * 0.75}
 						elevate

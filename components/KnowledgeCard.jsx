@@ -2,6 +2,7 @@ import React from 'react';
 import { Dimensions, Linking } from 'react-native';
 import { Button, Image, Text, View } from 'tamagui';
 import coin from '@/assets/images/Coin1.png';
+import { colors } from '@/constants';
 
 const wW = Dimensions.get('window').width;
 const wH = Dimensions.get('window').height;
@@ -9,7 +10,7 @@ const wH = Dimensions.get('window').height;
 const KnowledgeCard = ({ data }) => {
 	return (
 		<View
-			backgroundColor={'#8DC63F'}
+			backgroundColor={colors.primary}
 			borderRadius={20}
 			overflow='hidden'
 			height={wH * 0.5}
@@ -75,23 +76,27 @@ const KnowledgeCard = ({ data }) => {
 				alignItems='center'
 			>
 				<Button
-					onPress={() => {
-						Linking.openURL(data.file);
+					backgroundColor={colors.primaryDark}
+					borderColor={colors.primary}
+					pressStyle={{
+						backgroundColor: colors.primary,
+						borderColor: colors.primaryDark,
 					}}
-					width={'90%'}
-					iconAfter={() => {
-						return (
-							<Image
-								source={{
-									uri: coin,
-								}}
-							/>
-						);
-					}}
+					borderRadius={100 / 2}
+					width={wW * 0.6}
 				>
 					<Text>Read More</Text>
 				</Button>
-				<Button width={'90%'}>
+				<Button
+					backgroundColor={colors.primaryDark}
+					borderColor={colors.primary}
+					pressStyle={{
+						backgroundColor: colors.primary,
+						borderColor: colors.primaryDark,
+					}}
+					borderRadius={100 / 2}
+					width={wW * 0.6}
+				>
 					<Text>Share</Text>
 				</Button>
 			</View>

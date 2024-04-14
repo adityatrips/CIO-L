@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link, useRouter } from 'expo-router';
-import ImageTriangles from '../../components/ImageTriangles';
+import ImageTriangles from '@/components/ImageTriangles';
 import { Button, Image, Input, Text, View } from 'tamagui';
 import { colors } from '@/constants';
 import ankit from '@/assets/images/Ankit.png';
 import { ActivityIndicator, Dimensions } from 'react-native';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ScreenPassword = () => {
@@ -19,7 +19,7 @@ const ScreenPassword = () => {
 	const loginHandler = async () => {
 		try {
 			await login(userInfo?.username, pword);
-			router.push('/authUser');
+			router.push('/authUser/home');
 		} catch (error) {
 			console.log('ScreenPassword::loginHandler::error:: ', error);
 		}
@@ -27,7 +27,7 @@ const ScreenPassword = () => {
 
 	if (loading) {
 		<LinearGradient
-			colors={['#6EBA43', '#019348']}
+			colors={[colors.primary, colors.primaryDark]}
 			start={{ x: 0, y: 0 }}
 			end={{ x: 1, y: 1 }}
 			style={{
@@ -55,7 +55,7 @@ const ScreenPassword = () => {
 	return (
 		!loading && (
 			<LinearGradient
-				colors={['#6EBA43', '#019348']}
+				colors={[colors.primary, colors.primaryDark]}
 				start={{ x: 0, y: 0 }}
 				end={{ x: 1, y: 1 }}
 				style={{

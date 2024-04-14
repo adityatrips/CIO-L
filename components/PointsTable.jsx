@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, View } from 'tamagui';
 import { colors } from '@/constants';
 import { ActivityIndicator, Dimensions } from 'react-native';
+import { useRouter } from 'expo-router';
+
 const PointsTable = ({ data, isOnHome = false }) => {
 	const [loading, setLoading] = useState(true);
+	const router = useRouter();
 
 	useEffect(() => {
 		if (data.length === 0) {
@@ -40,7 +43,7 @@ const PointsTable = ({ data, isOnHome = false }) => {
 	) : (
 		<ScrollView
 			contentContainerStyle={{
-				width: '100%',
+				width: isOnHome ? '90%' : '100%',
 			}}
 		>
 			{!isOnHome && (
@@ -260,6 +263,9 @@ const PointsTable = ({ data, isOnHome = false }) => {
 				{isOnHome && (
 					<>
 						<Text
+							onPress={() => {
+								router.push('/authUser/pts');
+							}}
 							paddingTop={10}
 							paddingBottom={20}
 							textAlign='right'

@@ -6,8 +6,10 @@ import { colors } from '@/constants';
 import Hybrid from '@/assets/images/Hybrid.png';
 import Online from '@/assets/images/Online.png';
 import Offline from '@/assets/images/Offline.png';
+import { useRouter } from 'expo-router';
 
 const UpcomingEventCard = ({ data }) => {
+	const router = useRouter();
 	return (
 		<View
 			minHeight={Dimensions.get('screen').height * 0.3}
@@ -26,7 +28,7 @@ const UpcomingEventCard = ({ data }) => {
 				backgroundColor={'#000'}
 			>
 				<Image
-					source={{ uri: data.sponsorpicture }}
+					src={data.sponsorpicture}
 					borderRadius={20}
 					width={'100%'}
 					height={'100%'}
@@ -98,7 +100,19 @@ const UpcomingEventCard = ({ data }) => {
 					</Text>
 					<Text>{data.date}</Text>
 				</View>
-				<Button>
+				<Button
+					borderRadius={100 / 2}
+					backgroundColor={colors.primaryDark}
+					borderColor={colors.primaryDark}
+					pressStyle={{
+						backgroundColor: colors.primary,
+						borderColor: colors.primaryDark,
+					}}
+					onPress={() => {
+						console.log(`/authUser/event/${data.id}`);
+						router.push(`/authUser/event/${data.id}`);
+					}}
+				>
 					<Text>View Details</Text>
 				</Button>
 			</View>

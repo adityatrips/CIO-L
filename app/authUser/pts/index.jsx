@@ -6,6 +6,7 @@ import { AuthContext } from '@/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ActivityIndicator } from 'react-native';
 import PointsTable from '@/components/PointsTable';
+import { colors } from '@/constants';
 
 const wW = Dimensions.get('window').width;
 const wH = Dimensions.get('window').height;
@@ -37,12 +38,14 @@ export default function PointsScreen() {
 	};
 
 	useEffect(() => {
+		setIsLoading(true);
 		getPoints();
+		setIsLoading(false);
 	}, []);
 
 	return !isLoading ? (
 		<LinearGradient
-			colors={['#6EBA43', '#019348']}
+			colors={[colors.primary, colors.primaryDark]}
 			start={{ x: 0, y: 0 }}
 			end={{ x: 1, y: 1 }}
 			style={{
@@ -68,7 +71,7 @@ export default function PointsScreen() {
 		</LinearGradient>
 	) : (
 		<LinearGradient
-			colors={['#6EBA43', '#019348']}
+			colors={[colors.primary, colors.primaryDark]}
 			start={{ x: 0, y: 0 }}
 			end={{ x: 1, y: 1 }}
 			style={{
