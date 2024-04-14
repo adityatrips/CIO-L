@@ -84,6 +84,8 @@ const ScreenRegister = () => {
 						</Text>
 					</View>
 					<Input
+						autoCapitalize='none'
+						autoCorrect={false}
 						borderWidth={0}
 						color='#000'
 						width={Dimensions.get('window').width * 0.9}
@@ -100,6 +102,8 @@ const ScreenRegister = () => {
 						onChangeText={setFname}
 					/>
 					<Input
+						autoCapitalize='none'
+						autoCorrect={false}
 						borderWidth={0}
 						color='#000'
 						width={Dimensions.get('window').width * 0.9}
@@ -116,6 +120,8 @@ const ScreenRegister = () => {
 						onChangeText={setLname}
 					/>
 					<Input
+						autoCapitalize='none'
+						autoCorrect={false}
 						borderWidth={0}
 						color='#000'
 						width={Dimensions.get('window').width * 0.9}
@@ -132,6 +138,8 @@ const ScreenRegister = () => {
 						onChangeText={setMobile}
 					/>
 					<Input
+						autoCapitalize='none'
+						autoCorrect={false}
 						borderWidth={0}
 						color='#000'
 						width={Dimensions.get('window').width * 0.9}
@@ -148,6 +156,8 @@ const ScreenRegister = () => {
 						onChangeText={setEmail}
 					/>
 					<Input
+						autoCapitalize='none'
+						autoCorrect={false}
 						borderWidth={0}
 						color='#000'
 						width={Dimensions.get('window').width * 0.9}
@@ -165,6 +175,8 @@ const ScreenRegister = () => {
 						onChangeText={setPword}
 					/>
 					<Input
+						autoCapitalize='none'
+						autoCorrect={false}
 						borderWidth={0}
 						color='#000'
 						width={Dimensions.get('window').width * 0.9}
@@ -181,6 +193,8 @@ const ScreenRegister = () => {
 						onChangeText={setCompany}
 					/>
 					<Input
+						autoCapitalize='none'
+						autoCorrect={false}
 						borderWidth={0}
 						color='#000'
 						width={Dimensions.get('window').width * 0.9}

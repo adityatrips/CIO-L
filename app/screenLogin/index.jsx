@@ -17,11 +17,16 @@ const ScreenLogin = () => {
 	const [username, setUsername] = useState('');
 
 	const handleLookupUser = async () => {
-		try {
-			await lookupUser(username);
-			router.push('/screenPassword');
-		} catch (error) {
-			console.log('ScreenLogin::handleLookupUser::error:: ', error);
+		if (username.length === 0) {
+			alert('Please enter the username');
+			return;
+		} else {
+			try {
+				await lookupUser(username);
+				router.push('/screenPassword');
+			} catch (error) {
+				console.log('ScreenLogin::handleLookupUser::error:: ', error);
+			}
 		}
 	};
 
@@ -81,6 +86,8 @@ const ScreenLogin = () => {
 						marginBottom={'30%'}
 					>
 						<Input
+							autoCapitalize='none'
+							autoCorrect={false}
 							borderWidth={0}
 							width={'100%'}
 							borderRadius={100 / 2}
@@ -96,6 +103,11 @@ const ScreenLogin = () => {
 						/>
 						<Button
 							backgroundColor={colors.primary}
+							borderColor={colors.primary}
+							pressStyle={{
+								backgroundColor: colors.primaryDark,
+								borderColor: colors.primary,
+							}}
 							borderRadius={100 / 2}
 							width={'100%'}
 							elevate

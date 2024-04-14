@@ -82,6 +82,8 @@ const ScreenFeeback = ({ navigation }) => {
 					<View marginTop={20}>
 						<Text color='#000'>What are the main reason for your rating? </Text>
 						<Input
+							autoCapitalize='none'
+							autoCorrect={false}
 							value={ratingReason}
 							onChangeText={setRatingReason}
 							placeholder='Let us know the reason for your rating'
@@ -184,6 +186,8 @@ const ScreenFeeback = ({ navigation }) => {
 						</Text>
 						<View>
 							<Input
+								autoCapitalize='none'
+								autoCorrect={false}
 								value={additionalComments}
 								onChangeText={setAdditionalComments}
 								placeholder='Let us know any additional comments'
@@ -214,6 +218,8 @@ const ScreenFeeback = ({ navigation }) => {
 						<Text color='#000'>Any overall feedback for the event?</Text>
 						<View>
 							<Input
+								autoCapitalize='none'
+								autoCorrect={false}
 								value={overallFeedback}
 								onChangeText={setOverallFeedback}
 								placeholder='Let us know your overall feeback'

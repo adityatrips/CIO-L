@@ -18,11 +18,16 @@ const ScreenPassword = () => {
 		useContext(AuthContext);
 
 	const loginHandler = async () => {
-		try {
-			await login(userInfo?.username, pword);
-			router.push('/authUser/home');
-		} catch (error) {
-			console.log('ScreenPassword::loginHandler::error:: ', error);
+		if (pword.length === 0) {
+			alert('Please enter the password');
+			return;
+		} else {
+			try {
+				await login(userInfo?.username, pword);
+				router.push('/authUser/home');
+			} catch (error) {
+				console.log('ScreenPassword::loginHandler::error:: ', error);
+			}
 		}
 	};
 
@@ -70,6 +75,8 @@ const ScreenPassword = () => {
 					</View>
 
 					<Input
+						autoCapitalize='none'
+						autoCorrect={false}
 						borderWidth={0}
 						width={'100%'}
 						borderRadius={100 / 2}
@@ -86,6 +93,11 @@ const ScreenPassword = () => {
 					<Button
 						marginBottom={'30%'}
 						backgroundColor={colors.primary}
+						borderColor={colors.primary}
+						pressStyle={{
+							backgroundColor: colors.primaryDark,
+							borderColor: colors.primary,
+						}}
 						borderRadius={100 / 2}
 						width={'100%'}
 						elevate
