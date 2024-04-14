@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import axios from 'axios';
-import { ActivityIndicator, Dimensions } from 'react-native';
+import { Dimensions } from 'react-native';
 import { colors } from '@/constants';
 import ankit from '@/assets/images/Ankit.png';
 import globe from '@/assets/images/Globe.png';
@@ -13,6 +13,7 @@ import Divider from '@/components/Divider';
 import Hybrid from '@/assets/images/Hybrid.png';
 import Online from '@/assets/images/Online.png';
 import Offline from '@/assets/images/Offline.png';
+import LoadingComp from '../../../components/Loading';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -75,16 +76,7 @@ export default function ProfileScreen() {
 	};
 
 	return loading ? (
-		<View
-			flex={1}
-			alignItems='center'
-			justifyContent='center'
-		>
-			<ActivityIndicator
-				size='large'
-				color='#000'
-			/>
-		</View>
+		<LoadingComp />
 	) : (
 		<ScrollView flex={1}>
 			<View

@@ -38,64 +38,77 @@ const ScreenLogin = () => {
 			<ImageTriangles />
 			<SafeAreaView
 				style={{
-					width: '75%',
+					flex: 1,
 				}}
 			>
 				<View
-					height={'100%'}
 					alignItems='center'
 					justifyContent='flex-start'
-					gap={20}
+					height={Dimensions.get('window').height}
+					width={Dimensions.get('window').width * 0.9}
 				>
 					<Image
+						marginTop={'40%'}
+						marginBottom={'20%'}
 						source={logo}
 						maxWidth={'90%'}
 						height={'10%'}
-						marginTop={Dimensions.get('window').height * 0.15}
 						resizeMode='contain'
 					/>
-					<Text
-						textTransform='uppercase'
-						fontSize={35}
-						padding={0}
+					<View
+						alignItems='center'
+						position='relative'
 					>
-						WELCOME
-					</Text>
-					<Text
-						fontSize={13}
-						textTransform='uppercase'
+						<Text
+							textTransform='uppercase'
+							fontSize={35}
+							padding={0}
+						>
+							WELCOME
+						</Text>
+						<Text
+							fontSize={13}
+							textTransform='uppercase'
+							marginBottom={'10%'}
+							fontWeight={'bold'}
+						>
+							Sign in to continue
+						</Text>
+					</View>
+					<View
+						width={'100%'}
+						gap={10}
+						marginBottom={'30%'}
 					>
-						Sign in to continue
-					</Text>
-					<Input
-						borderWidth={0}
-						width={Dimensions.get('window').width * 0.75}
-						borderRadius={100 / 2}
-						elevate
-						elevation={5}
-						placeholder='E-MAIL OR MOBILE'
-						placeholderTextColor={'#fff'}
-						textAlign='center'
-						backgroundColor={colors.primary}
-						height={50}
-						value={username}
-						onChangeText={(text) => setUsername(text)}
-					/>
-					<Button
-						backgroundColor={colors.primary}
-						borderRadius={100 / 2}
-						width={Dimensions.get('window').width * 0.75}
-						elevate
-						elevation={5}
-						height={50}
-						onPress={handleLookupUser}
-					>
-						NEXT
-					</Button>
+						<Input
+							borderWidth={0}
+							width={'100%'}
+							borderRadius={100 / 2}
+							elevate
+							elevation={5}
+							placeholder='E-MAIL OR MOBILE'
+							placeholderTextColor={'#fff'}
+							textAlign='center'
+							backgroundColor={colors.primary}
+							height={50}
+							value={username}
+							onChangeText={(text) => setUsername(text)}
+						/>
+						<Button
+							backgroundColor={colors.primary}
+							borderRadius={100 / 2}
+							width={'100%'}
+							elevate
+							elevation={5}
+							height={50}
+							onPress={handleLookupUser}
+						>
+							NEXT
+						</Button>
+					</View>
 					<Text
-						position='absolute'
-						bottom={30}
 						fontSize={15}
+						marginBottom={'30%'}
 					>
 						Don't have any account?
 						<Link

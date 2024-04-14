@@ -20,32 +20,37 @@ const Component = () => {
 			style={{
 				flex: 1,
 				alignItems: 'center',
-				justifyContent: 'space-between',
+				justifyContent: 'space-around',
 			}}
 		>
 			<ImageTriangles />
 			<SafeAreaView
 				style={{
-					width: '75%',
-					alignItems: 'center',
+					flex: 1,
 				}}
 			>
 				<View
-					height={'100%'}
-					alignItems='center'
-					justifyContent='center'
 					gap={20}
+					height={Dimensions.get('window').height}
+					width={Dimensions.get('window').width * 0.9}
+					alignItems={'center'}
+					justifyContent={'center'}
 				>
 					<Image
 						source={logo}
-						maxWidth={'90%'}
-						height={'40%'}
+						maxWidth={'100%'}
+						height={'10%'}
 						resizeMode='contain'
+						padding={0}
+						margin={0}
+						marginTop={'40%'}
+						marginBottom={'20%'}
 					/>
 					<Text
 						textAlign='center'
 						textTransform='uppercase'
 						fontSize={14}
+						marginBottom={'30%'}
 					>
 						Explore the world by watching and creating live broadcasts
 					</Text>
@@ -58,21 +63,18 @@ const Component = () => {
 							borderColor: colors.primary,
 						}}
 						borderRadius={100 / 2}
-						width={Dimensions.get('window').width * 0.75}
+						width={'100%'}
 						elevate
 						elevation={5}
 						height={50}
 						onPress={() => {
 							router.push('/screenLogin');
 						}}
+						marginBottom={'30%'}
 					>
 						NEXT
 					</Button>
-					<Text
-						position='absolute'
-						bottom={30}
-						textAlign='center'
-					>
+					<Text textAlign='center'>
 						By signing up you agree to our ToS, Privacy Policy and Cookie Policy
 					</Text>
 				</View>

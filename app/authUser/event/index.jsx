@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Button, Image, Text, ScrollView } from 'tamagui';
 import Carousel from '@/components/Carousel';
-import { ActivityIndicator, Dimensions } from 'react-native';
+import { Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/constants';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
+import LoadingComp from '../../../components/Loading';
 
 const EventScreen = () => {
 	const { userToken } = useContext(AuthContext);
@@ -36,18 +37,7 @@ const EventScreen = () => {
 	}, []);
 
 	return loading ? (
-		<View
-			style={{
-				flex: 1,
-				justifyContent: 'center',
-				alignItems: 'center',
-			}}
-		>
-			<ActivityIndicator
-				size='large'
-				color={colors.primary}
-			/>
-		</View>
+		<LoadingComp />
 	) : (
 		<SafeAreaView
 			edges={['bottom', 'left', 'right']}

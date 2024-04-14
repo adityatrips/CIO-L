@@ -7,6 +7,7 @@ import { colors } from '@/constants';
 import { useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
+import LoadingComp from '../../../../components/Loading';
 const dummyData = [
 	{
 		name: 'Ankit Sharma',
@@ -78,15 +79,7 @@ const EventScreen = () => {
 	}, [event]);
 
 	return loading ? (
-		<View
-			style={{
-				flex: 1,
-				justifyContent: 'center',
-				alignItems: 'center',
-			}}
-		>
-			<Text color='#000'>Loading...</Text>
-		</View>
+		<LoadingComp />
 	) : (
 		<SafeAreaView
 			edges={['bottom', 'left', 'right']}

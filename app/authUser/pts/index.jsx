@@ -4,9 +4,9 @@ import { Dimensions } from 'react-native';
 import { View, Text, Image, ScrollView } from 'tamagui';
 import { AuthContext } from '@/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ActivityIndicator } from 'react-native';
 import PointsTable from '@/components/PointsTable';
 import { colors } from '@/constants';
+import LoadingComp from '../../../components/Loading';
 
 const wW = Dimensions.get('window').width;
 const wH = Dimensions.get('window').height;
@@ -70,20 +70,6 @@ export default function PointsScreen() {
 			</View>
 		</LinearGradient>
 	) : (
-		<LinearGradient
-			colors={[colors.primary, colors.primaryDark]}
-			start={{ x: 0, y: 0 }}
-			end={{ x: 1, y: 1 }}
-			style={{
-				flex: 1,
-				alignItems: 'center',
-				justifyContent: 'center',
-			}}
-		>
-			<ActivityIndicator
-				size='large'
-				color='#fff'
-			/>
-		</LinearGradient>
+		<LoadingComp />
 	);
 }

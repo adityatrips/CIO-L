@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, View } from 'tamagui';
 import { colors } from '@/constants';
-import { ActivityIndicator, Dimensions } from 'react-native';
+import { Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
+import LoadingComp from './Loading';
 
 const PointsTable = ({ data, isOnHome = false }) => {
 	const [loading, setLoading] = useState(true);
@@ -29,17 +30,7 @@ const PointsTable = ({ data, isOnHome = false }) => {
 	}, []);
 
 	return loading ? (
-		<View
-			flex={1}
-			justifyContent={'center'}
-			alignItems={'center'}
-			backgroundColor={'#fff'}
-		>
-			<ActivityIndicator
-				size='large'
-				color={colors.primary}
-			/>
-		</View>
+		<LoadingComp />
 	) : (
 		<ScrollView
 			contentContainerStyle={{

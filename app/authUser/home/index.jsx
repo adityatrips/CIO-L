@@ -11,10 +11,10 @@ import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Divider from '@/components/Divider';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
-import { ActivityIndicator } from 'react-native';
 import KnowledgeCard from '@/components/KnowledgeCard';
 import PointsTable from '@/components/PointsTable';
 import { useRouter } from 'expo-router';
+import LoadingComp from '../../../components/Loading';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -26,7 +26,7 @@ export default function HomeScreen() {
 	const [upcomingEvents, setUpcomingEvents] = useState([]);
 	const [knowledgeCards, setKnowledgeCards] = useState([]);
 	const [pointsData, setPoints] = useState([]);
-	const [isLoading, setIsLoading] = useState();
+	const [isLoading, setIsLoading] = useState(true);
 	const [offsetY, setOffsetY] = useState({
 		home: 0,
 		evt: 0,
@@ -119,8 +119,8 @@ export default function HomeScreen() {
 	};
 
 	useEffect(() => {
-		console.log('HomeScreen::useEffect:: ', userToken);
 		setIsLoading(true);
+		console.log('HomeScreen::useEffect:: ', userToken);
 		getUserProfile();
 		getUpcomingEvents();
 		getKnowledgeCards();
@@ -128,7 +128,7 @@ export default function HomeScreen() {
 		setIsLoading(false);
 	}, []);
 
-	return !isLoading && !loading ? (
+	return !isLoading ? (
 		<SafeAreaView
 			edges={['top', 'bottom', 'right', 'left']}
 			flex={1}
@@ -420,15 +420,6 @@ export default function HomeScreen() {
 			</View>
 		</SafeAreaView>
 	) : (
-		<View
-			flex={1}
-			alignItems='center'
-			justifyContent='center'
-		>
-			<ActivityIndicator
-				size='large'
-				color={colors.primary}
-			/>
-		</View>
+		<LoadingComp />
 	);
 }
