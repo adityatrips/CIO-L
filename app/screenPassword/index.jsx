@@ -1,0 +1,147 @@
+import React, { useContext, useEffect, useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Link, useRouter } from 'expo-router';
+import ImageTriangles from '../../components/ImageTriangles';
+import { Button, Image, Input, Text, View } from 'tamagui';
+import { colors } from '@/constants';
+import ankit from '@/assets/images/Ankit.png';
+import { ActivityIndicator, Dimensions } from 'react-native';
+import { AuthContext } from '../../context/AuthContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+const ScreenPassword = () => {
+	const router = useRouter();
+	const [pword, setPword] = useState('india@123');
+
+	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
+		useContext(AuthContext);
+
+	const loginHandler = async () => {
+		try {
+			await login(userInfo?.username, pword);
+			router.push('/authUser');
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	if (loading) {
+		<LinearGradient
+			colors={['#6EBA43', '#019348']}
+			start={{ x: 0, y: 0 }}
+			end={{ x: 1, y: 1 }}
+			style={{
+				flex: 1,
+				alignItems: 'center',
+				justifyContent: 'space-between',
+			}}
+		>
+			<ImageTriangles />
+			<SafeAreaView
+				style={{
+					justifyContent: 'center',
+					alignItems: 'center',
+					width: '75%',
+				}}
+			>
+				<ActivityIndicator
+					size='large'
+					color='#fff'
+				/>
+			</SafeAreaView>
+		</LinearGradient>;
+	}
+
+	return (
+		!loading && (
+			<LinearGradient
+				colors={['#6EBA43', '#019348']}
+				start={{ x: 0, y: 0 }}
+				end={{ x: 1, y: 1 }}
+				style={{
+					flex: 1,
+					alignItems: 'center',
+					justifyContent: 'space-between',
+				}}
+			>
+				<ImageTriangles />
+				<SafeAreaView
+					style={{
+						width: '75%',
+					}}
+				>
+					<View
+						height={'100%'}
+						alignItems='center'
+						justifyContent='center'
+						gap={20}
+					>
+						<Image
+							height={150}
+							width={150}
+							resizeMode='cover'
+							borderRadius={75}
+							src={userInfo?.profilepicture || ankit}
+						/>
+						<Text
+						fontSize={22}
+						fontWeight={'bold'}
+						>{userInfo?.name || 'Ankit Sharma'}</Text>
+						<Text
+						fontSize={17}
+						fontWeight={'500'}
+						>{userInfo?.designation || 'Ankit Sharma'}</Text>
+
+						<Input
+							borderWidth={0}
+							width={Dimensions.get('window').width * 0.75}
+							borderRadius={100 / 2}
+							elevate
+							elevation={5}
+							placeholder='ENTER PASSWORD'
+							secureTextEntry
+							placeholderTextColor={'#fff'}
+							textAlign='center'
+							backgroundColor={colors.primary}
+							height={50}
+							value={pword}
+							onChangeText={(text) => setPword(text)}
+						/>
+						<Button
+							backgroundColor={colors.primary}
+							fontSize={14}
+							fontWeight={'bold'}
+							borderRadius={100 / 2}
+							width={Dimensions.get('window').width * 0.75}
+							elevate
+							elevation={5}
+							height={50}
+							onPress={loginHandler}
+						>
+							LOGIN
+						</Button>
+						<Text
+							position='absolute'
+							bottom={30}
+							fontSize={15}
+							fontWeight={'500'}
+						>
+							Don't have any account?
+							<Link
+								style={{
+									fontWeight: 900,
+								}}
+								href='/screenRegister'
+							>
+								{' '}
+								Sign Up
+							</Link>
+						</Text>
+					</View>
+				</SafeAreaView>
+			</LinearGradient>
+		)
+	);
+};
+
+export default ScreenPassword;
