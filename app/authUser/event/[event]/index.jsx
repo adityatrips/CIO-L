@@ -80,7 +80,7 @@ const EventScreen = () => {
 		<LoadingComp />
 	) : (
 		<SafeAreaView
-			edges={['bottom', 'left', 'right']}
+			edges={['top', 'bottom', 'left', 'right']}
 			style={{ flexGrow: 1, backgroundColor: colors.primaryDark }}
 		>
 			<ScrollView
