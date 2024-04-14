@@ -14,14 +14,14 @@ const ScreenLogin = () => {
 	const router = useRouter();
 	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
 		useContext(AuthContext);
-	const [username, setUsername] = useState('yashdakshita123@gmail.com');
+	const [username, setUsername] = useState('adityatripathi@gmail.com');
 
 	const handleLookupUser = async () => {
 		try {
 			await lookupUser(username);
 			router.push('/screenPassword');
 		} catch (error) {
-			console.log(error);
+			console.log('ScreenLogin::handleLookupUser::error:: ', error);
 		}
 	};
 

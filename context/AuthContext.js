@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
 			const userInfo = await SecureStore.getItemAsync('userInfo');
 
 			if (userToken && userInfo) {
+				console.log('AuthCtx:useEffect:: ', userToken);
 				setUserToken(userToken);
 				setUserInfo(JSON.parse(userInfo));
 			}
@@ -28,7 +29,6 @@ export const AuthProvider = ({ children }) => {
 
 	const lookupUser = async (emailAddress) => {
 		setLoading(true);
-
 		try {
 			const res = await axios.get(
 				`${baseUri}/member/lookup?identity=${emailAddress}`
@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }) => {
 			}
 		} catch (error) {
 			setError(error);
+			console.log('AuthCtx:lookupUser::error:: ', error);
 		} finally {
 			setLoading(false);
 		}
@@ -58,13 +59,13 @@ export const AuthProvider = ({ children }) => {
 			);
 
 			if (res.data) {
-				setUserToken(res.data);
+				setUserToken(res.data.token);
 				console.log('AuthCtx:login:: ', res.data);
 				await SecureStore.setItemAsync('userToken', res.data.token);
 			}
 		} catch (error) {
 			setError(error);
-			console.log(error);
+			console.log('AuthCtx:login::error:: ', error);
 		} finally {
 			setLoading(false);
 		}

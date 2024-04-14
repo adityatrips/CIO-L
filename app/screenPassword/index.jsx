@@ -21,7 +21,7 @@ const ScreenPassword = () => {
 			await login(userInfo?.username, pword);
 			router.push('/authUser');
 		} catch (error) {
-			console.log(error);
+			console.log('ScreenPassword::loginHandler::error:: ', error);
 		}
 	};
 

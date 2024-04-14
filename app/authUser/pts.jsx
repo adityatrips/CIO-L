@@ -10,7 +10,7 @@ import PointsTable from '@/components/PointsTable';
 const wW = Dimensions.get('window').width;
 const wH = Dimensions.get('window').height;
 
-export default function TabTwoScreen() {
+export default function PointsScreen() {
 	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
 		useContext(AuthContext);
 
@@ -31,7 +31,7 @@ export default function TabTwoScreen() {
 			setData(res.data.results);
 			console.log(res.data.results);
 		} catch (error) {
-			console.log(error);
+			console.log('PointsScreen::getPoints::error:: ', error);
 		}
 		setIsLoading(false);
 	};

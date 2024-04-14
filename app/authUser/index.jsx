@@ -18,8 +18,7 @@ import { useRouter } from 'expo-router';
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
 
-export default function TabOneScreen() {
-	const router = useRouter();
+export default function HomeScreen() {
 	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
 		useContext(AuthContext);
 	const [userProfile, setUserProfile] = useState({});
@@ -29,8 +28,7 @@ export default function TabOneScreen() {
 	const [isLoading, setIsLoading] = useState();
 
 	const getUpcomingEvents = async () => {
-		setIsLoading(true);
-		if (!loading && userToken) {
+		if (userToken !== '' || userToken !== null || userToken !== undefined) {
 			try {
 				const res = await axios.get(
 					'https://cioleader.azurewebsites.net/api/event/all/',
@@ -43,47 +41,49 @@ export default function TabOneScreen() {
 				setUpcomingEvents(res.data);
 			} catch (error) {
 				setUserProfile([]);
-				console.log(error);
+				console.log('HomeScreen::getUpcomingEvents::error:: ', error);
 			}
 		}
 	};
 
 	const getPoints = async () => {
-		setIsLoading(true);
-		try {
-			const res = await axios.get(
-				'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=3',
-				{
-					headers: {
-						Authorization: `Token ${userToken}`,
-					},
-				}
-			);
-			setPoints(res.data.results);
-		} catch (error) {
-			console.log(error);
+		if (userToken !== '' || userToken !== null || userToken !== undefined) {
+			try {
+				const res = await axios.get(
+					'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=3',
+					{
+						headers: {
+							Authorization: `Token ${userToken}`,
+						},
+					}
+				);
+				setPoints(res.data.results);
+			} catch (error) {
+				console.log('HomeScreen::getPoints::error:: ', error);
+			}
 		}
-		setIsLoading(false);
 	};
 
 	const getKnowledgeCards = async () => {
-		setIsLoading(true);
-		try {
-			const res = await axios.get(
-				'https://cioleader.azurewebsites.net/api/whitepaper/all/',
-				{
-					headers: {
-						Authorization: `Token ${userToken}`,
-					},
-				}
-			);
-			setKnowledgeCards(res.data);
-		} catch (error) {}
+		if (userToken !== '' || userToken !== null || userToken !== undefined) {
+			try {
+				const res = await axios.get(
+					'https://cioleader.azurewebsites.net/api/whitepaper/all/',
+					{
+						headers: {
+							Authorization: `Token ${userToken}`,
+						},
+					}
+				);
+				setKnowledgeCards(res.data);
+			} catch (error) {
+				console.log('HomeScreen::getKnowledgeCards::error:: ', error);
+			}
+		}
 	};
 
 	const getUserProfile = async () => {
-		setIsLoading(true);
-		if (!loading && userToken) {
+		if (userToken !== '' || userToken !== null || userToken !== undefined) {
 			try {
 				const res = await axios.get(
 					'https://cioleader.azurewebsites.net/api/member/',
@@ -95,13 +95,15 @@ export default function TabOneScreen() {
 				);
 				setUserProfile(res.data);
 			} catch (error) {
-				console.log(error);
+				console.log('HomeScreen::getUserProfile::error:: ', error);
 				setUserProfile({});
 			}
 		}
 	};
 
 	useEffect(() => {
+		console.log('HomeScreen::useEffect:: ', userToken);
+		setIsLoading(true);
 		getUserProfile();
 		getUpcomingEvents();
 		getKnowledgeCards();
@@ -272,20 +274,10 @@ export default function TabOneScreen() {
 					width='90%'
 				>
 					{knowledgeCards.map((item, index) => (
-						<>
-							<KnowledgeCard
-								key={index}
-								data={item}
-							/>
-							<KnowledgeCard
-								key={index + 1}
-								data={item}
-							/>
-							<KnowledgeCard
-								key={index + 2}
-								data={item}
-							/>
-						</>
+						<KnowledgeCard
+							key={index}
+							data={item}
+						/>
 					))}
 				</ScrollView>
 
@@ -293,7 +285,7 @@ export default function TabOneScreen() {
 
 				<PointsTable
 					isOnHome
-					data={pointsData}
+					data={pointsData.length === 0 ? [] : pointsData}
 				/>
 			</ScrollView>
 		</SafeAreaView>

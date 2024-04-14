@@ -1,11 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, View } from 'tamagui';
 import { colors } from '@/constants';
+import { ActivityIndicator, Dimensions } from 'react-native';
 const PointsTable = ({ data, isOnHome = false }) => {
-	return (
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		if (data.length === 0) {
+			data = [
+				{
+					id: 1,
+					amount: 50,
+					type: '1',
+					date: '2024-04-12',
+					description: 'Nothing here',
+					user: 1,
+				},
+			];
+		} else {
+			data = data;
+		}
+		setLoading(false);
+
+		console.log(data);
+	}, []);
+
+	return loading ? (
+		<View
+			flex={1}
+			justifyContent={'center'}
+			alignItems={'center'}
+			backgroundColor={'#fff'}
+		>
+			<ActivityIndicator
+				size='large'
+				color={colors.primary}
+			/>
+		</View>
+	) : (
 		<ScrollView
 			contentContainerStyle={{
-				width: '90%',
+				width: '100%',
 			}}
 		>
 			{!isOnHome && (
@@ -15,8 +50,8 @@ const PointsTable = ({ data, isOnHome = false }) => {
 					justifyContent={'space-between'}
 					alignItems={'center'}
 					flexDirection={'row'}
-					padding={10}
-					paddingTop={0}
+					padding={20}
+					width={'100%'}
 				>
 					<View
 						justifyContent={'space-between'}
@@ -240,6 +275,7 @@ const PointsTable = ({ data, isOnHome = false }) => {
 							alignItems={'center'}
 							flexDirection={'row'}
 							padding={10}
+							width={Dimensions.get('window').width * 0.9}
 						>
 							<View
 								justifyContent={'space-between'}
@@ -282,6 +318,7 @@ const PointsTable = ({ data, isOnHome = false }) => {
 								flex={1}
 								borderRightWidth={1}
 								borderColor={'gray'}
+								width={'90%'}
 							>
 								<Text
 									fontWeight={'bold'}
