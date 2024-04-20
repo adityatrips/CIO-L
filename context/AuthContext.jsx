@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
 				await SecureStore.setItemAsync('userInfo', JSON.stringify(res.data));
 			}
 		} catch (e) {
-			ToastAndroid.show('Error fetching user info', ToastAndroid.SHORT);
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 			throw new Error(JSON.parse(JSON.stringify(e)).status);
 		} finally {
 			setLoading(false);
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
 				await SecureStore.setItemAsync('userToken', res.data.token);
 			}
 		} catch (e) {
-			ToastAndroid.show('Error logging in', ToastAndroid.SHORT);
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 			throw new Error(JSON.parse(JSON.stringify(e)).status);
 		} finally {
 			setLoading(false);

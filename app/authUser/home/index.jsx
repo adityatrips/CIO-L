@@ -48,7 +48,6 @@ export default function HomeScreen() {
 	const kcRef = React.useRef(null);
 	const ptsRef = React.useRef(null);
 	const scrollRef = React.useRef(null);
-	const [currentScroll, setCurrentScroll] = useState(0);
 
 	const scrollTo = (off) => {
 		scrollRef.current.scrollTo({
@@ -70,7 +69,8 @@ export default function HomeScreen() {
 				);
 				setUpcomingEvents(res.data);
 			} catch (error) {
-				ToastAndroid.show('Error fetching events', ToastAndroid.SHORT);
+				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+
 				setUserProfile([]);
 			}
 		}
@@ -89,7 +89,7 @@ export default function HomeScreen() {
 				);
 				setPoints(res.data);
 			} catch (error) {
-				ToastAndroid.show('Error fetching points', ToastAndroid.SHORT);
+				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 			}
 		}
 	};
@@ -107,7 +107,7 @@ export default function HomeScreen() {
 				);
 				setResourceData(res.data);
 			} catch (error) {
-				ToastAndroid.show('Error fetching resources', ToastAndroid.SHORT);
+				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 			}
 		}
 	};
@@ -125,7 +125,7 @@ export default function HomeScreen() {
 				);
 				setKnowledgeCards(res.data);
 			} catch (error) {
-				ToastAndroid.show('Error fetching knowledge cards', ToastAndroid.SHORT);
+				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 			}
 		}
 	};
@@ -150,7 +150,7 @@ export default function HomeScreen() {
 				}
 			} catch (error) {
 				setUserProfile({});
-				ToastAndroid.show('Error fetching user profile', ToastAndroid.SHORT);
+				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 			}
 		}
 	};
@@ -172,12 +172,7 @@ export default function HomeScreen() {
 		>
 			<StatusBar style='dark' />
 			<HeaderComp title='Welcome' />
-			<ScrollView
-				onScroll={(e) => {
-					setCurrentScroll(e.nativeEvent.contentOffset.y);
-				}}
-				ref={scrollRef}
-			>
+			<ScrollView ref={scrollRef}>
 				<PTRView
 					style={{
 						bottom: 10,
@@ -527,7 +522,6 @@ export default function HomeScreen() {
 								<PointsTable
 									isOnHome
 									userToken={userToken}
-									link='https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=5'
 								/>
 							</View>
 						</>

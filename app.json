@@ -1,32 +1,35 @@
 {
 	"expo": {
 		"name": "CIO&Leader",
-		"slug": "ciol",
+		"slug": "cioleader",
+		"scheme": "cioleader",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/images/icon.png",
-		"scheme": "myapp",
 		"userInterfaceStyle": "automatic",
 		"splash": {
 			"image": "./assets/images/splash.png",
 			"resizeMode": "contain",
 			"backgroundColor": "#ffffff"
 		},
+		"platforms": ["ios", "android"],
 		"assetBundlePatterns": ["**/*"],
 		"ios": {
-			"supportsTablet": true
+			"supportsTablet": true,
+			"bundleIdentifier": "com.cio.leader",
+			"infoPlist": {
+				"NSAppTransportSecurity": {
+					"NSAllowsArbitraryLoads": true
+				}
+			}
 		},
 		"android": {
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/images/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"package": "com.cio.leader"
-		},
-		"web": {
-			"bundler": "metro",
-			"output": "static",
-			"favicon": "./assets/images/favicon.png"
+			"package": "com.cio.leader",
+			"permissions": ["android.permission.INTERNET"]
 		},
 		"plugins": ["expo-router", "expo-font", "expo-secure-store"],
 		"experiments": {

@@ -49,7 +49,7 @@ export default function ProfileScreen() {
 				);
 				setUserProfile(res.data);
 			} catch (error) {
-				ToastAndroid.show('Error fetching user profile', ToastAndroid.SHORT);
+				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 				setUserProfile({});
 				return error.status;
 			}
@@ -77,7 +77,7 @@ export default function ProfileScreen() {
 			setPastRegisterdEvents(res.data.filter((evt) => evt.registered === '1'));
 			setPastAttendedEvent(res.data.filter((evt) => evt.registered === '3'));
 		} catch (error) {
-			ToastAndroid.show('Error fetching past events', ToastAndroid.SHORT);
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 		}
 	};
 

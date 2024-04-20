@@ -34,7 +34,7 @@ export default function PointsScreen() {
 			);
 			setData(res.data);
 		} catch (error) {
-			ToastAndroid.show('Error fetching points', ToastAndroid.SHORT);
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 		}
 	};
 

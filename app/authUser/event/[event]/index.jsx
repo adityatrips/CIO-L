@@ -28,7 +28,7 @@ const EventScreen = () => {
 			);
 			setEvtData(res.data);
 		} catch (error) {
-			ToastAndroid.show('Error fetching event data', ToastAndroid.SHORT);
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 		} finally {
 			setLoading(false);
 		}

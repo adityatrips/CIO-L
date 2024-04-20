@@ -56,7 +56,7 @@ const ScreenFeeback = () => {
 				}
 			);
 		} catch (error) {
-			ToastAndroid.show('Error submitting feedback', ToastAndroid.SHORT);
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 		} finally {
 			setLoading(false);
 		}

@@ -19,17 +19,14 @@ const ScreenPassword = () => {
 
 	const loginHandler = async () => {
 		if (pword.length === 0) {
-			ToastAndroid.show("Passwords don't match", ToastAndroid.SHORT);
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 			return;
 		} else {
 			try {
 				await login(userInfo?.username, pword);
 				router.push('/authUser/home');
 			} catch (error) {
-				ToastAndroid.show(
-					'Invalid password, please try again!',
-					ToastAndroid.SHORT
-				);
+				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 				if (error.message) {
 					alert('Invalid password, please try again!');
 				}

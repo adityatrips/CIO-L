@@ -9,17 +9,32 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeftCircle, ChevronRightCircle } from '@tamagui/lucide-icons';
 import axios from 'axios';
 
-const PointsTable = ({
-	link = 'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=9',
-	userToken,
-	isOnHome = false,
-}) => {
+const PointsTable = ({ userToken, isOnHome = false }) => {
 	const [loading, setLoading] = useState(true);
 	const router = useRouter();
 	const [data, setData] = useState({});
 	const [results, setResults] = useState([]);
 
-	const getData = async (newLink = link) => {
+	const getData = async () => {
+		try {
+			const res = await axios.get(
+				'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=10',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setData(res.data);
+			setResults(res.data.results);
+			return res.data.results;
+		} catch (error) {
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+		} finally {
+		}
+	};
+
+	const getPaginatedData = async (newLink) => {
 		try {
 			const res = await axios.get(newLink, {
 				headers: {
@@ -28,10 +43,8 @@ const PointsTable = ({
 			});
 			setData(res.data);
 			setResults(res.data.results);
-			return res.data.results;
 		} catch (error) {
-			ToastAndroid.show('Error fetching points', ToastAndroid.SHORT);
-		} finally {
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 		}
 	};
 
@@ -448,14 +461,20 @@ const PointsTable = ({
 				>
 					<Button
 						disabled={data.links.previous === null}
-						onPress={() => getData(data.links.previous)}
+						onPress={() =>
+							getPaginatedData(
+								data.links.previous.replace('http://', 'https://')
+							)
+						}
 						backgroundColor={colors.primary}
 					>
 						<ChevronLeftCircle />
 					</Button>
 					<Button
 						disabled={data.links.next === null}
-						onPress={() => getData(data.links.next)}
+						onPress={() => {
+							getPaginatedData(data.links.next.replace('http://', 'https://'));
+						}}
 						backgroundColor={colors.primary}
 					>
 						<ChevronRightCircle />

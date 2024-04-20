@@ -66,7 +66,7 @@ const ScreenRegister = () => {
 					router.push('/screenLogin');
 				}, 2000);
 			} catch (error) {
-				ToastAndroid.show('Invalid details', ToastAndroid.SHORT);
+				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 			}
 		}
 	};

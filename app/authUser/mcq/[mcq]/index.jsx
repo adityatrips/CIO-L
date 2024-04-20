@@ -135,7 +135,7 @@ const MCQScreen = () => {
 			);
 			setEvent(res.data.filter((e) => e.id === mcq));
 		} catch (error) {
-			ToastAndroid.show('Error fetching event', ToastAndroid.SHORT);
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 		} finally {
 			setLoading(false);
 		}

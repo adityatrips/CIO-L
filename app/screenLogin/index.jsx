@@ -25,7 +25,7 @@ const ScreenLogin = () => {
 				await lookupUser(username);
 				router.push('/screenPassword');
 			} catch (error) {
-				ToastAndroid.show('User not found', ToastAndroid.SHORT);
+				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 			}
 		}
 	};
