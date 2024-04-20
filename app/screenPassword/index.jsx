@@ -5,7 +5,7 @@ import ImageTriangles from '@/components/ImageTriangles';
 import { Button, Image, Input, Text, View } from 'tamagui';
 import { colors } from '@/constants';
 import ankit from '@/assets/images/Ankit.png';
-import { Dimensions } from 'react-native';
+import { Dimensions, ToastAndroid } from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LoadingComp from '../../components/Loading';
@@ -19,13 +19,17 @@ const ScreenPassword = () => {
 
 	const loginHandler = async () => {
 		if (pword.length === 0) {
-			alert('Please enter the password');
+			ToastAndroid.show("Passwords don't match", ToastAndroid.SHORT);
 			return;
 		} else {
 			try {
 				await login(userInfo?.username, pword);
 				router.push('/authUser/home');
 			} catch (error) {
+				ToastAndroid.show(
+					'Invalid password, please try again!',
+					ToastAndroid.SHORT
+				);
 				if (error.message) {
 					alert('Invalid password, please try again!');
 				}

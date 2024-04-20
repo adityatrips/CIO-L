@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import axios from 'axios';
-import { Dimensions } from 'react-native';
+import { Dimensions, ToastAndroid } from 'react-native';
 import { colors } from '@/constants';
 import ankit from '@/assets/images/Ankit.png';
 import globe from '@/assets/images/Globe.png';
@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft } from '@tamagui/lucide-icons';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
 import PTRView from 'react-native-pull-to-refresh';
+import HeaderComp from '../../../components/Header';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -48,6 +49,7 @@ export default function ProfileScreen() {
 				);
 				setUserProfile(res.data);
 			} catch (error) {
+				ToastAndroid.show('Error fetching user profile', ToastAndroid.SHORT);
 				setUserProfile({});
 				return error.status;
 			}
@@ -74,7 +76,9 @@ export default function ProfileScreen() {
 			setPastAttendedEvent(res.data.filter((evt) => evt.registered === '2'));
 			setPastRegisterdEvents(res.data.filter((evt) => evt.registered === '1'));
 			setPastAttendedEvent(res.data.filter((evt) => evt.registered === '3'));
-		} catch (error) {}
+		} catch (error) {
+			ToastAndroid.show('Error fetching past events', ToastAndroid.SHORT);
+		}
 	};
 
 	return loading ? (
@@ -85,37 +89,13 @@ export default function ProfileScreen() {
 				flex: 1,
 			}}
 		>
+			<HeaderComp title='Profile' />
 			<PTRView
 				onRefresh={() => {
 					getPastEvents();
 					getUserProfile();
 				}}
 			>
-				<View
-					backgroundColor={'#fff'}
-					flexDirection='row'
-					justifyContent='center'
-					alignItems='center'
-					paddingHorizontal={20}
-					width={Dimensions.get('screen').width}
-				>
-					<ChevronLeft
-						position='absolute'
-						left={20}
-						color='#000'
-						onPress={() => {
-							router.back();
-						}}
-					/>
-					<Image
-						source={{
-							uri: logo,
-						}}
-						height={Dimensions.get('screen').height * 0.08}
-						width={Dimensions.get('screen').width * 0.4}
-						resizeMode='contain'
-					/>
-				</View>
 				<ScrollView flex={1}>
 					<View
 						flex={1}

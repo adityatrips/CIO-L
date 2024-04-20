@@ -3,19 +3,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ImageTriangles from '@/components/ImageTriangles';
-import { Dimensions } from 'react-native';
+import { Dimensions, ToastAndroid } from 'react-native';
 import { Button, Image, Input, ScrollView, Text, View } from 'tamagui';
 import { colors } from '@/constants';
 import { useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
+import Divider from '@/components/Divider';
+import HeaderComp from '@/components/Header';
+
 const ScreenFeeback = () => {
 	const { id } = useLocalSearchParams();
-	const [email, setEmail] = useState(null);
-	const [feebackRating, setFeedbackRating] = useState(0);
-	const [ratingReason, setRatingReason] = useState('');
-	const [satisfactionRating, setSatisfactionRating] = useState(0);
-	const [attendNextEvent, setAttendNextEvent] = useState(0);
-	const [additionalComments, setAdditionalComments] = useState('');
+	const [feebackRating, setFeedbackRating] = useState(1);
+	const [attendNextEvent, setAttendNextEvent] = useState(true);
 	const [overallFeedback, setOverallFeedback] = useState('');
 
 	const ratingAssets = [
@@ -34,8 +33,8 @@ const ScreenFeeback = () => {
 		},
 	];
 	const yesNoAsset = [
-		{ src: require('@/assets/images/bad.png'), name: 'No', state: false },
 		{ src: require('@/assets/images/good.png'), name: 'Yes', state: true },
+		{ src: require('@/assets/images/bad.png'), name: 'No', state: false },
 	];
 
 	const [loading, setLoading] = useState(false);
@@ -48,7 +47,7 @@ const ScreenFeeback = () => {
 				{
 					Rating: feebackRating,
 					NextEvent: attendNextEvent,
-					Feedback: ratingReason,
+					Feedback: overallFeedback,
 				},
 				{
 					headers: {
@@ -56,9 +55,8 @@ const ScreenFeeback = () => {
 					},
 				}
 			);
-			console.log(res.data);
 		} catch (error) {
-			console.log(error);
+			ToastAndroid.show('Error submitting feedback', ToastAndroid.SHORT);
 		} finally {
 			setLoading(false);
 		}
@@ -72,6 +70,7 @@ const ScreenFeeback = () => {
 				flex: 1,
 			}}
 		>
+			<HeaderComp title='Feedback' />
 			<ImageTriangles />
 			<ScrollView flex={1}>
 				<View
@@ -91,15 +90,23 @@ const ScreenFeeback = () => {
 						alignItems={'center'}
 						marginTop={10}
 					>
-						{ratingAssets.map((item) => (
+						{ratingAssets.map((item, i) => (
 							<Button
+								pressStyle={{
+									borderWidth: 0,
+									backgroundColor: colors.primaryDark,
+								}}
+								key={i}
 								width={(wW * 0.8) / 5 - 5}
 								flexDirection={'column'}
 								justifyContent={'center'}
 								alignItems={'center'}
 								borderWidth={1}
 								borderRadius={10}
-								backgroundColor={colors.primary}
+								backgroundColor={
+									i === feebackRating - 1 ? colors.primary : '#FFF'
+								}
+								borderColor={i === feebackRating - 1 ? colors.primary : '#000'}
 								onPress={() => setFeedbackRating(item.rating)}
 							>
 								<Image source={item.src} />
@@ -107,75 +114,7 @@ const ScreenFeeback = () => {
 						))}
 					</View>
 
-					<View marginTop={20}>
-						<Text color='#000'>What are the main reason for your rating? </Text>
-						<Input
-							autoCapitalize='none'
-							autoCorrect={false}
-							value={ratingReason}
-							onChangeText={setRatingReason}
-							placeholder='Let us know the reason for your rating'
-							borderWidth={2}
-							borderColor={colors.primary}
-							backgroundColor={'#FFFFFF'}
-							width={'100%'}
-							borderRadius={10}
-							elevate
-							elevation={5}
-							color={'#000'}
-							placeholderTextColor={'#000'}
-							textAlign='left'
-							verticalAlign='top'
-							height={100}
-						/>
-					</View>
-
-					<View marginTop={20}>
-						<Text color='#000'>How satisfied were you with the event?*</Text>
-						<View
-							flexDirection={'row'}
-							justifyContent={'space-between'}
-							alignItems={'center'}
-							marginTop={10}
-						>
-							<Text color='#000'>Not very</Text>
-							<Text color='#000'>Very likely</Text>
-						</View>
-						<View
-							paddingVertical={10}
-							alignItems={'center'}
-							justifyContent={'space-between'}
-							flexDirection={'row'}
-							gap={10}
-						>
-							{[1, 2, 3, 4, 5].map((item) => (
-								<Button
-									aspectRatio={1 / 1}
-									height={50}
-									flexDirection={'column'}
-									justifyContent={'center'}
-									alignItems={'center'}
-									borderWidth={1}
-									borderRadius={100 / 2}
-									backgroundColor={colors.primary}
-								>
-									<Text
-										color={'#FFF'}
-										fontWeight={attendNextEvent === item ? 'bold' : 'normal'}
-									>
-										{item}
-									</Text>
-								</Button>
-							))}
-						</View>
-					</View>
-
-					<View
-						backgroundColor={'gray'}
-						height={5}
-						borderRadius={100 / 2}
-						marginVertical={30}
-					></View>
+					<Divider />
 
 					<View>
 						<Text color='#000'>Do You want to attend our next event? </Text>
@@ -185,15 +124,26 @@ const ScreenFeeback = () => {
 							flexDirection={'row'}
 							gap={10}
 						>
-							{yesNoAsset.map((item) => (
+							{yesNoAsset.map((item, i) => (
 								<Button
+									pressStyle={{
+										borderWidth: 0,
+										backgroundColor: colors.primaryDark,
+									}}
+									key={i}
 									width={(wW * 0.9) / 2 - 5}
 									flexDirection={'column'}
 									justifyContent={'center'}
 									alignItems={'center'}
 									borderWidth={1}
 									borderRadius={10}
-									backgroundColor={colors.primary}
+									backgroundColor={
+										attendNextEvent === item.state ? colors.primary : '#FFF'
+									}
+									color={attendNextEvent === item.state ? '#FFF' : '#000'}
+									borderColor={
+										attendNextEvent === item.state ? colors.primary : '#000'
+									}
 									onPress={() => setAttendNextEvent(item.state)}
 								>
 									{item.name}
@@ -202,48 +152,9 @@ const ScreenFeeback = () => {
 						</View>
 					</View>
 
-					<View
-						backgroundColor={'gray'}
-						height={5}
-						borderRadius={100 / 2}
-						marginVertical={30}
-					></View>
+					<Divider />
 
-					<View marginTop={20}>
-						<Text color='#000'>
-							Any additional comments regarding the sessions or overall agenda?
-						</Text>
-						<View>
-							<Input
-								autoCapitalize='none'
-								autoCorrect={false}
-								value={additionalComments}
-								onChangeText={setAdditionalComments}
-								placeholder='Let us know any additional comments'
-								verticalAlign='top'
-								textAlign='left'
-								borderWidth={2}
-								borderColor={colors.primary}
-								backgroundColor={'#FFFFFF'}
-								width={'100%'}
-								borderRadius={10}
-								elevate
-								elevation={5}
-								color={'#000'}
-								placeholderTextColor={'#000'}
-								height={100}
-							/>
-						</View>
-					</View>
-
-					<View
-						backgroundColor={'gray'}
-						height={5}
-						borderRadius={100 / 2}
-						marginVertical={30}
-					></View>
-
-					<View marginTop={20}>
+					<View>
 						<Text color='#000'>Any overall feedback for the event?</Text>
 						<View>
 							<Input
@@ -277,6 +188,10 @@ const ScreenFeeback = () => {
 						height={50}
 						marginTop={20}
 						onPress={submitFeedback}
+						pressStyle={{
+							borderWidth: 0,
+							backgroundColor: colors.primaryDark,
+						}}
 					>
 						Submit
 					</Button>

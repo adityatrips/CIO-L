@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { View, Text, ScrollView, Button } from 'tamagui';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Dimensions } from 'react-native';
+import { Dimensions, ToastAndroid } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BouncyCheckboxGroup from 'react-native-bouncy-checkbox-group';
 import ImageTriangles from '@/components/ImageTriangles';
@@ -133,12 +133,9 @@ const MCQScreen = () => {
 					},
 				}
 			);
-			console.log(
-				'EVENT:',
-				res.data.filter((e) => e.id === mcq)
-			);
 			setEvent(res.data.filter((e) => e.id === mcq));
 		} catch (error) {
+			ToastAndroid.show('Error fetching event', ToastAndroid.SHORT);
 		} finally {
 			setLoading(false);
 		}
@@ -227,9 +224,6 @@ const MCQScreen = () => {
 												flexDirection: 'column',
 												gap: 10,
 												color: '#000',
-											}}
-											onChange={(selected) => {
-												console.log(selected);
 											}}
 										/>
 									</View>

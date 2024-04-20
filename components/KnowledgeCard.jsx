@@ -90,7 +90,13 @@ const KnowledgeCard = ({ data }) => {
 					width={'85%'}
 					height={30}
 					justifyContent='space-between'
-					onPress={() => Linking.openURL(data.file)}
+					onPress={() =>
+						Linking.openURL(
+							`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURI(
+								data.file
+							)}`
+						)
+					}
 				>
 					<Text
 						fontSize={10}

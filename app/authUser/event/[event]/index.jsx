@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Button, Image, Text, ScrollView } from 'tamagui';
-import { Dimensions, Linking } from 'react-native';
+import { Dimensions, Linking, ToastAndroid } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/constants';
 import { useLocalSearchParams } from 'expo-router';
@@ -28,6 +28,7 @@ const EventScreen = () => {
 			);
 			setEvtData(res.data);
 		} catch (error) {
+			ToastAndroid.show('Error fetching event data', ToastAndroid.SHORT);
 		} finally {
 			setLoading(false);
 		}
@@ -244,8 +245,7 @@ const EventScreen = () => {
 											<View
 												style={{
 													width: '100%',
-													marginTop: 5,
-													paddingVertical: 5,
+													paddingVertical: 10,
 												}}
 											>
 												<Text
@@ -306,8 +306,7 @@ const EventScreen = () => {
 												<View
 													style={{
 														width: '100%',
-														marginTop: 5,
-														paddingVertical: 5,
+														paddingVertical: 10,
 													}}
 												>
 													<Text

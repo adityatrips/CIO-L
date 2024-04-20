@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Image, Text, View } from 'tamagui';
 import { AuthContext } from '@/context/AuthContext';
 import { colors } from '@/constants';
-import { Dimensions, ScrollView } from 'react-native';
+import { Dimensions, ScrollView, ToastAndroid } from 'react-native';
 import evt from '@/assets/icons/evt.png';
 import home from '@/assets/icons/home.png';
 import points from '@/assets/icons/points.png';
@@ -12,7 +12,6 @@ import earn from '@/assets/icons/earn.png';
 import rem from '@/assets/icons/rem.png';
 import ankit from '@/assets/images/Ankit.png';
 import globe from '@/assets/images/Globe.png';
-import logo from '@/assets/images/Logo_GreenBlack.png';
 import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Divider from '@/components/Divider';
@@ -20,10 +19,10 @@ import UpcomingEventCard from '@/components/UpcomingEventCard';
 import KnowledgeCard from '@/components/KnowledgeCard';
 import PointsTable from '@/components/PointsTable';
 import { useRouter } from 'expo-router';
-import LoadingComp from '../../../components/Loading';
+import LoadingComp from '@/components/Loading';
 import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
 import PTRView from 'react-native-pull-to-refresh';
+import HeaderComp from '@/components/Header';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -49,9 +48,13 @@ export default function HomeScreen() {
 	const kcRef = React.useRef(null);
 	const ptsRef = React.useRef(null);
 	const scrollRef = React.useRef(null);
+	const [currentScroll, setCurrentScroll] = useState(0);
 
 	const scrollTo = (off) => {
-		scrollRef.current.scrollTo({ y: off, animated: true });
+		scrollRef.current.scrollTo({
+			y: off,
+			animated: true,
+		});
 	};
 
 	const getUpcomingEvents = async () => {
@@ -67,6 +70,7 @@ export default function HomeScreen() {
 				);
 				setUpcomingEvents(res.data);
 			} catch (error) {
+				ToastAndroid.show('Error fetching events', ToastAndroid.SHORT);
 				setUserProfile([]);
 			}
 		}
@@ -84,7 +88,9 @@ export default function HomeScreen() {
 					}
 				);
 				setPoints(res.data);
-			} catch (error) {}
+			} catch (error) {
+				ToastAndroid.show('Error fetching points', ToastAndroid.SHORT);
+			}
 		}
 	};
 
@@ -100,7 +106,9 @@ export default function HomeScreen() {
 					}
 				);
 				setResourceData(res.data);
-			} catch (error) {}
+			} catch (error) {
+				ToastAndroid.show('Error fetching resources', ToastAndroid.SHORT);
+			}
 		}
 	};
 
@@ -115,9 +123,10 @@ export default function HomeScreen() {
 						},
 					}
 				);
-				console.log('KNOWLEDGE:', res.data);
 				setKnowledgeCards(res.data);
-			} catch (error) {}
+			} catch (error) {
+				ToastAndroid.show('Error fetching knowledge cards', ToastAndroid.SHORT);
+			}
 		}
 	};
 
@@ -141,6 +150,7 @@ export default function HomeScreen() {
 				}
 			} catch (error) {
 				setUserProfile({});
+				ToastAndroid.show('Error fetching user profile', ToastAndroid.SHORT);
 			}
 		}
 	};
@@ -161,36 +171,28 @@ export default function HomeScreen() {
 			flex={1}
 		>
 			<StatusBar style='dark' />
-			<PTRView
-				onRefresh={() => {
-					getUserProfile();
-					getUpcomingEvents();
-					getKnowledgeCards();
-					getResourceList();
-					getPoints();
+			<HeaderComp title='Welcome' />
+			<ScrollView
+				onScroll={(e) => {
+					setCurrentScroll(e.nativeEvent.contentOffset.y);
 				}}
+				ref={scrollRef}
 			>
-				<View
-					backgroundColor={'#fff'}
-					flexDirection='row'
-					justifyContent='space-between'
-					alignItems='center'
-					paddingHorizontal={20}
-				>
-					<Image
-						source={{
-							uri: logo,
-						}}
-						height={Dimensions.get('screen').height * 0.08}
-						width={Dimensions.get('screen').width * 0.4}
-						resizeMode='contain'
-					/>
-				</View>
-				<ScrollView
-					ref={scrollRef}
+				<PTRView
+					style={{
+						bottom: 10,
+						flex: 1,
+						marginBottom: 20,
+					}}
 					contentContainerStyle={{
 						alignItems: 'center',
-						bottom: 60,
+					}}
+					onRefresh={() => {
+						getUserProfile();
+						getUpcomingEvents();
+						getKnowledgeCards();
+						getResourceList();
+						getPoints();
 					}}
 				>
 					<View
@@ -374,7 +376,15 @@ export default function HomeScreen() {
 							{userProfile.code}
 						</Text>
 					</View>
-					<Divider />
+					<Divider
+						ref={eventRef}
+						onLayout={(e) => {
+							setOffsetY({
+								...offsetY,
+								evt: e.nativeEvent.layout.y,
+							});
+						}}
+					/>
 					<Text
 						fontSize={16}
 						fontFamily={'InterBold'}
@@ -384,15 +394,6 @@ export default function HomeScreen() {
 					>
 						Upcoming Events
 					</Text>
-					<View
-						ref={eventRef}
-						onLayout={(e) => {
-							setOffsetY({
-								...offsetY,
-								evt: e.nativeEvent.layout.y,
-							});
-						}}
-					></View>
 					<View
 						gap={10}
 						marginBottom={10}
@@ -415,8 +416,7 @@ export default function HomeScreen() {
 							</View>
 						)}
 					</View>
-					<Divider />
-					<View
+					<Divider
 						ref={kcRef}
 						onLayout={(e) => {
 							setOffsetY({
@@ -424,7 +424,8 @@ export default function HomeScreen() {
 								kc: e.nativeEvent.layout.y,
 							});
 						}}
-					></View>
+					/>
+					<View></View>
 
 					<Text
 						width={'90%'}
@@ -501,9 +502,9 @@ export default function HomeScreen() {
 						))}
 					</ScrollView>
 
+					<Divider />
 					{pointsData.results && pointsData.results.length > 0 ? (
 						<>
-							<Divider />
 							<Text
 								width={'90%'}
 								color='#616161'
@@ -540,8 +541,8 @@ export default function HomeScreen() {
 							</Text>
 						</View>
 					)}
-				</ScrollView>
-			</PTRView>
+				</PTRView>
+			</ScrollView>
 			<View
 				height={60}
 				position='absolute'
@@ -557,8 +558,10 @@ export default function HomeScreen() {
 				borderTopRightRadius={Dimensions.get('screen').width * 0.05}
 			>
 				<View
+					flexGrow={1}
+					padding={5}
 					onPress={() => {
-						scrollTo(offsetY.home);
+						scrollTo(0);
 					}}
 					justifyContent='center'
 					alignItems='center'
@@ -578,6 +581,8 @@ export default function HomeScreen() {
 					</Text>
 				</View>
 				<View
+					flexGrow={1}
+					padding={5}
 					onPress={() => {
 						scrollTo(offsetY.evt);
 					}}
@@ -598,6 +603,8 @@ export default function HomeScreen() {
 					</Text>
 				</View>
 				<View
+					flexGrow={1}
+					padding={5}
 					onPress={() => {
 						scrollTo(offsetY.kc);
 					}}
@@ -618,6 +625,8 @@ export default function HomeScreen() {
 					</Text>
 				</View>
 				<View
+					flexGrow={1}
+					padding={5}
 					onPress={() => {
 						scrollTo(offsetY.pts);
 					}}
@@ -639,6 +648,8 @@ export default function HomeScreen() {
 					</Text>
 				</View>
 				<View
+					flexGrow={1}
+					padding={5}
 					onPress={() => {
 						router.push('/authUser/pro');
 					}}

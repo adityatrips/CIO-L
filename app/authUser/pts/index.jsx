@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, ToastAndroid } from 'react-native';
 import { View, Text, Image, ScrollView } from 'tamagui';
 import { AuthContext } from '@/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,6 +11,7 @@ import logo from '@/assets/images/Logo_GreenBlack.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowBigLeft, ChevronLeft } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
+import HeaderComp from '@/components/Header';
 
 const wW = Dimensions.get('window').width;
 const wH = Dimensions.get('window').height;
@@ -32,7 +33,9 @@ export default function PointsScreen() {
 				}
 			);
 			setData(res.data);
-		} catch (error) {}
+		} catch (error) {
+			ToastAndroid.show('Error fetching points', ToastAndroid.SHORT);
+		}
 	};
 
 	const router = useRouter();
@@ -45,6 +48,7 @@ export default function PointsScreen() {
 
 	return !isLoading ? (
 		<SafeAreaView>
+			<HeaderComp />
 			<LinearGradient
 				colors={[colors.primary, colors.primaryDark]}
 				start={{ x: 0, y: 0 }}
@@ -56,31 +60,6 @@ export default function PointsScreen() {
 					height: Dimensions.get('window').height,
 				}}
 			>
-				<View
-					backgroundColor={'#fff'}
-					flexDirection='row'
-					justifyContent='center'
-					alignItems='center'
-					paddingHorizontal={20}
-					width={Dimensions.get('screen').width}
-				>
-					<ChevronLeft
-						position='absolute'
-						left={20}
-						color='#000'
-						onPress={() => {
-							router.back();
-						}}
-					/>
-					<Image
-						source={{
-							uri: logo,
-						}}
-						height={Dimensions.get('screen').height * 0.08}
-						width={Dimensions.get('screen').width * 0.4}
-						resizeMode='contain'
-					/>
-				</View>
 				<View>
 					{data.results && data.results.length > 0 ? (
 						<View paddingHorizontal={20}>
@@ -99,7 +78,7 @@ export default function PointsScreen() {
 						</View>
 					) : (
 						<View
-							flex={1}
+							flexShrink={1}
 							justifyContent={'center'}
 							alignItems={'center'}
 							paddingHorizontal={20}

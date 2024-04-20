@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Image, ScrollView, Text, View } from 'tamagui';
 import { colors } from '@/constants';
-import { ActivityIndicator, Dimensions } from 'react-native';
+import { ActivityIndicator, Dimensions, ToastAndroid } from 'react-native';
 import { useRouter } from 'expo-router';
 import LoadingComp from './Loading';
 import moment from 'moment';
@@ -30,6 +30,7 @@ const PointsTable = ({
 			setResults(res.data.results);
 			return res.data.results;
 		} catch (error) {
+			ToastAndroid.show('Error fetching points', ToastAndroid.SHORT);
 		} finally {
 		}
 	};
@@ -327,9 +328,10 @@ const PointsTable = ({
 								<View
 									justifyContent={'space-between'}
 									alignItems={'center'}
-									flex={1}
 									borderRightWidth={1}
 									borderColor={'#61616150'}
+									flexGrow={1}
+									flex={1}
 								>
 									<Text
 										fontWeight={'bold'}
@@ -362,10 +364,11 @@ const PointsTable = ({
 								<View
 									justifyContent={'space-between'}
 									alignItems={'center'}
-									flex={1}
 									borderRightWidth={1}
 									borderColor={'#61616150'}
 									width={'90%'}
+									flexGrow={1}
+									flex={1}
 								>
 									<Text
 										fontWeight={'bold'}
@@ -398,6 +401,7 @@ const PointsTable = ({
 								<View
 									justifyContent={'space-between'}
 									alignItems={'center'}
+									flexGrow={1}
 									flex={1}
 								>
 									<Text

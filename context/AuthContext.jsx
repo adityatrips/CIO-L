@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { baseUri } from '@/constants';
 import * as SecureStore from 'expo-secure-store';
+import { ToastAndroid } from 'react-native';
 
 export const AuthContext = createContext();
 
@@ -38,6 +39,7 @@ export const AuthProvider = ({ children }) => {
 				await SecureStore.setItemAsync('userInfo', JSON.stringify(res.data));
 			}
 		} catch (e) {
+			ToastAndroid.show('Error fetching user info', ToastAndroid.SHORT);
 			throw new Error(JSON.parse(JSON.stringify(e)).status);
 		} finally {
 			setLoading(false);
@@ -61,6 +63,7 @@ export const AuthProvider = ({ children }) => {
 				await SecureStore.setItemAsync('userToken', res.data.token);
 			}
 		} catch (e) {
+			ToastAndroid.show('Error logging in', ToastAndroid.SHORT);
 			throw new Error(JSON.parse(JSON.stringify(e)).status);
 		} finally {
 			setLoading(false);

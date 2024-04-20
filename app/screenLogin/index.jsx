@@ -7,7 +7,7 @@ import { colors } from '@/constants';
 import { Link, useRouter } from 'expo-router';
 import ImageTriangles from '@/components/ImageTriangles';
 import logo from '@/assets/images/Logo_White.png';
-import { Dimensions, KeyboardAvoidingView } from 'react-native';
+import { Dimensions, KeyboardAvoidingView, ToastAndroid } from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
 
 const ScreenLogin = () => {
@@ -24,7 +24,9 @@ const ScreenLogin = () => {
 			try {
 				await lookupUser(username);
 				router.push('/screenPassword');
-			} catch (error) {}
+			} catch (error) {
+				ToastAndroid.show('User not found', ToastAndroid.SHORT);
+			}
 		}
 	};
 
