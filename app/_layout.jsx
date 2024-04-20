@@ -82,7 +82,7 @@ function RootLayoutNav() {
 					>
 						<Stack.Screen name='index' />
 						<Stack.Screen name='authUser/home/index' />
-						<Stack.Screen name='screenFeedback/index' />
+						<Stack.Screen name='screenFeedback/[id]/index' />
 						<Stack.Screen name='screenLogin/index' />
 						<Stack.Screen name='screenPassword/index' />
 						<Stack.Screen name='screenRegister/index' />

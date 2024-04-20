@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,10 +6,11 @@ import ImageTriangles from '@/components/ImageTriangles';
 import { Dimensions } from 'react-native';
 import { Button, Image, Input, ScrollView, Text, View } from 'tamagui';
 import { colors } from '@/constants';
-const ScreenFeeback = ({ navigation }) => {
+import { useLocalSearchParams } from 'expo-router';
+import axios from 'axios';
+const ScreenFeeback = () => {
+	const { id } = useLocalSearchParams();
 	const [email, setEmail] = useState(null);
-	const val = useContext(AuthContext);
-
 	const [feebackRating, setFeedbackRating] = useState(0);
 	const [ratingReason, setRatingReason] = useState('');
 	const [satisfactionRating, setSatisfactionRating] = useState(0);
@@ -33,11 +34,37 @@ const ScreenFeeback = ({ navigation }) => {
 		},
 	];
 	const yesNoAsset = [
-		{ src: require('@/assets/images/bad.png'), name: 'No' },
-		{ src: require('@/assets/images/good.png'), name: 'Yes' },
+		{ src: require('@/assets/images/bad.png'), name: 'No', state: false },
+		{ src: require('@/assets/images/good.png'), name: 'Yes', state: true },
 	];
 
-	const { isLoading, lookup } = useContext(AuthContext);
+	const [loading, setLoading] = useState(false);
+	const [pastEvent, setPastEvent] = useState({});
+
+	const submitFeedback = async () => {
+		try {
+			const res = await axios.post(
+				`https://cioleader.azurewebsites.net/api/event/${id}/feedback/`,
+				{
+					Rating: feebackRating,
+					NextEvent: attendNextEvent,
+					Feedback: ratingReason,
+				},
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			console.log(res.data);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const { userToken } = useContext(AuthContext);
 
 	return (
 		<SafeAreaView
@@ -73,6 +100,7 @@ const ScreenFeeback = ({ navigation }) => {
 								borderWidth={1}
 								borderRadius={10}
 								backgroundColor={colors.primary}
+								onPress={() => setFeedbackRating(item.rating)}
 							>
 								<Image source={item.src} />
 							</Button>
@@ -166,6 +194,7 @@ const ScreenFeeback = ({ navigation }) => {
 									borderWidth={1}
 									borderRadius={10}
 									backgroundColor={colors.primary}
+									onPress={() => setAttendNextEvent(item.state)}
 								>
 									{item.name}
 								</Button>
@@ -247,6 +276,7 @@ const ScreenFeeback = ({ navigation }) => {
 						elevation={5}
 						height={50}
 						marginTop={20}
+						onPress={submitFeedback}
 					>
 						Submit
 					</Button>

@@ -24,9 +24,7 @@ const ScreenLogin = () => {
 			try {
 				await lookupUser(username);
 				router.push('/screenPassword');
-			} catch (error) {
-				console.log('ScreenLogin::handleLookupUser::error:: ', error);
-			}
+			} catch (error) {}
 		}
 	};
 

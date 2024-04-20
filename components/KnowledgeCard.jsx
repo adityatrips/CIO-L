@@ -19,27 +19,29 @@ const KnowledgeCard = ({ data }) => {
 			justifyContent='space-between'
 			marginRight={10}
 		>
-			<View
-				position={'absolute'}
-				backgroundColor={'red'}
-				alignItems={'center'}
-				justifyContent={'flex-end'}
-				height={100}
-				width={100}
-				zIndex={2}
-				right={-50}
-				top={-50}
-				transform={'rotate(45deg)'}
-			>
-				<Text
-					fontSize={8}
-					fontFamily={'InterBold'}
-					color={'#fff'}
-					paddingBottom={7}
+			{data.new && (
+				<View
+					position={'absolute'}
+					backgroundColor={'#CC3340'}
+					alignItems={'center'}
+					justifyContent={'flex-end'}
+					height={100}
+					width={100}
+					zIndex={2}
+					right={-50}
+					top={-50}
+					transform={'rotate(45deg)'}
 				>
-					NEW
-				</Text>
-			</View>
+					<Text
+						fontSize={8}
+						fontFamily={'InterBold'}
+						color={'#fff'}
+						paddingBottom={7}
+					>
+						NEW
+					</Text>
+				</View>
+			)}
 
 			<Text
 				position={'absolute'}
@@ -59,7 +61,7 @@ const KnowledgeCard = ({ data }) => {
 				height={'50%'}
 				borderRadius={20}
 				objectFit={'cover'}
-				src={data.image}
+				src={data.picture}
 			/>
 
 			<View padding={10}>
@@ -114,41 +116,44 @@ const KnowledgeCard = ({ data }) => {
 						</Text>
 					</View>
 				</Button>
-				<Button
-					backgroundColor={colors.primaryDark}
-					borderColor={colors.primary}
-					pressStyle={{
-						backgroundColor: colors.primary,
-						borderColor: colors.primaryDark,
-					}}
-					borderRadius={100 / 2}
-					justifyContent='space-between'
-					width={'85%'}
-					height={30}
-				>
-					<Text
-						fontSize={10}
-						fontFamily={'InterBold'}
+				{data.viewed && (
+					<Button
+						backgroundColor={colors.primaryDark}
+						borderColor={colors.primary}
+						pressStyle={{
+							backgroundColor: colors.primary,
+							borderColor: colors.primaryDark,
+						}}
+						borderRadius={100 / 2}
+						justifyContent='space-between'
+						width={'85%'}
+						height={30}
+						disabled={data.viewed}
 					>
-						MCQ
-					</Text>
-					<View
-						flexDirection='row'
-						alignItems='center'
-					>
-						<Image
-							src={coin}
-							height={25}
-							width={25}
-						/>
 						<Text
-							fontSize={11}
-							fontFamily='InterSemiBold'
+							fontSize={10}
+							fontFamily={'InterBold'}
 						>
-							+0
+							MCQ
 						</Text>
-					</View>
-				</Button>
+						<View
+							flexDirection='row'
+							alignItems='center'
+						>
+							<Image
+								src={coin}
+								height={25}
+								width={25}
+							/>
+							<Text
+								fontSize={11}
+								fontFamily='InterSemiBold'
+							>
+								+0
+							</Text>
+						</View>
+					</Button>
+				)}
 			</View>
 		</View>
 	);

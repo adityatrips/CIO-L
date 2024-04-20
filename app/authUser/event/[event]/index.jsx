@@ -1,52 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Button, Image, Text, ScrollView } from 'tamagui';
-import Carousel from '@/components/Carousel';
 import { Dimensions, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/constants';
 import { useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
-import LoadingComp from '../../../../components/Loading';
+import LoadingComp from '@/components/Loading';
 import moment from 'moment';
-const dummyData = [
-	{
-		name: 'Ankit Sharma',
-		designation: 'Designation',
-		company: 'Company',
-		img: 'https://dummyimage.com/200x200/fff/000&text=Ankit+Sharma',
-	},
-	{
-		name: 'Ankit Sharma',
-		designation: 'Designation',
-		company: 'Company',
-		img: 'https://dummyimage.com/200x200/fff/000&text=Ankit+Sharma',
-	},
-	{
-		name: 'Ankit Sharma',
-		designation: 'Designation',
-		company: 'Company',
-		img: 'https://dummyimage.com/200x200/fff/000&text=Ankit+Sharma',
-	},
-	{
-		name: 'Ankit Sharma',
-		designation: 'Designation',
-		company: 'Company',
-		img: 'https://dummyimage.com/200x200/fff/000&text=Ankit+Sharma',
-	},
-	{
-		name: 'Ankit Sharma',
-		designation: 'Designation',
-		company: 'Company',
-		img: 'https://dummyimage.com/200x200/fff/000&text=Ankit+Sharma',
-	},
-	{
-		name: 'Ankit Sharma',
-		designation: 'Designation',
-		company: 'Company',
-		img: 'https://dummyimage.com/200x200/fff/000&text=Ankit+Sharma',
-	},
-];
 
 const EventScreen = () => {
 	const { event } = useLocalSearchParams();
@@ -67,7 +28,6 @@ const EventScreen = () => {
 			);
 			setEvtData(res.data);
 		} catch (error) {
-			console.log('Event::getOneEvent::error::', error);
 		} finally {
 			setLoading(false);
 		}
@@ -252,6 +212,7 @@ const EventScreen = () => {
 								fontSize: 16,
 								fontWeight: 'bold',
 								color: '#616161',
+								marginBottom: 10,
 							}}
 						>
 							Speaker / Panellists
@@ -263,62 +224,128 @@ const EventScreen = () => {
 								gap: 10,
 							}}
 						>
-							{evtData.speakers.map((speaker, index) => (
-								<View
-									key={index}
-									style={{
-										marginTop: 20,
-										width: wW / 3 - 20,
-										justifyContent: 'space-between',
-										alignItems: 'center',
-									}}
-								>
-									<View
-										borderRadius={20}
-										borderWidth={1}
-										borderColor={'#000'}
-										overflow='hidden'
-									>
-										<Image
-											source={{ uri: speaker.profile }}
-											width={'80%'}
-											aspectRatio={1 / 1}
-										/>
-									</View>
-									<View
-										style={{
-											width: '80%',
-											marginTop: 5,
+							{
+								evtData.speakers.length <= 6 ? (
+									evtData.speakers.map((speaker, index) => (
+										<View
+											key={index}
+											width={wW * 0.5}
+											borderRadius={20}
+											borderWidth={1}
+											borderColor={'#000'}
+											overflow='hidden'
+										>
+											<Image
+												source={{ uri: speaker.profile }}
+												width={'100%'}
+												aspectRatio={1 / 1}
+												overflow='hidden'
+											/>
+											<View
+												style={{
+													width: '100%',
+													marginTop: 5,
+													paddingVertical: 5,
+												}}
+											>
+												<Text
+													style={{
+														fontSize: 12,
+														fontWeight: 'bold',
+														color: '#616161',
+														textAlign: 'center',
+													}}
+												>
+													{speaker.name}
+												</Text>
+												<Text
+													style={{
+														fontSize: 9,
+														color: '#616161',
+														textAlign: 'center',
+													}}
+												>
+													{speaker.designation}
+												</Text>
+												<Text
+													style={{
+														fontSize: 9,
+														color: '#616161',
+														textAlign: 'center',
+													}}
+												>
+													{speaker.company}
+												</Text>
+											</View>
+										</View>
+									))
+								) : (
+									// <ScrollView horizontal>
+									// {evtData.speakers.map((speaker, index) => (
+									<ScrollView
+										horizontal
+										contentContainerStyle={{
+											gap: 10,
 										}}
 									>
-										<Text
-											style={{
-												fontSize: 12,
-												fontWeight: 'bold',
-												color: '#616161',
-											}}
-										>
-											{speaker.name}
-										</Text>
-										<Text
-											style={{
-												fontSize: 9,
-												color: '#616161',
-											}}
-										>
-											{speaker.designation}
-										</Text>
-										<Text
-											style={{
-												fontSize: 9,
-												color: '#616161',
-											}}
-										>
-											{speaker.company}
-										</Text>
-									</View>
-								</View>
-							))}
+										{evtData.speakers.map((speaker, index) => (
+											<View
+												key={index}
+												width={wW * 0.5}
+												borderRadius={20}
+												borderWidth={1}
+												borderColor={'#000'}
+												overflow='hidden'
+											>
+												<Image
+													source={{ uri: speaker.profile }}
+													width={'100%'}
+													aspectRatio={1 / 1}
+													overflow='hidden'
+												/>
+												<View
+													style={{
+														width: '100%',
+														marginTop: 5,
+														paddingVertical: 5,
+													}}
+												>
+													<Text
+														style={{
+															fontSize: 12,
+															fontWeight: 'bold',
+															color: '#616161',
+															textAlign: 'center',
+														}}
+													>
+														{speaker.name}
+													</Text>
+													<Text
+														style={{
+															fontSize: 9,
+															color: '#616161',
+															textAlign: 'center',
+														}}
+													>
+														{speaker.designation}
+													</Text>
+													<Text
+														style={{
+															fontSize: 9,
+															color: '#616161',
+															textAlign: 'center',
+														}}
+													>
+														{speaker.company}
+													</Text>
+												</View>
+											</View>
+										))}
+									</ScrollView>
+								)
+								// ))}
+								// </ScrollView>
+							}
 						</View>
 					</View>
 					<View

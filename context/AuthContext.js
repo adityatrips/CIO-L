@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
 			const userInfo = await SecureStore.getItemAsync('userInfo');
 
 			if (userToken && userInfo) {
-				console.log('AuthCtx:useEffect:: ', userToken);
 				setUserToken(userToken);
 				setUserInfo(JSON.parse(userInfo));
 			}
@@ -47,7 +46,6 @@ export const AuthProvider = ({ children }) => {
 
 	const login = async (username, password) => {
 		setLoading(true);
-		console.log('AuthCtx:login:: ', username, password);
 
 		try {
 			const res = await axios.post(
@@ -60,7 +58,6 @@ export const AuthProvider = ({ children }) => {
 
 			if (res.data) {
 				setUserToken(res.data.token);
-				console.log('AuthCtx:login:: ', res.data);
 				await SecureStore.setItemAsync('userToken', res.data.token);
 			}
 		} catch (e) {

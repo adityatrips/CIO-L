@@ -1,44 +1,70 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Image, ScrollView, Text, View } from 'tamagui';
 import { colors } from '@/constants';
-import { Dimensions } from 'react-native';
+import { ActivityIndicator, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import LoadingComp from './Loading';
 import moment from 'moment';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ChevronLeftCircle, ChevronRightCircle } from '@tamagui/lucide-icons';
+import axios from 'axios';
 
-const PointsTable = ({ data, isOnHome = false }) => {
+const PointsTable = ({
+	link = 'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=9',
+	userToken,
+	isOnHome = false,
+}) => {
 	const [loading, setLoading] = useState(true);
 	const router = useRouter();
+	const [data, setData] = useState({});
+	const [results, setResults] = useState([]);
+
+	const getData = async (newLink = link) => {
+		try {
+			const res = await axios.get(newLink, {
+				headers: {
+					Authorization: `Token ${userToken}`,
+				},
+			});
+			setData(res.data);
+			setResults(res.data.results);
+			return res.data.results;
+		} catch (error) {
+		} finally {
+		}
+	};
 
 	useEffect(() => {
-		if (data.length === 0) {
-			data = [
-				{
-					id: 1,
-					amount: 50,
-					type: '1',
-					date: '2024-04-12',
-					description: 'Nothing here',
-					user: 1,
-				},
-			];
-		} else {
-			data = data;
-		}
+		setLoading(true);
+		getData();
 		setLoading(false);
 	}, []);
 
-	return loading ? (
-		<LoadingComp />
+	return loading && data ? (
+		<SafeAreaView
+			style={{
+				height: Dimensions.get('window').height,
+				alignItems: 'center',
+				justifyContent: 'center',
+				flex: 1,
+			}}
+		>
+			<ActivityIndicator
+				size='large'
+				color={'#fff'}
+			/>
+		</SafeAreaView>
 	) : (
-		<SafeAreaView>
-			<ScrollView
-				contentContainerStyle={{
-					width: isOnHome ? '90%' : '100%',
-					height: isOnHome ? null : Dimensions.get('window').height * 0.8,
-				}}
-			>
+		<SafeAreaView
+			style={{
+				position: 'relative',
+				width: Dimensions.get('window').width * 0.9,
+				height: !isOnHome
+					? Dimensions.get('screen').height * 0.925
+					: Dimensions.get('screen').height * 0.8,
+			}}
+		>
+			<ScrollView flex={1}>
 				{!isOnHome && (
 					<View
 						backgroundColor={'#FFFFFF'}
@@ -80,7 +106,7 @@ const PointsTable = ({ data, isOnHome = false }) => {
 									fontWeight={'bold'}
 									fontSize={10}
 								>
-									+50
+									{data.earned}
 								</Text>
 							</View>
 						</View>
@@ -96,7 +122,7 @@ const PointsTable = ({ data, isOnHome = false }) => {
 								fontWeight={'bold'}
 								textTransform={'uppercase'}
 								fontSize={10}
-								color={'red'}
+								color={'#CC3340'}
 							>
 								Total Redeem
 							</Text>
@@ -111,11 +137,11 @@ const PointsTable = ({ data, isOnHome = false }) => {
 									width={20}
 								/>
 								<Text
-									color={'red'}
+									color={'#CC3340'}
 									fontWeight={'bold'}
 									fontSize={10}
 								>
-									+50
+									{data.redeemed}
 								</Text>
 							</View>
 						</View>
@@ -148,7 +174,7 @@ const PointsTable = ({ data, isOnHome = false }) => {
 									fontWeight={'bold'}
 									fontSize={10}
 								>
-									+50
+									{data.balance}
 								</Text>
 							</View>
 						</View>
@@ -197,7 +223,7 @@ const PointsTable = ({ data, isOnHome = false }) => {
 						Points
 					</Text>
 				</View>
-				<ScrollView
+				<View
 					borderBottomRightRadius={20}
 					borderBottomLeftRadius={20}
 					marginBottom={20}
@@ -205,64 +231,69 @@ const PointsTable = ({ data, isOnHome = false }) => {
 					borderWidth={0.5}
 					backgroundColor={'#fff'}
 				>
-					{data.map((item, index) => (
-						<View
-							key={index}
-							flexDirection={'row'}
-							justifyContent={'space-between'}
-							alignItems={'center'}
-							flex={1}
-							width={'100%'}
-							padding={10}
-							borderBottomColor={'#61616150'}
-							borderBottomWidth={0.5}
-							paddingVertical={10}
-						>
-							<Text
-								textAlign={'center'}
-								flex={1}
-								textTransform={'uppercase'}
-								color={'#616161'}
-								fontSize={10}
-							>
-								{moment(item.date, 'YYYY-MM-DD').format('MMM DD, YYYY')}
-							</Text>
-							<Text
-								textAlign={'center'}
-								flex={1}
-								textTransform={'uppercase'}
-								color={'#616161'}
-								fontSize={10}
-							>
-								{item.description.length > 15
-									? item.description.substring(0, 15).concat('...')
-									: item.description}
-							</Text>
-							<View
-								flex={1}
-								flexDirection={'row'}
-								alignItems={'center'}
-								justifyContent={'center'}
-								fontSize={10}
-							>
-								<Image
-									source={require('@/assets/images/Coin1.png')}
-									height={20}
-									width={20}
-								/>
-								<Text
-									textAlign={'center'}
-									textTransform={'uppercase'}
-									color={item.type === '1' ? 'green' : 'red'}
-									fontSize={11}
-									fontFamily={'InterMedium'}
-								>
-									{item.type === '1' ? '+' : '-'}
-									{item.amount}
-								</Text>
-							</View>
-						</View>
-					))}
+					{results &&
+						results.map((item, index) => {
+							return (
+								item && (
+									<View
+										key={index}
+										flexDirection={'row'}
+										justifyContent={'space-between'}
+										alignItems={'center'}
+										flex={1}
+										width={'100%'}
+										padding={10}
+										borderBottomColor={'#61616150'}
+										borderBottomWidth={0.5}
+										paddingVertical={10}
+									>
+										<Text
+											textAlign={'center'}
+											flex={1}
+											textTransform={'uppercase'}
+											color={'#616161'}
+											fontSize={10}
+										>
+											{moment(item.date, 'YYYY-MM-DD').format('MMM DD, YYYY')}
+										</Text>
+										<Text
+											textAlign={'center'}
+											flex={1}
+											textTransform={'uppercase'}
+											color={'#616161'}
+											fontSize={10}
+										>
+											{item.description.length > 15
+												? item.description.substring(0, 15).concat('...')
+												: item.description}
+										</Text>
+										<View
+											flex={1}
+											flexDirection={'row'}
+											alignItems={'center'}
+											justifyContent={'center'}
+											fontSize={10}
+										>
+											<Image
+												source={require('@/assets/images/Coin1.png')}
+												height={20}
+												width={20}
+											/>
+											<Text
+												textAlign={'center'}
+												textTransform={'uppercase'}
+												color={item.type === '1' ? 'green' : '#CC3340'}
+												fontSize={11}
+												fontFamily={'InterMedium'}
+											>
+												{item.type === '1' ? '+' : '-'}
+												{item.amount}
+											</Text>
+										</View>
+									</View>
+								)
+							);
+						})}
 					{isOnHome && (
 						<>
 							<Button
@@ -323,7 +354,7 @@ const PointsTable = ({ data, isOnHome = false }) => {
 											fontWeight={'bold'}
 											fontSize={10}
 										>
-											+50
+											{data.earned}
 										</Text>
 									</View>
 								</View>
@@ -340,7 +371,7 @@ const PointsTable = ({ data, isOnHome = false }) => {
 										fontWeight={'bold'}
 										textTransform={'uppercase'}
 										fontSize={10}
-										color={'red'}
+										color={'#CC3340'}
 									>
 										Total Redeem
 									</Text>
@@ -355,11 +386,11 @@ const PointsTable = ({ data, isOnHome = false }) => {
 											width={20}
 										/>
 										<Text
-											color={'red'}
+											color={'#CC3340'}
 											fontWeight={'bold'}
 											fontSize={10}
 										>
-											+50
+											{data.redeemed}
 										</Text>
 									</View>
 								</View>
@@ -392,15 +423,41 @@ const PointsTable = ({ data, isOnHome = false }) => {
 											fontWeight={'bold'}
 											fontSize={10}
 										>
-											+50
+											{data.balance}
 										</Text>
 									</View>
 								</View>
 							</View>
 						</>
 					)}
-				</ScrollView>
+				</View>
 			</ScrollView>
+			{!isOnHome && data.links && data.results.length <= 10 && (
+				<View
+					flexDirection={'row'}
+					justifyContent={'space-between'}
+					alignItems={'center'}
+					marginBottom={20}
+					width={'100%'}
+					position='absolute'
+					bottom={'12%'}
+				>
+					<Button
+						disabled={data.links.previous === null}
+						onPress={() => getData(data.links.previous)}
+						backgroundColor={colors.primary}
+					>
+						<ChevronLeftCircle />
+					</Button>
+					<Button
+						disabled={data.links.next === null}
+						onPress={() => getData(data.links.next)}
+						backgroundColor={colors.primary}
+					>
+						<ChevronRightCircle />
+					</Button>
+				</View>
+			)}
 		</SafeAreaView>
 	);
 };

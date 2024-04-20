@@ -23,6 +23,7 @@ import { useRouter } from 'expo-router';
 import LoadingComp from '../../../components/Loading';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
+import PTRView from 'react-native-pull-to-refresh';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -33,7 +34,7 @@ export default function HomeScreen() {
 	const [userProfile, setUserProfile] = useState({});
 	const [upcomingEvents, setUpcomingEvents] = useState([]);
 	const [knowledgeCards, setKnowledgeCards] = useState([]);
-	const [pointsData, setPoints] = useState([]);
+	const [pointsData, setPoints] = useState({});
 	const [resourceData, setResourceData] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [offsetY, setOffsetY] = useState({
@@ -67,7 +68,6 @@ export default function HomeScreen() {
 				setUpcomingEvents(res.data);
 			} catch (error) {
 				setUserProfile([]);
-				console.log('HomeScreen::getUpcomingEvents::error:: ', error);
 			}
 		}
 	};
@@ -83,10 +83,8 @@ export default function HomeScreen() {
 						},
 					}
 				);
-				setPoints(res.data.results);
-			} catch (error) {
-				console.log('HomeScreen::getPoints::error:: ', error);
-			}
+				setPoints(res.data);
+			} catch (error) {}
 		}
 	};
 
@@ -102,9 +100,7 @@ export default function HomeScreen() {
 					}
 				);
 				setResourceData(res.data);
-			} catch (error) {
-				console.log('HomeScreen::getResourceList::error:: ', error);
-			}
+			} catch (error) {}
 		}
 	};
 
@@ -119,10 +115,9 @@ export default function HomeScreen() {
 						},
 					}
 				);
+				console.log('KNOWLEDGE:', res.data);
 				setKnowledgeCards(res.data);
-			} catch (error) {
-				console.log('HomeScreen::getKnowledgeCards::error:: ', error);
-			}
+			} catch (error) {}
 		}
 	};
 
@@ -145,7 +140,6 @@ export default function HomeScreen() {
 					setUserProfile(res.data);
 				}
 			} catch (error) {
-				console.log('HomeScreen::getUserProfile::error:: ', error);
 				setUserProfile({});
 			}
 		}
@@ -153,12 +147,12 @@ export default function HomeScreen() {
 
 	useEffect(() => {
 		setIsLoading(true);
-		console.log('HomeScreen::useEffect:: ', userToken);
 		getUserProfile();
 		getUpcomingEvents();
 		getKnowledgeCards();
 		getResourceList();
 		getPoints();
+		setIsLoading(false);
 	}, []);
 
 	return !isLoading ? (
@@ -167,352 +161,387 @@ export default function HomeScreen() {
 			flex={1}
 		>
 			<StatusBar style='dark' />
-			<View
-				backgroundColor={'#fff'}
-				flexDirection='row'
-				justifyContent='space-between'
-				alignItems='center'
-				paddingHorizontal={20}
-			>
-				<Image
-					source={{
-						uri: logo,
-					}}
-					height={Dimensions.get('screen').height * 0.08}
-					width={Dimensions.get('screen').width * 0.4}
-					resizeMode='contain'
-				/>
-			</View>
-			<ScrollView
-				ref={scrollRef}
-				contentContainerStyle={{
-					alignItems: 'center',
-					bottom: 60,
+			<PTRView
+				onRefresh={() => {
+					getUserProfile();
+					getUpcomingEvents();
+					getKnowledgeCards();
+					getResourceList();
+					getPoints();
 				}}
 			>
 				<View
-					height={height * 0.7}
-					ref={homeRef}
-					onLayout={(e) => {
-						setOffsetY({
-							...offsetY,
-							home: e.nativeEvent.layout.y,
-						});
-					}}
+					backgroundColor={'#fff'}
+					flexDirection='row'
+					justifyContent='space-between'
+					alignItems='center'
+					paddingHorizontal={20}
 				>
-					<View
-						height={height * 0.6}
-						width={width}
-						alignItems='center'
-						justifyContent='center'
-						position='relative'
-						overflow='visible'
-						backgroundColor={colors.primary}
-					>
-						<View
-							top={Dimensions.get('screen').height * 0.1}
-							position='absolute'
-						>
-							<Image
-								source={globe}
-								resizeMode='contain'
-							/>
-						</View>
-						<Text
-							fontSize={35}
-							fontFamily={'InterBold'}
-						>
-							WELCOME!!
-						</Text>
-						<Image
-							height={110}
-							width={120}
-							borderRadius={20}
-							source={{
-								uri: userProfile.profilepicture || ankit,
-							}}
-							marginBottom={10}
-						/>
-						<Text
-							fontSize={18}
-							fontFamily={'InterBold'}
-						>
-							{`${userProfile.fname} ${userProfile.lname}` || 'Ankit'}
-						</Text>
-						<Text
-							fontSize={15}
-							fontFamily={'InterMedium'}
-						>
-							{userProfile.designation || 'Founder'}
-						</Text>
-					</View>
-					<View
-						position='absolute'
-						bottom={20}
-						flexDirection='row'
-						justifyContent='space-between'
-						alignItems='center'
-						width={width}
-						paddingHorizontal={20}
-					>
-						<View
-							alignItems='center'
-							justifyContent='center'
-							padding={10}
-							borderRadius={20}
-							elevationAndroid={10}
-							flexDirection='column'
-							width={width * 0.425}
-							height={100}
-							backgroundColor={colors.primaryDark}
-						>
-							<View
-								flexDirection='row'
-								alignItems='center'
-								gap={10}
-							>
-								<Image
-									source={earn}
-									height={35}
-									width={'auto'}
-									aspectRatio={0.837}
-								/>
-								<Text
-									textAlign='center'
-									fontSize={32}
-									fontFamily={'InterBold'}
-								>
-									{userProfile.earnmonth}
-								</Text>
-							</View>
-							<Text
-								textAlign='center'
-								fontSize={13}
-								fontFamily={'InterSemiBold'}
-							>
-								Total Earned
-							</Text>
-						</View>
-						<View
-							alignItems='center'
-							flexDirection='column'
-							justifyContent='center'
-							padding={10}
-							borderRadius={20}
-							elevationAndroid={10}
-							width={width * 0.425}
-							height={100}
-							backgroundColor={colors.primaryDark}
-						>
-							<View
-								flexDirection='row'
-								alignItems='center'
-								gap={10}
-							>
-								<Image
-									source={rem}
-									height={40}
-									width={'auto'}
-									aspectRatio={1.04}
-								/>
-								<Text
-									textAlign='center'
-									fontSize={32}
-									fontFamily={'InterBold'}
-								>
-									{userProfile.points}
-								</Text>
-							</View>
-							<Text
-								textAlign='center'
-								fontSize={13}
-								fontFamily={'InterSemiBold'}
-							>
-								Remaining points
-							</Text>
-						</View>
-					</View>
-				</View>
-				<View>
-					<Text
-						color='#616161'
-						textAlign='center'
-						textTransform='uppercase'
-						fontSize={15}
-						fontFamily={'InterBold'}
-					>
-						Your unique QR code
-					</Text>
-
 					<Image
 						source={{
-							uri: userProfile.qrcode,
+							uri: logo,
 						}}
-						height={200}
-						width={200}
+						height={Dimensions.get('screen').height * 0.08}
+						width={Dimensions.get('screen').width * 0.4}
+						resizeMode='contain'
 					/>
-
-					<Text
-						color={'#616161'}
-						fontSize={15}
-						fontFamily={'InterSemiBold'}
-						textTransform='uppercase'
-						textAlign='center'
+				</View>
+				<ScrollView
+					ref={scrollRef}
+					contentContainerStyle={{
+						alignItems: 'center',
+						bottom: 60,
+					}}
+				>
+					<View
+						height={height * 0.7}
+						ref={homeRef}
+						onLayout={(e) => {
+							setOffsetY({
+								...offsetY,
+								home: e.nativeEvent.layout.y,
+							});
+						}}
 					>
-						CIO&L Privilege Code
-					</Text>
+						<View
+							height={height * 0.6}
+							width={width}
+							alignItems='center'
+							justifyContent='center'
+							position='relative'
+							overflow='visible'
+							backgroundColor={colors.primary}
+						>
+							<View
+								top={Dimensions.get('screen').height * 0.1}
+								position='absolute'
+							>
+								<Image
+									source={globe}
+									resizeMode='contain'
+								/>
+							</View>
+							<Text
+								fontSize={35}
+								fontFamily={'InterBold'}
+							>
+								WELCOME!!
+							</Text>
+							<Image
+								height={110}
+								width={120}
+								borderRadius={20}
+								source={{
+									uri: userProfile.profilepicture || ankit,
+								}}
+								marginBottom={10}
+							/>
+							<Text
+								fontSize={18}
+								fontFamily={'InterBold'}
+							>
+								{`${userProfile.fname} ${userProfile.lname}` || 'Ankit'}
+							</Text>
+							<Text
+								fontSize={15}
+								fontFamily={'InterMedium'}
+							>
+								{userProfile.designation || 'Founder'}
+							</Text>
+						</View>
+						<View
+							position='absolute'
+							bottom={20}
+							flexDirection='row'
+							justifyContent='space-between'
+							alignItems='center'
+							width={width}
+							paddingHorizontal={20}
+						>
+							<View
+								alignItems='center'
+								justifyContent='center'
+								padding={10}
+								borderRadius={20}
+								elevationAndroid={10}
+								flexDirection='column'
+								width={width * 0.425}
+								height={100}
+								backgroundColor={colors.primaryDark}
+							>
+								<View
+									flexDirection='row'
+									alignItems='center'
+									gap={10}
+								>
+									<Image
+										source={earn}
+										height={35}
+										width={'auto'}
+										aspectRatio={0.837}
+									/>
+									<Text
+										textAlign='center'
+										fontSize={32}
+										fontFamily={'InterBold'}
+									>
+										{userProfile.earnmonth || '0'}
+									</Text>
+								</View>
+								<Text
+									textAlign='center'
+									fontSize={13}
+									fontFamily={'InterSemiBold'}
+								>
+									Total Earned
+								</Text>
+							</View>
+							<View
+								alignItems='center'
+								flexDirection='column'
+								justifyContent='center'
+								padding={10}
+								borderRadius={20}
+								elevationAndroid={10}
+								width={width * 0.425}
+								height={100}
+								backgroundColor={colors.primaryDark}
+							>
+								<View
+									flexDirection='row'
+									alignItems='center'
+									gap={10}
+								>
+									<Image
+										source={rem}
+										height={40}
+										width={'auto'}
+										aspectRatio={1.04}
+									/>
+									<Text
+										textAlign='center'
+										fontSize={32}
+										fontFamily={'InterBold'}
+									>
+										{userProfile.points || '0'}
+									</Text>
+								</View>
+								<Text
+									textAlign='center'
+									fontSize={13}
+									fontFamily={'InterSemiBold'}
+								>
+									Remaining points
+								</Text>
+							</View>
+						</View>
+					</View>
+					<View>
+						<Text
+							color='#616161'
+							textAlign='center'
+							textTransform='uppercase'
+							fontSize={15}
+							fontFamily={'InterBold'}
+						>
+							Your unique QR code
+						</Text>
+
+						<Image
+							source={{
+								uri: userProfile.qrcode,
+							}}
+							height={200}
+							width={200}
+						/>
+
+						<Text
+							color={'#616161'}
+							fontSize={15}
+							fontFamily={'InterSemiBold'}
+							textTransform='uppercase'
+							textAlign='center'
+						>
+							CIO&L Privilege Code
+						</Text>
+						<Text
+							color={'#6BB943'}
+							fontSize={21}
+							fontFamily={'InterBold'}
+							textTransform='uppercase'
+							textAlign='center'
+						>
+							{userProfile.code}
+						</Text>
+					</View>
+					<Divider />
 					<Text
-						color={'#6BB943'}
-						fontSize={21}
+						fontSize={16}
 						fontFamily={'InterBold'}
-						textTransform='uppercase'
-						textAlign='center'
+						color={'#616161'}
+						width={'90%'}
+						marginBottom={20}
 					>
-						{userProfile.code}
+						Upcoming Events
 					</Text>
-				</View>
-				<Divider />
-				<Text
-					fontSize={16}
-					fontFamily={'InterBold'}
-					color={'#616161'}
-					width={'90%'}
-					marginBottom={20}
-				>
-					Upcoming Events
-				</Text>
-				<View
-					ref={eventRef}
-					onLayout={(e) => {
-						setOffsetY({
-							...offsetY,
-							evt: e.nativeEvent.layout.y,
-						});
-					}}
-				></View>
-				<View
-					gap={10}
-					marginBottom={10}
-				>
-					{upcomingEvents.map((item, index) => (
-						<UpcomingEventCard
-							key={index}
-							data={item}
-						/>
-					))}
-				</View>
-				<Divider />
-				<View
-					ref={kcRef}
-					onLayout={(e) => {
-						setOffsetY({
-							...offsetY,
-							kc: e.nativeEvent.layout.y,
-						});
-					}}
-				></View>
+					<View
+						ref={eventRef}
+						onLayout={(e) => {
+							setOffsetY({
+								...offsetY,
+								evt: e.nativeEvent.layout.y,
+							});
+						}}
+					></View>
+					<View
+						gap={10}
+						marginBottom={10}
+					>
+						{upcomingEvents.length > 0 ? (
+							upcomingEvents.map((item, index) => (
+								<UpcomingEventCard
+									key={index}
+									data={item}
+								/>
+							))
+						) : (
+							<View width={'90%'}>
+								<Text
+									textAlign='left'
+									color={colors.text}
+								>
+									Nothing to show here...
+								</Text>
+							</View>
+						)}
+					</View>
+					<Divider />
+					<View
+						ref={kcRef}
+						onLayout={(e) => {
+							setOffsetY({
+								...offsetY,
+								kc: e.nativeEvent.layout.y,
+							});
+						}}
+					></View>
 
-				<Text
-					width={'90%'}
-					color='#616161'
-					fontSize={16}
-					fontFamily={'InterBold'}
-				>
-					Knowledge Center
-				</Text>
-				<Text
-					width={'90%'}
-					color='#616161'
-					marginBottom={20}
-					fontSize={14}
-					fontFamily={'InterMedium'}
-				>
-					Whitepaper & Reports
-				</Text>
-				<ScrollView
-					horizontal
-					gap={10}
-					marginBottom={10}
-					width='90%'
-				>
-					{knowledgeCards.map((item, index) => (
-						<KnowledgeCard
-							key={index}
-							data={item}
-						/>
-					))}
+					<Text
+						width={'90%'}
+						color='#616161'
+						fontSize={16}
+						fontFamily={'InterBold'}
+					>
+						Knowledge Center
+					</Text>
+					<Text
+						width={'90%'}
+						color='#616161'
+						marginBottom={20}
+						fontSize={14}
+						fontFamily={'InterMedium'}
+					>
+						Whitepaper & Reports
+					</Text>
+					<ScrollView
+						horizontal
+						gap={10}
+						marginBottom={10}
+						width='90%'
+					>
+						{knowledgeCards.map((item, index) => (
+							<KnowledgeCard
+								key={index}
+								data={item}
+							/>
+						))}
+					</ScrollView>
+
+					<Text
+						width={'90%'}
+						color='#616161'
+						marginBottom={20}
+						fontSize={14}
+						fontFamily={'InterMedium'}
+					>
+						Editorial Magazines
+					</Text>
+
+					<Text
+						width={'90%'}
+						color='#616161'
+						marginBottom={20}
+						fontSize={14}
+						fontFamily={'InterMedium'}
+					>
+						Podcast
+					</Text>
+
+					<Text
+						width={'90%'}
+						color='#616161'
+						marginBottom={20}
+						fontSize={14}
+						fontFamily={'InterMedium'}
+					>
+						Resource Libraries
+					</Text>
+
+					<ScrollView
+						horizontal
+						gap={10}
+						marginBottom={10}
+						width='90%'
+					>
+						{resourceData.map((item, index) => (
+							<KnowledgeCard
+								key={index}
+								data={item}
+							/>
+						))}
+					</ScrollView>
+
+					{pointsData.results && pointsData.results.length > 0 ? (
+						<>
+							<Divider />
+							<Text
+								width={'90%'}
+								color='#616161'
+								fontSize={14}
+								fontFamily={'InterSemiBold'}
+							>
+								CIO&Leader Loyalty Point History
+							</Text>
+							<View
+								ref={ptsRef}
+								onLayout={(e) => {
+									setOffsetY({
+										...offsetY,
+										pts: e.nativeEvent.layout.y,
+									});
+								}}
+								marginLeft={Dimensions.get('screen').width * 0.1}
+								width={'100%'}
+							>
+								<PointsTable
+									isOnHome
+									userToken={userToken}
+									link='https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=5'
+								/>
+							</View>
+						</>
+					) : (
+						<View width={'90%'}>
+							<Text
+								textAlign='left'
+								color={colors.text}
+							>
+								Nothing to show here...
+							</Text>
+						</View>
+					)}
 				</ScrollView>
-
-				<Text
-					width={'90%'}
-					color='#616161'
-					marginBottom={20}
-					fontSize={14}
-					fontFamily={'InterMedium'}
-				>
-					Editorial Magazines
-				</Text>
-
-				<Text
-					width={'90%'}
-					color='#616161'
-					marginBottom={20}
-					fontSize={14}
-					fontFamily={'InterMedium'}
-				>
-					Podcast
-				</Text>
-
-				<Text
-					width={'90%'}
-					color='#616161'
-					marginBottom={20}
-					fontSize={14}
-					fontFamily={'InterMedium'}
-				>
-					Resource Libraries
-				</Text>
-
-				<ScrollView
-					horizontal
-					gap={10}
-					marginBottom={10}
-					width='90%'
-				>
-					{resourceData.map((item, index) => (
-						<KnowledgeCard
-							key={index}
-							data={item}
-						/>
-					))}
-				</ScrollView>
-
-				<Divider />
-				<Text
-					width={'90%'}
-					color='#616161'
-					fontSize={14}
-					fontFamily={'InterSemiBold'}
-				>
-					CIO&Leader Loyalty Point History
-				</Text>
-				<View
-					ref={ptsRef}
-					onLayout={(e) => {
-						setOffsetY({
-							...offsetY,
-							pts: e.nativeEvent.layout.y,
-						});
-					}}
-					marginLeft={Dimensions.get('screen').width * 0.1}
-					width={'100%'}
-				>
-					<PointsTable
-						isOnHome
-						data={pointsData.length === 0 ? [] : pointsData}
-					/>
-				</View>
-			</ScrollView>
+			</PTRView>
 			<View
 				height={60}
 				position='absolute'

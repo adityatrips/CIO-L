@@ -2,7 +2,7 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Button, Image, Input, ScrollView, Text, View } from 'tamagui';
-import { Dimensions } from 'react-native';
+import { Dimensions, Modal, ToastAndroid } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
 import { ChevronLeftCircle } from '@tamagui/lucide-icons';
 import coin from '@/assets/images/Coin1.png';
@@ -10,6 +10,8 @@ import logo from '@/assets/images/Logo_GreenBlack.png';
 import { colors } from '@/constants';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
+import { isAlpha, isMobilePhone } from 'validator';
+import isEmail from 'validator/lib/isEmail';
 const ScreenRegister = () => {
 	const router = useRouter();
 
@@ -23,27 +25,54 @@ const ScreenRegister = () => {
 	const [designation, setDesignation] = React.useState('');
 
 	const handleRegister = async () => {
-		try {
-			const res = await axios.post(
-				'https://cioleader.azurewebsites.net/api/member/create/',
-				{
-					account: {
-						username: mobile,
-						password: pword,
-					},
-					fname,
-					lname,
-					mobile,
-					email,
-					designation,
-					company: company === '' ? 'N/A' : company,
-				}
+		if (!isAlpha(fname) && !isAlpha(lname)) {
+			ToastAndroid.show(
+				'First and last names should be alphabets',
+				ToastAndroid.SHORT
 			);
-			router.push('/screenLogin');
-		} catch (error) {
-			console.log('ScreenRegister::handleRegister::error:: ', error);
+		} else if (!isMobilePhone(mobile, 'en-IN')) {
+			ToastAndroid.show('Invalid mobile number', ToastAndroid.SHORT);
+		} else if (!isEmail(email)) {
+			ToastAndroid.show('Invalid email address', ToastAndroid.SHORT);
+		} else if (!pword.length >= 8) {
+			ToastAndroid.show(
+				'Password should be atleast 8 characters long',
+				ToastAndroid.SHORT
+			);
+		} else if (pword !== confPword) {
+			ToastAndroid.show('Passwords do not match', ToastAndroid.SHORT);
+		} else {
+			try {
+				await axios.post(
+					'https://cioleader.azurewebsites.net/api/member/create/',
+					{
+						account: {
+							username: mobile,
+							password: pword,
+						},
+						fname,
+						lname,
+						mobile,
+						email,
+						designation,
+						company: company === '' ? 'N/A' : company,
+					}
+				);
+				setShown(true);
+				setModalMessage('Registration successful');
+				setTimeout(() => {
+					setShown(false);
+					setModalMessage('');
+					router.push('/screenLogin');
+				}, 2000);
+			} catch (error) {
+				ToastAndroid.show('Invalid details', ToastAndroid.SHORT);
+			}
 		}
 	};
+
+	const [shown, setShown] = React.useState(false);
+	const [modalMessage, setModalMessage] = React.useState('');
 
 	return (
 		<SafeAreaView
@@ -52,6 +81,37 @@ const ScreenRegister = () => {
 				alignItems: 'center',
 			}}
 		>
+			<Modal
+				visible={shown}
+				animationType='slide'
+				onRequestClose={() => setShown(false)}
+				transparent={true}
+				style={{
+					flex: 1,
+					alignItems: 'center',
+					justifyContent: 'center',
+				}}
+			>
+				<View
+					justifyContent='center'
+					alignItems='center'
+					backgroundColor={colors.primary}
+					width={Dimensions.get('window').width * 0.75}
+					height={Dimensions.get('window').height * 0.5}
+					alignSelf='center'
+					top={Dimensions.get('window').height * 0.25}
+					borderRadius={30}
+				>
+					<Text
+						color='#fff'
+						fontFamily={'InterBold'}
+						fontSize={30}
+						textAlign='center'
+					>
+						{modalMessage}
+					</Text>
+				</View>
+			</Modal>
 			<StatusBar style='auto' />
 			<ScrollView
 				contentContainerStyle={{

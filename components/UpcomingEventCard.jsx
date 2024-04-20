@@ -3,13 +3,13 @@ import { Dimensions } from 'react-native';
 import { Button, Image, Text, View } from 'tamagui';
 import { colors } from '@/constants';
 
-import Hybrid from '@/assets/images/hybrid.png';
-import Online from '@/assets/images/online.png';
-import Offline from '@/assets/images/offline.png';
+import Hybrid from '@/assets/images/Hybrid.png';
+import Online from '@/assets/images/Online.png';
+import Offline from '@/assets/images/Offline.png';
 import { useRouter } from 'expo-router';
 import moment from 'moment';
 
-const UpcomingEventCard = ({ data }) => {
+const UpcomingEventCard = ({ data, isOnProfile }) => {
 	const router = useRouter();
 	return (
 		<View
@@ -150,27 +150,72 @@ const UpcomingEventCard = ({ data }) => {
 						<Text fontSize={10}>{data.address}</Text>
 					</View>
 				</View>
-				<Button
-					borderRadius={100 / 2}
-					backgroundColor={colors.primaryDark}
-					borderColor={colors.primaryDark}
-					pressStyle={{
-						backgroundColor: colors.primary,
-						borderColor: colors.primaryDark,
-					}}
-					height={30}
-					onPress={() => {
-						console.log(`/authUser/event/${data.id}`);
-						router.push(`/authUser/event/${data.id}`);
-					}}
-				>
-					<Text
-						fontSize={10}
-						fontFamily={'InterBold'}
+				{!isOnProfile && (
+					<Button
+						borderRadius={100 / 2}
+						backgroundColor={colors.primaryDark}
+						borderColor={colors.primaryDark}
+						pressStyle={{
+							backgroundColor: colors.primary,
+							borderColor: colors.primaryDark,
+						}}
+						height={30}
+						onPress={() => {
+							router.push(`/authUser/event/${data.id}`);
+						}}
 					>
-						KNOW MORE
-					</Text>
-				</Button>
+						<Text
+							fontSize={10}
+							fontFamily={'InterBold'}
+						>
+							KNOW MORE
+						</Text>
+					</Button>
+				)}
+				{isOnProfile && (
+					<View gap={5}>
+						<Button
+							borderRadius={100 / 2}
+							backgroundColor={colors.primaryDark}
+							borderColor={colors.primaryDark}
+							pressStyle={{
+								backgroundColor: colors.primary,
+								borderColor: colors.primaryDark,
+							}}
+							height={30}
+							onPress={() => {
+								router.push(`/screenFeedback/${data.id}`);
+							}}
+						>
+							<Text
+								fontSize={10}
+								fontFamily={'InterBold'}
+							>
+								FEEDBACK
+							</Text>
+						</Button>
+						<Button
+							borderRadius={100 / 2}
+							backgroundColor={colors.primaryDark}
+							borderColor={colors.primaryDark}
+							pressStyle={{
+								backgroundColor: colors.primary,
+								borderColor: colors.primaryDark,
+							}}
+							height={30}
+							onPress={() => {
+								// router.push(`/authUser/event/${data.id}`);
+							}}
+						>
+							<Text
+								fontSize={10}
+								fontFamily={'InterBold'}
+							>
+								SHARE SELFIE
+							</Text>
+						</Button>
+					</View>
+				)}
 			</View>
 		</View>
 	);

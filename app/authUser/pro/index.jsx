@@ -14,6 +14,7 @@ import LoadingComp from '@/components/Loading';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft } from '@tamagui/lucide-icons';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
+import PTRView from 'react-native-pull-to-refresh';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -22,7 +23,9 @@ export default function ProfileScreen() {
 	const router = useRouter();
 	const { userToken } = useContext(AuthContext);
 	const [userProfile, setUserProfile] = useState({});
-	const [pastEvents, setPastEvents] = useState([]);
+	const [pastAttendedEvents, setPastAttendedEvent] = useState([]);
+	const [pastRegisterdEvents, setPastRegisterdEvents] = useState([]);
+	const [pastMissedEvents, setPastMissedEvents] = useState([]);
 	const [loading, setLoading] = useState(false);
 
 	const logout = async () => {
@@ -45,7 +48,6 @@ export default function ProfileScreen() {
 				);
 				setUserProfile(res.data);
 			} catch (error) {
-				console.log('HomeScreen::getUserProfile::error:: ', error);
 				setUserProfile({});
 				return error.status;
 			}
@@ -69,10 +71,10 @@ export default function ProfileScreen() {
 					},
 				}
 			);
-			setPastEvents(res.data);
-		} catch (error) {
-			console.log('ProfileScreen::getPastEvents::error:: ', error);
-		}
+			setPastAttendedEvent(res.data.filter((evt) => evt.registered === '2'));
+			setPastRegisterdEvents(res.data.filter((evt) => evt.registered === '1'));
+			setPastAttendedEvent(res.data.filter((evt) => evt.registered === '3'));
+		} catch (error) {}
 	};
 
 	return loading ? (
@@ -83,146 +85,238 @@ export default function ProfileScreen() {
 				flex: 1,
 			}}
 		>
-			<View
-				backgroundColor={'#fff'}
-				flexDirection='row'
-				justifyContent='center'
-				alignItems='center'
-				paddingHorizontal={20}
-				width={Dimensions.get('screen').width}
+			<PTRView
+				onRefresh={() => {
+					getPastEvents();
+					getUserProfile();
+				}}
 			>
-				<ChevronLeft
-					position='absolute'
-					left={20}
-					color='#000'
-					onPress={() => {
-						router.back();
-					}}
-				/>
-				<Image
-					source={{
-						uri: logo,
-					}}
-					height={Dimensions.get('screen').height * 0.08}
-					width={Dimensions.get('screen').width * 0.4}
-					resizeMode='contain'
-				/>
-			</View>
-			<ScrollView flex={1}>
 				<View
-					flex={1}
+					backgroundColor={'#fff'}
+					flexDirection='row'
+					justifyContent='center'
 					alignItems='center'
+					paddingHorizontal={20}
+					width={Dimensions.get('screen').width}
 				>
-					<View height={height * 0.35}>
-						<View
-							height={height * 0.35}
-							width={width}
-							alignItems='center'
-							justifyContent='center'
-							flexDirection='row'
-							position='relative'
-							overflow='visible'
-							backgroundColor={colors.primary}
-							gap={20}
-						>
-							<Image
-								position='absolute'
-								source={globe}
-								resizeMode='contain'
-							/>
-							<Image
-								height={110}
-								width={120}
-								borderRadius={20}
-								source={{
-									uri: userProfile.profilepicture || ankit,
-								}}
-							/>
-							<View>
-								<Text
-									fontSize={22}
-									fontFamily={'InterBold'}
-								>
-									{`${userProfile.fname} ${userProfile.lname}` || 'Ankit'}
-								</Text>
-								<Text
-									fontSize={16}
-									fontFamily={'InterMedium'}
-								>
-									{userProfile.designation || 'Founder'}
-								</Text>
-								<Text
-									fontSize={16}
-									fontFamily={'InterMedium'}
-								>
-									{`${
-										userProfile.company === 'N/A'
-											? 'No Company'
-											: userProfile.company
-									}` || 'Ankit'}
-								</Text>
+					<ChevronLeft
+						position='absolute'
+						left={20}
+						color='#000'
+						onPress={() => {
+							router.back();
+						}}
+					/>
+					<Image
+						source={{
+							uri: logo,
+						}}
+						height={Dimensions.get('screen').height * 0.08}
+						width={Dimensions.get('screen').width * 0.4}
+						resizeMode='contain'
+					/>
+				</View>
+				<ScrollView flex={1}>
+					<View
+						flex={1}
+						alignItems='center'
+					>
+						<View height={height * 0.35}>
+							<View
+								height={height * 0.35}
+								width={width}
+								alignItems='center'
+								justifyContent='center'
+								flexDirection='row'
+								position='relative'
+								overflow='visible'
+								backgroundColor={colors.primary}
+								gap={20}
+							>
+								<Image
+									position='absolute'
+									source={globe}
+									resizeMode='contain'
+								/>
+								<Image
+									height={110}
+									width={120}
+									borderRadius={20}
+									source={{
+										uri: userProfile.profilepicture || ankit,
+									}}
+								/>
+								<View>
+									<Text
+										fontSize={22}
+										fontFamily={'InterBold'}
+									>
+										{`${userProfile.fname} ${userProfile.lname}` || 'Ankit'}
+									</Text>
+									<Text
+										fontSize={16}
+										fontFamily={'InterMedium'}
+									>
+										{userProfile.designation || 'Founder'}
+									</Text>
+									<Text
+										fontSize={16}
+										fontFamily={'InterMedium'}
+									>
+										{`${
+											userProfile.company === 'N/A'
+												? 'No Company'
+												: userProfile.company
+										}` || 'Ankit'}
+									</Text>
+								</View>
 							</View>
 						</View>
-					</View>
-					<View
-						flexDirection='row'
-						alignItems='center'
-						justifyContent='space-between'
-						width={width * 0.9}
-						paddingTop={20}
-					>
-						<Text
-							fontSize={16}
-							fontFamily={'InterBold'}
-							color='#616161'
+						<View
+							flexDirection='row'
+							alignItems='center'
+							justifyContent='space-between'
+							width={width * 0.9}
+							paddingTop={20}
 						>
-							My Past Events
-						</Text>
-						<Text
-							fontSize={14}
-							fontFamily={'InterMedium'}
-							color='#616161'
-						>
-							Total {pastEvents.length.toString()} Events
-						</Text>
-					</View>
-					<Divider spacing={20} />
-
-					<View gap={10}>
-						{pastEvents.length > 0 ? (
-							pastEvents.map((event, index) => (
-								<UpcomingEventCard
-									key={index}
-									data={event}
-								/>
-							))
-						) : (
 							<Text
-								color='#000'
-								marginBottom={20}
+								fontSize={16}
+								fontFamily={'InterBold'}
+								color='#616161'
 							>
-								No past events
+								Events Registered
 							</Text>
-						)}
-					</View>
+							<Text
+								fontSize={14}
+								fontFamily={'InterMedium'}
+								color='#616161'
+							>
+								Total {pastRegisterdEvents.length.toString()} Events
+							</Text>
+						</View>
+						<Divider spacing={20} />
 
-					<Button
-						backgroundColor={colors.primary}
-						borderColor={colors.primary}
-						pressStyle={{
-							backgroundColor: colors.primaryDark,
-							borderColor: colors.primary,
-						}}
-						width={'90%'}
-						borderRadius={100 / 2}
-						onPress={logout}
-						marginTop={20}
-					>
-						SIGNOUT
-					</Button>
-					<Text fontSize={20}>Profile</Text>
-				</View>
-			</ScrollView>
+						<View gap={10}>
+							{pastRegisterdEvents.length > 0 ? (
+								pastRegisterdEvents.map((event, index) => (
+									<UpcomingEventCard
+										key={index}
+										data={event}
+										isOnProfile
+									/>
+								))
+							) : (
+								<Text
+									color='#000'
+									marginBottom={20}
+								>
+									No past events
+								</Text>
+							)}
+						</View>
+
+						<View
+							flexDirection='row'
+							alignItems='center'
+							justifyContent='space-between'
+							width={width * 0.9}
+							paddingTop={20}
+						>
+							<Text
+								fontSize={16}
+								fontFamily={'InterBold'}
+								color='#616161'
+							>
+								Events Attended
+							</Text>
+							<Text
+								fontSize={14}
+								fontFamily={'InterMedium'}
+								color='#616161'
+							>
+								Total {pastAttendedEvents.length.toString()} Events
+							</Text>
+						</View>
+						<Divider spacing={20} />
+
+						<View gap={10}>
+							{pastAttendedEvents.length > 0 ? (
+								pastAttendedEvents.map((event, index) => (
+									<UpcomingEventCard
+										key={index}
+										data={event}
+									/>
+								))
+							) : (
+								<Text
+									color='#000'
+									marginBottom={20}
+								>
+									No past events
+								</Text>
+							)}
+						</View>
+
+						<View
+							flexDirection='row'
+							alignItems='center'
+							justifyContent='space-between'
+							width={width * 0.9}
+							paddingTop={20}
+						>
+							<Text
+								fontSize={16}
+								fontFamily={'InterBold'}
+								color='#616161'
+							>
+								Events Missed
+							</Text>
+							<Text
+								fontSize={14}
+								fontFamily={'InterMedium'}
+								color='#616161'
+							>
+								Total {pastMissedEvents.length.toString()} Events
+							</Text>
+						</View>
+						<Divider spacing={20} />
+
+						<View gap={10}>
+							{pastMissedEvents.length > 0 ? (
+								pastMissedEvents.map((event, index) => (
+									<UpcomingEventCard
+										key={index}
+										data={event}
+									/>
+								))
+							) : (
+								<Text
+									color='#000'
+									marginBottom={20}
+								>
+									No past events
+								</Text>
+							)}
+						</View>
+
+						<Button
+							backgroundColor={colors.primary}
+							borderColor={colors.primary}
+							pressStyle={{
+								backgroundColor: colors.primaryDark,
+								borderColor: colors.primary,
+							}}
+							width={'90%'}
+							borderRadius={100 / 2}
+							onPress={logout}
+							marginTop={20}
+						>
+							SIGNOUT
+						</Button>
+						<Text fontSize={20}>Profile</Text>
+					</View>
+				</ScrollView>
+			</PTRView>
 		</SafeAreaView>
 	);
 }
