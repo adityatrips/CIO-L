@@ -29,9 +29,34 @@
 				"backgroundColor": "#ffffff"
 			},
 			"package": "com.cio.leader",
-			"permissions": ["android.permission.INTERNET"]
+			"permissions": [
+				"android.permission.INTERNET",
+				"android.permission.READ_EXTERNAL_STORAGE",
+				"android.permission.WRITE_EXTERNAL_STORAGE"
+			],
+			"intentFilters": [
+				{
+					"action": "android.intent.action.VIEW",
+					"category": [
+						"android.intent.category.DEFAULT",
+						"android.intent.category.BROWSABLE"
+					],
+					"data": {
+						"scheme": "http",
+						"host": "*",
+						"pathPattern": ".*.pdf",
+						"mimeType": "application/pdf"
+					}
+				}
+			]
 		},
-		"plugins": ["expo-router", "expo-font", "expo-secure-store"],
+		"plugins": [
+			"expo-router",
+			"expo-font",
+			"expo-secure-store",
+			"expo-file-system",
+			"expo-build-properties"
+		],
 		"experiments": {
 			"typedRoutes": true
 		}

@@ -2,14 +2,20 @@ import React from 'react';
 import { Dimensions } from 'react-native';
 import { Button, Image, Text, View } from 'tamagui';
 import { colors } from '@/constants';
-
+import coin from '@/assets/images/Coin1.png';
 import Hybrid from '@/assets/images/Hybrid.png';
 import Online from '@/assets/images/Online.png';
 import Offline from '@/assets/images/Offline.png';
 import { useRouter } from 'expo-router';
 import moment from 'moment';
 
-const UpcomingEventCard = ({ data, isOnProfile }) => {
+const UpcomingEventCard = ({
+	data,
+	registered = false,
+	missed = false,
+	attended = false,
+	srcRoute = 'EvtCard',
+}) => {
 	const router = useRouter();
 	return (
 		<View
@@ -105,9 +111,7 @@ const UpcomingEventCard = ({ data, isOnProfile }) => {
 					fontFamily={'InterMedium'}
 					flexShrink={1}
 				>
-					{String(data.name).length > 40
-						? String(data.name).slice(0, 40) + '...'
-						: data.name}
+					{String(data.name)}
 				</Text>
 				<View flexGrow={1}>
 					<View
@@ -150,71 +154,114 @@ const UpcomingEventCard = ({ data, isOnProfile }) => {
 						<Text fontSize={10}>{data.address}</Text>
 					</View>
 				</View>
-				{!isOnProfile && (
+				{attended ? (
+					<View gap={5}>
+						<Button
+							justifyContent='space-between'
+							borderRadius={100 / 2}
+							backgroundColor={colors.primaryDark}
+							borderColor={colors.primaryDark}
+							disabled={missed}
+							pressStyle={{
+								backgroundColor: colors.primary,
+								borderColor: colors.primaryDark,
+							}}
+							height={30}
+							onPress={() => {
+								router.push({
+									pathname: `/screenFeedback/${data.id}`,
+									state: { srcRoute: srcRoute },
+								});
+							}}
+						>
+							<View
+								flexDirection='row'
+								alignItems='center'
+								gap={5}
+							>
+								<Text
+									fontSize={10}
+									fontFamily={'InterBold'}
+								>
+									SHARE FEEDBACK
+								</Text>
+								<Image
+									source={{
+										uri: coin,
+									}}
+									width={25}
+									height={25}
+								/>
+							</View>
+						</Button>
+						<Button
+							justifyContent='space-between'
+							borderRadius={100 / 2}
+							backgroundColor={colors.primaryDark}
+							borderColor={colors.primaryDark}
+							disabled={missed}
+							pressStyle={{
+								backgroundColor: colors.primary,
+								borderColor: colors.primaryDark,
+							}}
+							height={30}
+							onPress={() => {
+								router.push({
+									pathname: `/authUser/event/${data.id}`,
+									state: { srcRoute: srcRoute },
+								});
+							}}
+						>
+							<View
+								flexDirection='row'
+								alignItems='center'
+								gap={5}
+							>
+								<Text
+									fontSize={10}
+									fontFamily={'InterBold'}
+								>
+									SHARE SELFIE
+								</Text>
+								<Image
+									source={{
+										uri: coin,
+									}}
+									width={25}
+									height={25}
+								/>
+							</View>
+						</Button>
+					</View>
+				) : (
 					<Button
 						borderRadius={100 / 2}
-						backgroundColor={colors.primaryDark}
-						borderColor={colors.primaryDark}
+						backgroundColor={
+							registered ? '#7a7a7a' : missed ? '#CE3426' : colors.primaryDark
+						}
+						borderColor={
+							registered ? '#7a7a7a' : missed ? '#CE3426' : colors.primaryDark
+						}
+						disabled={missed}
 						pressStyle={{
 							backgroundColor: colors.primary,
 							borderColor: colors.primaryDark,
 						}}
 						height={30}
 						onPress={() => {
-							router.push(`/authUser/event/${data.id}`);
+							router.push({
+								pathname: `/authUser/event/${data.id}`,
+								state: { srcRoute: srcRoute },
+							});
 						}}
 					>
 						<Text
 							fontSize={10}
 							fontFamily={'InterBold'}
 						>
-							KNOW MORE
+							{registered ? 'REGISTERED' : missed ? 'MISSED' : 'KNOW MORE'}
 						</Text>
 					</Button>
-				)}
-				{isOnProfile && (
-					<View gap={5}>
-						<Button
-							borderRadius={100 / 2}
-							backgroundColor={colors.primaryDark}
-							borderColor={colors.primaryDark}
-							pressStyle={{
-								backgroundColor: colors.primary,
-								borderColor: colors.primaryDark,
-							}}
-							height={30}
-							onPress={() => {
-								router.push(`/screenFeedback/${data.id}`);
-							}}
-						>
-							<Text
-								fontSize={10}
-								fontFamily={'InterBold'}
-							>
-								FEEDBACK
-							</Text>
-						</Button>
-						<Button
-							borderRadius={100 / 2}
-							backgroundColor={colors.primaryDark}
-							borderColor={colors.primaryDark}
-							pressStyle={{
-								backgroundColor: colors.primary,
-								borderColor: colors.primaryDark,
-							}}
-							height={30}
-							onPress={() => {
-								// router.push(`/authUser/event/${data.id}`);
-							}}
-						>
-							<Text
-								fontSize={10}
-								fontFamily={'InterBold'}
-							>
-								SHARE SELFIE
-							</Text>
-						</Button>
-					</View>
 				)}
 			</View>
 		</View>

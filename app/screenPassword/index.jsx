@@ -8,28 +8,35 @@ import ankit from '@/assets/images/Ankit.png';
 import { Dimensions, ToastAndroid } from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import LoadingComp from '../../components/Loading';
+import LoadingComp from '@/components/Loading';
 
 const ScreenPassword = () => {
 	const router = useRouter();
 	const [pword, setPword] = useState('india@123');
+	const [isLoading, setIsLoading] = useState(false);
 
 	const { userToken, userInfo, loading, login, lookupUser, toggleAuth } =
 		useContext(AuthContext);
 
 	const loginHandler = async () => {
-		if (pword.length === 0) {
-			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+		if (pword.length === 0 || pword.length < 8) {
+			ToastAndroid.show(
+				'Invalid password, please re-check',
+				ToastAndroid.SHORT
+			);
 			return;
 		} else {
 			try {
-				await login(userInfo?.username, pword);
-				router.push('/authUser/home');
+				setIsLoading(true);
+				login(userInfo?.username, pword).then(() => {
+					router.push('/authUser/home');
+					setIsLoading(false);
+				});
 			} catch (error) {
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				if (error.message) {
-					alert('Invalid password, please try again!');
-				}
+				ToastAndroid.show(
+					'Invalid password, please try again!',
+					ToastAndroid.SHORT
+				);
 			}
 		}
 	};

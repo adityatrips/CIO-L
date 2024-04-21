@@ -3,6 +3,8 @@ import { StyleSheet } from 'react-native';
 import { View, Text } from 'tamagui';
 
 export default function NotFoundScreen() {
+	console.log(window.location);
+
 	return (
 		<>
 			<Stack.Screen options={{ title: 'Oops!' }} />

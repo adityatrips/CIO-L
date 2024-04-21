@@ -18,7 +18,7 @@ const PointsTable = ({ userToken, isOnHome = false }) => {
 	const getData = async () => {
 		try {
 			const res = await axios.get(
-				'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=10',
+				'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=5',
 				{
 					headers: {
 						Authorization: `Token ${userToken}`,
@@ -73,9 +73,7 @@ const PointsTable = ({ userToken, isOnHome = false }) => {
 			style={{
 				position: 'relative',
 				width: Dimensions.get('window').width * 0.9,
-				height: !isOnHome
-					? Dimensions.get('screen').height * 0.925
-					: Dimensions.get('screen').height * 0.8,
+				height: !isOnHome ? Dimensions.get('screen').height * 0.925 : 'auto',
 			}}
 		>
 			<ScrollView flex={1}>
@@ -277,9 +275,7 @@ const PointsTable = ({ userToken, isOnHome = false }) => {
 											color={'#616161'}
 											fontSize={10}
 										>
-											{item.description.length > 15
-												? item.description.substring(0, 15).concat('...')
-												: item.description}
+											{item.description}
 										</Text>
 										<View
 											flex={1}
@@ -460,24 +456,30 @@ const PointsTable = ({ userToken, isOnHome = false }) => {
 					bottom={'12%'}
 				>
 					<Button
+						height={30}
 						disabled={data.links.previous === null}
 						onPress={() =>
 							getPaginatedData(
 								data.links.previous.replace('http://', 'https://')
 							)
 						}
-						backgroundColor={colors.primary}
+						backgroundColor={
+							data.links.previous === null ? 'transparent' : colors.primary
+						}
 					>
-						<ChevronLeftCircle />
+						{!(data.links.previous === null) && <ChevronLeftCircle />}
 					</Button>
 					<Button
+						height={30}
 						disabled={data.links.next === null}
 						onPress={() => {
 							getPaginatedData(data.links.next.replace('http://', 'https://'));
 						}}
-						backgroundColor={colors.primary}
+						backgroundColor={
+							data.links.next === null ? 'transparent' : colors.primary
+						}
 					>
-						<ChevronRightCircle />
+						{!(data.links.next === null) && <ChevronRightCircle />}
 					</Button>
 				</View>
 			)}

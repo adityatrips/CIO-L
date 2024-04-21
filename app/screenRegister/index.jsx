@@ -205,6 +205,7 @@ const ScreenRegister = () => {
 				<Input
 					autoCapitalize='none'
 					autoCorrect={false}
+					autoComplete='tel'
 					borderWidth={0}
 					color='#616161'
 					width={'100%'}
@@ -225,6 +226,7 @@ const ScreenRegister = () => {
 				<Input
 					autoCapitalize='none'
 					autoCorrect={false}
+					autoComplete='email'
 					borderWidth={0}
 					color='#616161'
 					width={'100%'}
@@ -281,8 +283,8 @@ const ScreenRegister = () => {
 					backgroundColor={'#fff'}
 					paddingHorizontal={20}
 					height={50}
-					value={pword}
-					onChangeText={setPword}
+					value={confPword}
+					onChangeText={setConfPword}
 				/>
 				<Input
 					autoCapitalize='none'

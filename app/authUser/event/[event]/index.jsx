@@ -1,19 +1,29 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Button, Image, Text, ScrollView } from 'tamagui';
-import { Dimensions, Linking, ToastAndroid } from 'react-native';
+import { Dimensions, StatusBar, ToastAndroid } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/constants';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
 import LoadingComp from '@/components/Loading';
 import moment from 'moment';
+import HeaderComp from '@/components/Header';
+import coin from '@/assets/images/Coin1.png';
+import * as Linking from 'expo-linking';
+import * as Sharing from 'expo-sharing';
+import { Share } from 'react-native';
+import { downloadAndOpenPdf } from '@/constants';
 
 const EventScreen = () => {
 	const { event } = useLocalSearchParams();
 	const { userToken } = useContext(AuthContext);
 	const [loading, setLoading] = useState(true);
 	const [evtData, setEvtData] = useState({});
+	const router = useRouter();
+	const url = Linking.useURL();
+
+	const { srcRoute } = useLocalSearchParams();
 
 	const getOneEvent = async () => {
 		setLoading(true);
@@ -28,7 +38,7 @@ const EventScreen = () => {
 			);
 			setEvtData(res.data);
 		} catch (error) {
-			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			ToastAndroid.show('An error has occurred', ToastAndroid.SHORT);
 		} finally {
 			setLoading(false);
 		}
@@ -45,6 +55,8 @@ const EventScreen = () => {
 			edges={['top', 'bottom', 'left', 'right']}
 			style={{ flexGrow: 1, backgroundColor: colors.primaryDark }}
 		>
+			<HeaderComp title={evtData.name} />
+			<StatusBar barStyle='light' />
 			<ScrollView
 				style={{
 					flex: 1,
@@ -166,6 +178,35 @@ const EventScreen = () => {
 								height={30}
 								fontSize={10}
 								fontFamily={'InterBold'}
+								onPress={async () => {
+									console.log(userToken, event);
+									try {
+										const res = await axios.post(
+											'https://cioleader.azurewebsites.net/api/register/create/',
+											{
+												event: event,
+											},
+											{
+												headers: {
+													Authorization: `Token ${userToken}`,
+												},
+											}
+										);
+									} catch (error) {
+										console.log(error.code);
+										if (error.code === 'ERR_BAD_REQUEST') {
+											ToastAndroid.show(
+												'You have already registered for the event.',
+												ToastAndroid.SHORT
+											);
+										} else {
+											ToastAndroid.show(
+												'Thank you for showing interest in this event!',
+												ToastAndroid.SHORT
+											);
+										}
+									}
+								}}
 							>
 								<Text
 									fontSize={10}
@@ -174,6 +215,24 @@ const EventScreen = () => {
 								>
 									Register
 								</Text>
+								<View
+									flexDirection='row'
+									alignItems='center'
+								>
+									<Image
+										source={{
+											uri: coin,
+										}}
+										height={25}
+										width={25}
+									/>
+									<Text
+										fontSize={10}
+										fontFamily={'InterBold'}
+									>
+										+50
+									</Text>
+								</View>
 							</Button>
 							<Button
 								width={wW * 0.4}
@@ -187,8 +246,16 @@ const EventScreen = () => {
 									backgroundColor: colors.primaryDark,
 									borderColor: colors.primary,
 								}}
-								onPress={() => {
-									Linking.openURL(evtData.agenda);
+								onPress={async () => {
+									const uri = await downloadAndOpenPdf(
+										evtData.agenda,
+										`${evtData.name}_Agenda`
+									);
+									await Sharing.shareAsync(uri, {
+										mimeType: 'application/pdf',
+										dialogTitle: 'Share PDF',
+										dialogTitle: 'Share PDF',
+									});
 								}}
 							>
 								<Text
@@ -225,12 +292,12 @@ const EventScreen = () => {
 								gap: 10,
 							}}
 						>
-							{
-								evtData.speakers.length <= 6 ? (
-									evtData.speakers.map((speaker, index) => (
+							{evtData.speakers.length <= 6 ? (
+								evtData.speakers.map((speaker, index) => (
+									<View>
 										<View
 											key={index}
-											width={wW * 0.5}
+											width={wW / 3 - 20}
 											borderRadius={20}
 											borderWidth={1}
 											borderColor={'#000'}
@@ -242,12 +309,64 @@ const EventScreen = () => {
 												aspectRatio={1 / 1}
 												overflow='hidden'
 											/>
-											<View
+										</View>
+										<View>
+											<Text
 												style={{
-													width: '100%',
-													paddingVertical: 10,
+													fontSize: 12,
+													fontWeight: 'bold',
+													color: '#616161',
+													textAlign: 'center',
 												}}
 											>
+												{speaker.name}
+											</Text>
+											<Text
+												style={{
+													fontSize: 9,
+													color: '#616161',
+													textAlign: 'center',
+												}}
+											>
+												{speaker.designation}
+											</Text>
+											<Text
+												style={{
+													fontSize: 9,
+													color: '#616161',
+													textAlign: 'center',
+												}}
+											>
+												{speaker.company}
+											</Text>
+										</View>
+									</View>
+								))
+							) : (
+								<ScrollView
+									horizontal
+									contentContainerStyle={{
+										gap: 10,
+									}}
+								>
+									{evtData.speakers.map((speaker, index) => (
+										<View>
+											<View
+												key={index}
+												width={wW / 3 - 20}
+												borderRadius={20}
+												borderWidth={1}
+												borderColor={'#000'}
+												overflow='hidden'
+											>
+												<Image
+													source={{ uri: speaker.profile }}
+													width={'100%'}
+													aspectRatio={1 / 1}
+													overflow='hidden'
+												/>
+											</View>
+											<View>
 												<Text
 													style={{
 														fontSize: 12,
@@ -278,73 +397,9 @@ const EventScreen = () => {
 												</Text>
 											</View>
 										</View>
-									))
-								) : (
-									// <ScrollView horizontal>
-									// {evtData.speakers.map((speaker, index) => (
-									<ScrollView
-										horizontal
-										contentContainerStyle={{
-											gap: 10,
-										}}
-									>
-										{evtData.speakers.map((speaker, index) => (
-											<View
-												key={index}
-												width={wW * 0.5}
-												borderRadius={20}
-												borderWidth={1}
-												borderColor={'#000'}
-												overflow='hidden'
-											>
-												<Image
-													source={{ uri: speaker.profile }}
-													width={'100%'}
-													aspectRatio={1 / 1}
-													overflow='hidden'
-												/>
-												<View
-													style={{
-														width: '100%',
-														paddingVertical: 10,
-													}}
-												>
-													<Text
-														style={{
-															fontSize: 12,
-															fontWeight: 'bold',
-															color: '#616161',
-															textAlign: 'center',
-														}}
-													>
-														{speaker.name}
-													</Text>
-													<Text
-														style={{
-															fontSize: 9,
-															color: '#616161',
-															textAlign: 'center',
-														}}
-													>
-														{speaker.designation}
-													</Text>
-													<Text
-														style={{
-															fontSize: 9,
-															color: '#616161',
-															textAlign: 'center',
-														}}
-													>
-														{speaker.company}
-													</Text>
-												</View>
-											</View>
-										))}
-									</ScrollView>
-								)
-								// ))}
-								// </ScrollView>
-							}
+									))}
+								</ScrollView>
+							)}
 						</View>
 					</View>
 					<View
@@ -392,6 +447,21 @@ const EventScreen = () => {
 								}}
 								borderRadius={100 / 2}
 								height={30}
+								onPress={async () => {
+									const res = await Share.share({
+										message: `CIO&Leader\n\nJoin me at ${
+											evtData.name
+										} on ${moment(evtData.date, 'YYYY-MM-DD').format(
+											'MMM DD, YYYY'
+										)} at ${moment(evtData.time, 'HH:mm:ss').format(
+											'hh:mm A'
+										)} at ${
+											evtData.venue
+										} for an amazing event. Click the link below to view the agenda.\n\nRegister now at CIO&Leader.\n${
+											evtData.agenda
+										}`,
+									});
+								}}
 							>
 								<Text
 									fontSize={10}
@@ -401,48 +471,53 @@ const EventScreen = () => {
 									Share Event
 								</Text>
 							</Button>
-							<Button
-								backgroundColor={colors.primary}
-								borderColor={colors.primary}
-								pressStyle={{
-									backgroundColor: colors.primaryDark,
-									borderColor: colors.primary,
-								}}
-								width={wW * 0.4}
-								borderRadius={100 / 2}
-								height={30}
-								fontSize={10}
-								fontFamily={'InterBold'}
-							>
-								<Text
-									fontSize={10}
-									fontFamily={'InterBold'}
-									textTransform='uppercase'
-								>
-									Share Selfie
-								</Text>
-							</Button>
-							<Button
-								backgroundColor={colors.primary}
-								borderColor={colors.primary}
-								pressStyle={{
-									backgroundColor: colors.primaryDark,
-									borderColor: colors.primary,
-								}}
-								width={wW * 0.4}
-								borderRadius={100 / 2}
-								height={30}
-								fontSize={10}
-								fontFamily={'InterBold'}
-							>
-								<Text
-									fontSize={10}
-									fontFamily={'InterBold'}
-									textTransform='uppercase'
-								>
-									Share Feedback
-								</Text>
-							</Button>
+							{srcRoute === 'Profile' && (
+								<>
+									<Button
+										backgroundColor={colors.primary}
+										borderColor={colors.primary}
+										pressStyle={{
+											backgroundColor: colors.primaryDark,
+											borderColor: colors.primary,
+										}}
+										width={wW * 0.4}
+										borderRadius={100 / 2}
+										height={30}
+										fontSize={10}
+										fontFamily={'InterBold'}
+									>
+										<Text
+											fontSize={10}
+											fontFamily={'InterBold'}
+											textTransform='uppercase'
+										>
+											Share Selfie
+										</Text>
+									</Button>
+									<Button
+										backgroundColor={colors.primary}
+										borderColor={colors.primary}
+										pressStyle={{
+											backgroundColor: colors.primaryDark,
+											borderColor: colors.primary,
+										}}
+										width={wW * 0.4}
+										borderRadius={100 / 2}
+										height={30}
+										fontSize={10}
+										fontFamily={'InterBold'}
+										onPress={() => {}}
+									>
+										<Text
+											fontSize={10}
+											fontFamily={'InterBold'}
+											textTransform='uppercase'
+										>
+											Share Feedback
+										</Text>
+									</Button>
+								</>
+							)}
 						</View>
 					</View>
 				</View>

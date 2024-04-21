@@ -1,8 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
-import { Image, Text, View } from 'tamagui';
+import { Button, Image, Text, View } from 'tamagui';
 import { AuthContext } from '@/context/AuthContext';
 import { colors } from '@/constants';
-import { Dimensions, ScrollView, ToastAndroid } from 'react-native';
+import {
+	Dimensions,
+	RefreshControl,
+	ScrollView,
+	ToastAndroid,
+} from 'react-native';
 import evt from '@/assets/icons/evt.png';
 import home from '@/assets/icons/home.png';
 import points from '@/assets/icons/points.png';
@@ -21,8 +26,10 @@ import PointsTable from '@/components/PointsTable';
 import { useRouter } from 'expo-router';
 import LoadingComp from '@/components/Loading';
 import { StatusBar } from 'expo-status-bar';
-import PTRView from 'react-native-pull-to-refresh';
 import HeaderComp from '@/components/Header';
+import ResourceCard from '@/components/ResourceCard';
+import PodcastCard from '@/components/PodcastCard';
+import EditorialMags from '@/components/EditorialMags';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -35,6 +42,8 @@ export default function HomeScreen() {
 	const [knowledgeCards, setKnowledgeCards] = useState([]);
 	const [pointsData, setPoints] = useState({});
 	const [resourceData, setResourceData] = useState([]);
+	const [podcastData, setPodcastData] = useState([]);
+	const [magData, setMagData] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [offsetY, setOffsetY] = useState({
 		home: 0,
@@ -51,7 +60,7 @@ export default function HomeScreen() {
 
 	const scrollTo = (off) => {
 		scrollRef.current.scrollTo({
-			y: off,
+			y: off + 60,
 			animated: true,
 		});
 	};
@@ -94,6 +103,24 @@ export default function HomeScreen() {
 		}
 	};
 
+	const getMags = async () => {
+		if (userToken !== '' || userToken !== null || userToken !== undefined) {
+			try {
+				const res = await axios.get(
+					'https://cioleader.azurewebsites.net/api/editorial/all',
+					{
+						headers: {
+							Authorization: `Token ${userToken}`,
+						},
+					}
+				);
+				setMagData(res.data);
+			} catch (error) {
+				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			}
+		}
+	};
+
 	const getResourceList = async () => {
 		if (userToken !== '' || userToken !== null || userToken !== undefined) {
 			try {
@@ -130,6 +157,8 @@ export default function HomeScreen() {
 		}
 	};
 
+	const [currScroll, setCurrScroll] = useState(0);
+
 	const getUserProfile = async () => {
 		if (userToken !== '' || userToken !== null || userToken !== undefined) {
 			try {
@@ -155,290 +184,328 @@ export default function HomeScreen() {
 		}
 	};
 
+	const getPodcasts = async () => {
+		if (userToken !== '' || userToken !== null || userToken !== undefined) {
+			try {
+				const res = await axios.get(
+					'https://cioleader.azurewebsites.net/api/podcast/all/',
+					{
+						headers: {
+							Authorization: `Token ${userToken}`,
+						},
+					}
+				);
+				setIsLoading(false);
+				setPodcastData(res.data);
+			} catch (error) {
+				setPodcastData([]);
+				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			}
+		}
+	};
+
 	useEffect(() => {
 		setIsLoading(true);
-		getUserProfile();
-		getUpcomingEvents();
-		getKnowledgeCards();
-		getResourceList();
-		getPoints();
-		setIsLoading(false);
+		(async () => {
+			getUserProfile();
+			getUpcomingEvents();
+			getKnowledgeCards();
+			getResourceList();
+			getPodcasts();
+			getPoints();
+			getMags();
+		})().then(() => {
+			setIsLoading(false);
+		});
 	}, []);
 
-	return !isLoading ? (
+	return !isLoading && !loading ? (
 		<SafeAreaView
 			edges={['top', 'bottom', 'right', 'left']}
 			flex={1}
 		>
 			<StatusBar style='dark' />
 			<HeaderComp title='Welcome' />
-			<ScrollView ref={scrollRef}>
-				<PTRView
-					style={{
-						bottom: 10,
-						flex: 1,
-						marginBottom: 20,
-					}}
-					contentContainerStyle={{
-						alignItems: 'center',
-					}}
-					onRefresh={() => {
-						getUserProfile();
-						getUpcomingEvents();
-						getKnowledgeCards();
-						getResourceList();
-						getPoints();
+			<ScrollView
+				onScroll={(e) => {
+					setCurrScroll(e.nativeEvent.contentOffset.y);
+				}}
+				refreshControl={
+					<RefreshControl
+						refreshing={loading}
+						onRefresh={() => {
+							setIsLoading(true);
+							getUserProfile();
+							getUpcomingEvents();
+							getKnowledgeCards();
+							getResourceList();
+							getPodcasts();
+							getPoints();
+							getMags();
+							setIsLoading(false);
+						}}
+					/>
+				}
+				ref={scrollRef}
+				style={{
+					bottom: 10,
+					flex: 1,
+					marginBottom: 20,
+				}}
+				contentContainerStyle={{
+					alignItems: 'center',
+				}}
+			>
+				<View
+					height={height * 0.7}
+					ref={homeRef}
+					onLayout={(e) => {
+						setOffsetY({
+							...offsetY,
+							home: e.nativeEvent.layout.y,
+						});
 					}}
 				>
 					<View
-						height={height * 0.7}
-						ref={homeRef}
-						onLayout={(e) => {
-							setOffsetY({
-								...offsetY,
-								home: e.nativeEvent.layout.y,
-							});
-						}}
+						height={height * 0.6}
+						width={width}
+						alignItems='center'
+						justifyContent='center'
+						position='relative'
+						overflow='visible'
+						backgroundColor={colors.primary}
 					>
 						<View
-							height={height * 0.6}
-							width={width}
+							top={Dimensions.get('screen').height * 0.1}
+							position='absolute'
+						>
+							<Image
+								source={globe}
+								resizeMode='contain'
+							/>
+						</View>
+						<Text
+							fontSize={35}
+							fontFamily={'InterBold'}
+						>
+							WELCOME!!
+						</Text>
+						<Image
+							height={110}
+							width={120}
+							borderRadius={20}
+							source={{
+								uri: userProfile.profilepicture || ankit,
+							}}
+							marginBottom={10}
+						/>
+						<Text
+							fontSize={18}
+							fontFamily={'InterBold'}
+						>
+							{`${userProfile.fname} ${userProfile.lname}` || 'Ankit'}
+						</Text>
+						<Text
+							fontSize={15}
+							fontFamily={'InterMedium'}
+						>
+							{userProfile.designation || 'Founder'}
+						</Text>
+					</View>
+					<View
+						position='absolute'
+						bottom={20}
+						flexDirection='row'
+						justifyContent='space-between'
+						alignItems='center'
+						width={width}
+						paddingHorizontal={20}
+					>
+						<View
 							alignItems='center'
 							justifyContent='center'
-							position='relative'
-							overflow='visible'
-							backgroundColor={colors.primary}
+							padding={10}
+							borderRadius={20}
+							elevationAndroid={10}
+							flexDirection='column'
+							width={width * 0.425}
+							height={100}
+							backgroundColor={colors.primaryDark}
 						>
 							<View
-								top={Dimensions.get('screen').height * 0.1}
-								position='absolute'
+								flexDirection='row'
+								alignItems='center'
+								gap={10}
 							>
 								<Image
-									source={globe}
-									resizeMode='contain'
+									source={earn}
+									height={35}
+									width={'auto'}
+									aspectRatio={0.837}
 								/>
+								<Text
+									textAlign='center'
+									fontSize={32}
+									fontFamily={'InterBold'}
+								>
+									{userProfile.earnmonth || '0'}
+								</Text>
 							</View>
 							<Text
-								fontSize={35}
-								fontFamily={'InterBold'}
+								textAlign='center'
+								fontSize={13}
+								fontFamily={'InterSemiBold'}
 							>
-								WELCOME!!
-							</Text>
-							<Image
-								height={110}
-								width={120}
-								borderRadius={20}
-								source={{
-									uri: userProfile.profilepicture || ankit,
-								}}
-								marginBottom={10}
-							/>
-							<Text
-								fontSize={18}
-								fontFamily={'InterBold'}
-							>
-								{`${userProfile.fname} ${userProfile.lname}` || 'Ankit'}
-							</Text>
-							<Text
-								fontSize={15}
-								fontFamily={'InterMedium'}
-							>
-								{userProfile.designation || 'Founder'}
+								Total Earned
 							</Text>
 						</View>
 						<View
-							position='absolute'
-							bottom={20}
-							flexDirection='row'
-							justifyContent='space-between'
 							alignItems='center'
-							width={width}
-							paddingHorizontal={20}
+							flexDirection='column'
+							justifyContent='center'
+							padding={10}
+							borderRadius={20}
+							elevationAndroid={10}
+							width={width * 0.425}
+							height={100}
+							backgroundColor={colors.primaryDark}
 						>
 							<View
+								flexDirection='row'
 								alignItems='center'
-								justifyContent='center'
-								padding={10}
-								borderRadius={20}
-								elevationAndroid={10}
-								flexDirection='column'
-								width={width * 0.425}
-								height={100}
-								backgroundColor={colors.primaryDark}
+								gap={10}
 							>
-								<View
-									flexDirection='row'
-									alignItems='center'
-									gap={10}
-								>
-									<Image
-										source={earn}
-										height={35}
-										width={'auto'}
-										aspectRatio={0.837}
-									/>
-									<Text
-										textAlign='center'
-										fontSize={32}
-										fontFamily={'InterBold'}
-									>
-										{userProfile.earnmonth || '0'}
-									</Text>
-								</View>
+								<Image
+									source={rem}
+									height={40}
+									width={'auto'}
+									aspectRatio={1.04}
+								/>
 								<Text
 									textAlign='center'
-									fontSize={13}
-									fontFamily={'InterSemiBold'}
+									fontSize={32}
+									fontFamily={'InterBold'}
 								>
-									Total Earned
+									{userProfile.points || '0'}
 								</Text>
 							</View>
-							<View
-								alignItems='center'
-								flexDirection='column'
-								justifyContent='center'
-								padding={10}
-								borderRadius={20}
-								elevationAndroid={10}
-								width={width * 0.425}
-								height={100}
-								backgroundColor={colors.primaryDark}
+							<Text
+								textAlign='center'
+								fontSize={13}
+								fontFamily={'InterSemiBold'}
 							>
-								<View
-									flexDirection='row'
-									alignItems='center'
-									gap={10}
-								>
-									<Image
-										source={rem}
-										height={40}
-										width={'auto'}
-										aspectRatio={1.04}
-									/>
-									<Text
-										textAlign='center'
-										fontSize={32}
-										fontFamily={'InterBold'}
-									>
-										{userProfile.points || '0'}
-									</Text>
-								</View>
-								<Text
-									textAlign='center'
-									fontSize={13}
-									fontFamily={'InterSemiBold'}
-								>
-									Remaining points
-								</Text>
-							</View>
+								Remaining points
+							</Text>
 						</View>
 					</View>
-					<View>
-						<Text
-							color='#616161'
-							textAlign='center'
-							textTransform='uppercase'
-							fontSize={15}
-							fontFamily={'InterBold'}
-						>
-							Your unique QR code
-						</Text>
-
-						<Image
-							source={{
-								uri: userProfile.qrcode,
-							}}
-							height={200}
-							width={200}
-						/>
-
-						<Text
-							color={'#616161'}
-							fontSize={15}
-							fontFamily={'InterSemiBold'}
-							textTransform='uppercase'
-							textAlign='center'
-						>
-							CIO&L Privilege Code
-						</Text>
-						<Text
-							color={'#6BB943'}
-							fontSize={21}
-							fontFamily={'InterBold'}
-							textTransform='uppercase'
-							textAlign='center'
-						>
-							{userProfile.code}
-						</Text>
-					</View>
-					<Divider
-						ref={eventRef}
-						onLayout={(e) => {
-							setOffsetY({
-								...offsetY,
-								evt: e.nativeEvent.layout.y,
-							});
-						}}
-					/>
+				</View>
+				<View>
 					<Text
-						fontSize={16}
+						color='#616161'
+						textAlign='center'
+						textTransform='uppercase'
+						fontSize={15}
 						fontFamily={'InterBold'}
+					>
+						Your unique QR code
+					</Text>
+
+					<Image
+						source={{
+							uri: userProfile.qrcode,
+						}}
+						height={200}
+						width={200}
+					/>
+
+					<Text
 						color={'#616161'}
-						width={'90%'}
-						marginBottom={20}
+						fontSize={15}
+						fontFamily={'InterSemiBold'}
+						textTransform='uppercase'
+						textAlign='center'
 					>
-						Upcoming Events
+						CIO&L Privilege Code
 					</Text>
-					<View
-						gap={10}
-						marginBottom={10}
-					>
-						{upcomingEvents.length > 0 ? (
-							upcomingEvents.map((item, index) => (
-								<UpcomingEventCard
-									key={index}
-									data={item}
-								/>
-							))
-						) : (
-							<View width={'90%'}>
-								<Text
-									textAlign='left'
-									color={colors.text}
-								>
-									Nothing to show here...
-								</Text>
-							</View>
-						)}
-					</View>
-					<Divider
-						ref={kcRef}
-						onLayout={(e) => {
-							setOffsetY({
-								...offsetY,
-								kc: e.nativeEvent.layout.y,
-							});
-						}}
-					/>
-					<View></View>
-
 					<Text
-						width={'90%'}
-						color='#616161'
-						fontSize={16}
+						color={'#6BB943'}
+						fontSize={21}
 						fontFamily={'InterBold'}
+						textTransform='uppercase'
+						textAlign='center'
 					>
-						Knowledge Center
+						{userProfile.code}
 					</Text>
-					<Text
-						width={'90%'}
-						color='#616161'
-						marginBottom={20}
-						fontSize={14}
-						fontFamily={'InterMedium'}
-					>
-						Whitepaper & Reports
-					</Text>
+				</View>
+				<Divider
+					ref={eventRef}
+					onLayout={(e) => {
+						setOffsetY({
+							...offsetY,
+							evt: e.nativeEvent.layout.y,
+						});
+					}}
+				/>
+				<Text
+					fontSize={16}
+					fontFamily={'InterBold'}
+					color={'#616161'}
+					width={'90%'}
+					marginBottom={20}
+				>
+					Upcoming Events
+				</Text>
+				<View
+					gap={10}
+					marginBottom={10}
+				>
+					{upcomingEvents.length > 0 ? (
+						upcomingEvents.map((item, index) => (
+							<UpcomingEventCard
+								key={index}
+								data={item}
+							/>
+						))
+					) : (
+						<View width={'90%'}>
+							<Text
+								textAlign='left'
+								color={colors.text}
+							>
+								No upcoming events for now...
+							</Text>
+						</View>
+					)}
+				</View>
+				<Divider
+					ref={kcRef}
+					onLayout={(e) => {
+						setOffsetY({
+							...offsetY,
+							kc: e.nativeEvent.layout.y,
+						});
+					}}
+				/>
+				<View></View>
+
+				<Text
+					width={'90%'}
+					color='#616161'
+					fontSize={16}
+					fontFamily={'InterBold'}
+				>
+					Knowledge Center
+				</Text>
+				<Text
+					width={'90%'}
+					color='#616161'
+					marginBottom={20}
+					fontSize={14}
+					fontFamily={'InterMedium'}
+				>
+					Whitepaper & Reports
+				</Text>
+				{knowledgeCards.length > 0 ? (
 					<ScrollView
 						horizontal
 						gap={10}
@@ -447,42 +514,221 @@ export default function HomeScreen() {
 					>
 						{knowledgeCards.map((item, index) => (
 							<KnowledgeCard
+								getFn={getKnowledgeCards}
 								key={index}
 								data={item}
 							/>
 						))}
 					</ScrollView>
-
+				) : (
 					<Text
-						width={'90%'}
-						color='#616161'
+						color='#000'
+						textAlign='center'
+						width={Dimensions.get('screen').width * 0.9}
 						marginBottom={20}
-						fontSize={14}
-						fontFamily={'InterMedium'}
 					>
-						Editorial Magazines
+						No whitepapers available...
 					</Text>
+				)}
 
+				<Text
+					width={'90%'}
+					color='#616161'
+					marginBottom={20}
+					fontSize={14}
+					fontFamily={'InterMedium'}
+				>
+					Editorial Magazines
+				</Text>
+
+				{/* {magData.length > 0 ? (
+					magData.filter((mag) => mag.magzine === '1').length > 1 ? (
+						<ScrollView
+							horizontal
+							gap={10}
+							marginBottom={10}
+							width='90%'
+						>
+							{magData
+								.filter((mag) => mag.magzine === '1')
+								.map((item, index) => (
+									<EditorialMags
+										getFn={getMags}
+										key={index}
+										data={item}
+									/>
+								))}
+						</ScrollView>
+					) : (
+						magData
+							.filter((mag) => mag.magzine === '1')
+							.map((item, index) => (
+								<EditorialMags
+									getFn={getMags}
+									key={index}
+									data={item}
+									width={'90%'}
+								/>
+							))
+					)
+				) : magData.filter((mag) => mag.magzine === '2').length > 1 ? (
+					<ScrollView
+						horizontal
+						gap={10}
+						marginBottom={10}
+						width='90%'
+					>
+						{magData
+							.filter((mag) => mag.magzine === '2')
+							.map((item, index) => (
+								<EditorialMags
+									getFn={getMags}
+									key={index}
+									data={item}
+								/>
+							))}
+					</ScrollView>
+				) : magData
+						.filter((mag) => mag.magzine === '2')
+						.map((item, index) => (
+							<EditorialMags
+								getFn={getMags}
+								key={index}
+								data={item}
+								width={'90%'}
+							/>
+						)) ? (
 					<Text
-						width={'90%'}
-						color='#616161'
+						color='#000'
+						textAlign='center'
+						width={Dimensions.get('screen').width * 0.9}
 						marginBottom={20}
-						fontSize={14}
-						fontFamily={'InterMedium'}
 					>
-						Podcast
+						No new magazines...
 					</Text>
-
+				) : (
 					<Text
-						width={'90%'}
-						color='#616161'
+						color='#000'
+						textAlign='center'
+						width={Dimensions.get('screen').width * 0.9}
 						marginBottom={20}
-						fontSize={14}
-						fontFamily={'InterMedium'}
 					>
-						Resource Libraries
+						No new magazines...
 					</Text>
+				)} */}
+				{magData.filter((mag) => mag.magzine === '1').length > 1 ? (
+					<ScrollView
+						horizontal
+						gap={10}
+						marginBottom={10}
+						width='90%'
+					>
+						{magData
+							.filter((mag) => mag.magzine === '1')
+							.map((item, index) => (
+								<EditorialMags
+									getFn={getMags}
+									key={index}
+									data={item}
+								/>
+							))}
+					</ScrollView>
+				) : (
+					magData
+						.filter((mag) => mag.magzine === '1')
+						.map((item, index) => (
+							<EditorialMags
+								getFn={getMags}
+								key={index}
+								data={item}
+								width={'90%'}
+							/>
+						))
+				)}
+				{magData.filter((mag) => mag.magzine === '2').length > 1 ? (
+					<ScrollView
+						horizontal
+						gap={10}
+						marginBottom={10}
+						width='90%'
+					>
+						{magData
+							.filter((mag) => mag.magzine === '2')
+							.map((item, index) => (
+								<EditorialMags
+									getFn={getMags}
+									key={index}
+									data={item}
+								/>
+							))}
+					</ScrollView>
+				) : (
+					magData
+						.filter((mag) => mag.magzine === '2')
+						.map((item, index) => (
+							<EditorialMags
+								getFn={getMags}
+								key={index}
+								data={item}
+								width={'90%'}
+							/>
+						))
+				)}
 
+				<Text
+					width={'90%'}
+					color='#616161'
+					marginBottom={20}
+					fontSize={14}
+					fontFamily={'InterMedium'}
+				>
+					Podcast
+				</Text>
+
+				{podcastData.length > 0 ? (
+					<ScrollView
+						horizontal
+						gap={10}
+						marginBottom={10}
+						width='90%'
+					>
+						{podcastData.map((item, index) => (
+							<PodcastCard
+								getFn={getPodcasts}
+								key={index}
+								data={item}
+							/>
+						))}
+					</ScrollView>
+				) : podcastData.length === 1 ? (
+					<View width={'90%'}>
+						<PodcastCard
+							getFn={getPodcasts}
+							data={podcastData}
+						/>
+					</View>
+				) : (
+					<Text
+						color='#000'
+						textAlign='center'
+						width={Dimensions.get('screen').width * 0.9}
+						marginBottom={20}
+					>
+						No podcast available...
+					</Text>
+				)}
+
+				<Text
+					width={'90%'}
+					color='#616161'
+					marginBottom={20}
+					fontSize={14}
+					fontFamily={'InterMedium'}
+				>
+					Resource Libraries
+				</Text>
+
+				{resourceData.length > 1 ? (
 					<ScrollView
 						horizontal
 						gap={10}
@@ -490,52 +736,93 @@ export default function HomeScreen() {
 						width='90%'
 					>
 						{resourceData.map((item, index) => (
-							<KnowledgeCard
+							<ResourceCard
+								getFn={getResourceList}
 								key={index}
 								data={item}
 							/>
 						))}
 					</ScrollView>
+				) : resourceData.length === 1 ? (
+					resourceData.map((item, index) => (
+						<ResourceCard
+							getFn={getResourceList}
+							key={index}
+							data={item}
+							width={'90%'}
+						/>
+					))
+				) : (
+					<Text
+						color='#000'
+						textAlign='center'
+						width={Dimensions.get('screen').width * 0.9}
+					>
+						No blogs available...
+					</Text>
+				)}
 
-					<Divider />
-					{pointsData.results && pointsData.results.length > 0 ? (
-						<>
-							<Text
-								width={'90%'}
-								color='#616161'
-								fontSize={14}
-								fontFamily={'InterSemiBold'}
-							>
-								CIO&Leader Loyalty Point History
-							</Text>
-							<View
-								ref={ptsRef}
-								onLayout={(e) => {
-									setOffsetY({
-										...offsetY,
-										pts: e.nativeEvent.layout.y,
-									});
-								}}
-								marginLeft={Dimensions.get('screen').width * 0.1}
-								width={'100%'}
-							>
-								<PointsTable
-									isOnHome
-									userToken={userToken}
-								/>
-							</View>
-						</>
-					) : (
-						<View width={'90%'}>
-							<Text
-								textAlign='left'
-								color={colors.text}
-							>
-								Nothing to show here...
-							</Text>
-						</View>
-					)}
-				</PTRView>
+				<Divider />
+				<Text
+					width={'90%'}
+					color='#616161'
+					fontSize={14}
+					fontFamily={'InterSemiBold'}
+					marginBottom={20}
+				>
+					CIO&Leader Loyalty Point History
+				</Text>
+				{pointsData.results && pointsData.results.length > 0 ? (
+					<View
+						ref={ptsRef}
+						onLayout={(e) => {
+							setOffsetY({
+								...offsetY,
+								pts: e.nativeEvent.layout.y,
+							});
+						}}
+						marginLeft={Dimensions.get('screen').width * 0.1}
+						width={'100%'}
+					>
+						<PointsTable
+							isOnHome
+							userToken={userToken}
+						/>
+					</View>
+				) : (
+					<View width={'90%'}>
+						<Text
+							textAlign='center'
+							color={colors.text}
+							marginBottom={50}
+						>
+							No transactions currently, perform some activities...
+						</Text>
+					</View>
+				)}
+				<Button
+					marginBottom={40}
+					marginTop={5}
+					width={'90%'}
+					borderRadius={100 / 2}
+					backgroundColor={colors.primary}
+					borderColor={colors.primary}
+					pressStyle={{
+						backgroundColor: colors.primaryDark,
+						borderColor: colors.primary,
+					}}
+					onPress={() => {
+						router.push('/screenStore');
+					}}
+					height={50}
+				>
+					<Text
+						fontSize={14}
+						fontFamily={'InterBold'}
+					>
+						REDEEM POINTS
+					</Text>
+				</Button>
 			</ScrollView>
 			<View
 				height={60}
@@ -559,6 +846,14 @@ export default function HomeScreen() {
 					}}
 					justifyContent='center'
 					alignItems='center'
+					borderRadius={100 / 2}
+					aspectRatio={1 / 1}
+					width={30}
+					backgroundColor={
+						currScroll >= -100 && currScroll < offsetY.evt + 60
+							? '#FFFFFF50'
+							: 'transparent'
+					}
 				>
 					<Image
 						source={home}
@@ -582,6 +877,14 @@ export default function HomeScreen() {
 					}}
 					justifyContent='center'
 					alignItems='center'
+					borderRadius={100 / 2}
+					aspectRatio={1 / 1}
+					width={30}
+					backgroundColor={
+						currScroll >= offsetY.evt && currScroll < offsetY.kc + 60
+							? '#FFFFFF50'
+							: 'transparent'
+					}
 				>
 					<Image
 						source={evt}
@@ -604,6 +907,14 @@ export default function HomeScreen() {
 					}}
 					justifyContent='center'
 					alignItems='center'
+					borderRadius={100 / 2}
+					aspectRatio={1 / 1}
+					width={30}
+					backgroundColor={
+						currScroll >= offsetY.kc && currScroll < offsetY.pts + 60
+							? '#FFFFFF50'
+							: 'transparent'
+					}
 				>
 					<Image
 						source={kc}
@@ -626,6 +937,12 @@ export default function HomeScreen() {
 					}}
 					justifyContent='center'
 					alignItems='center'
+					borderRadius={100 / 2}
+					aspectRatio={1 / 1}
+					width={30}
+					backgroundColor={
+						currScroll >= offsetY.pts ? '#FFFFFF50' : 'transparent'
+					}
 				>
 					<Image
 						source={points}

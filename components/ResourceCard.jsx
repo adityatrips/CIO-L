@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 const wW = Dimensions.get('window').width;
 const wH = Dimensions.get('window').height;
 
-const KnowledgeCard = ({ data, getFn }) => {
+const ResourceCard = ({ data, getFn }) => {
 	const { userToken } = useContext(AuthContext);
 	const router = useRouter();
 
@@ -67,7 +67,7 @@ const KnowledgeCard = ({ data, getFn }) => {
 				height={'50%'}
 				borderRadius={20}
 				objectFit={'cover'}
-				src={data.picture}
+				src={data.image}
 			/>
 
 			<View padding={10}>
@@ -99,7 +99,7 @@ const KnowledgeCard = ({ data, getFn }) => {
 					onPress={async () => {
 						axios
 							.post(
-								`https://cioleader.azurewebsites.net/api/whitepaper/${data.id}/viewed/`,
+								`https://cioleader.azurewebsites.net/api/resource/${data.id}/viewed/`,
 								{},
 								{
 									headers: {
@@ -108,11 +108,7 @@ const KnowledgeCard = ({ data, getFn }) => {
 								}
 							)
 							.then(() => {
-								Linking.openURL(
-									`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURI(
-										data.file
-									)}`
-								);
+								Linking.openURL(data.link);
 								getFn();
 							});
 					}}
@@ -122,7 +118,7 @@ const KnowledgeCard = ({ data, getFn }) => {
 						fontFamily={'InterBold'}
 						textTransform='uppercase'
 					>
-						Download
+						Read
 					</Text>
 					<View
 						flexDirection='row'
@@ -184,4 +180,4 @@ const KnowledgeCard = ({ data, getFn }) => {
 	);
 };
 
-export default KnowledgeCard;
+export default ResourceCard;

@@ -9,12 +9,15 @@ import { useEffect } from 'react';
 import config from '@/tamagui.config';
 import { colors } from '@/constants';
 import { StatusBar } from 'expo-status-bar';
-
 export { ErrorBoundary } from 'expo-router';
+import * as Linking from 'expo-linking';
+import { Dimensions } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+	const linkingUrl = Linking.useURL();
+
 	const [NotoLoaded, NotoError] = useFonts({
 		InterBlack: require('@/assets/fonts/NotoSans-Black.ttf'),
 		InterExtraBold: require('@/assets/fonts/NotoSans-ExtraBold.ttf'),
@@ -81,15 +84,18 @@ function RootLayoutNav() {
 						}}
 					>
 						<Stack.Screen name='index' />
-						<Stack.Screen name='authUser/home/index' />
-						<Stack.Screen name='screenFeedback/[id]/index' />
+						<Stack.Screen name='screenStore/index' />
+						<Stack.Screen name='screenFeedback/index' />
 						<Stack.Screen name='screenLogin/index' />
 						<Stack.Screen name='screenPassword/index' />
 						<Stack.Screen name='screenRegister/index' />
 						<Stack.Screen
 							name='modal'
 							options={{
-								presentation: 'modal',
+								presentation: 'containedTransparentModal',
+								animation: 'slide_from_bottom',
+								customAnimationOnGesture: true,
+								contentStyle: {},
 							}}
 						/>
 					</Stack>

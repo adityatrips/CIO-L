@@ -5,10 +5,10 @@ import openTopRight from '@/assets/images/OpenTopRight.png';
 import OpenMiddle from '@/assets/images/OpenMiddle.png';
 import OpenLeftBottom from '@/assets/images/OpenLeftBottom.png';
 
-const ImageTriangles = () => {
+const ImageTriangles = ({ bottom = 0 }) => {
 	return (
 		<View
-			bottom={0}
+			bottom={bottom}
 			left={0}
 			right={0}
 			position='absolute'

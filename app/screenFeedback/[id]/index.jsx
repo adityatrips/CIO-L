@@ -4,17 +4,25 @@ import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ImageTriangles from '@/components/ImageTriangles';
 import { Dimensions, ToastAndroid } from 'react-native';
-import { Button, Image, Input, ScrollView, Text, View } from 'tamagui';
+import {
+	Button,
+	Image,
+	Input,
+	ScrollView,
+	Text,
+	TextArea,
+	View,
+} from 'tamagui';
 import { colors } from '@/constants';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import axios from 'axios';
 import Divider from '@/components/Divider';
 import HeaderComp from '@/components/Header';
 
 const ScreenFeeback = () => {
 	const { id } = useLocalSearchParams();
-	const [feebackRating, setFeedbackRating] = useState(1);
-	const [attendNextEvent, setAttendNextEvent] = useState(true);
+	const [feebackRating, setFeedbackRating] = useState(null);
+	const [attendNextEvent, setAttendNextEvent] = useState(null);
 	const [overallFeedback, setOverallFeedback] = useState('');
 
 	const ratingAssets = [
@@ -39,26 +47,52 @@ const ScreenFeeback = () => {
 
 	const [loading, setLoading] = useState(false);
 	const [pastEvent, setPastEvent] = useState({});
+	const router = useRouter();
 
 	const submitFeedback = async () => {
-		try {
-			const res = await axios.post(
-				`https://cioleader.azurewebsites.net/api/event/${id}/feedback/`,
-				{
-					Rating: feebackRating,
-					NextEvent: attendNextEvent,
-					Feedback: overallFeedback,
-				},
-				{
-					headers: {
-						Authorization: `Token ${userToken}`,
-					},
-				}
-			);
-		} catch (error) {
-			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-		} finally {
-			setLoading(false);
+		if (
+			!overallFeedback ||
+			attendNextEvent === null ||
+			feebackRating === null
+		) {
+			ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT);
+			return;
+		} else {
+			// try {
+			// 	console.log(userToken);
+			// 	const res = await axios.post(
+			// 		`https://cioleader.azurewebsites.net/api/event/${id}/feedback/`,
+			// 		{
+			// 			Rating: feebackRating,
+			// 			NextEvent: attendNextEvent,
+			// 			Feedback: overallFeedback,
+			// 		},
+			// 		{
+			// 			headers: {
+			// 				Authorization: `Token ${userToken}`,
+			// 			},
+			// 		}
+			// 	);
+
+			// 	if (res.status === 200) {
+			// 		setFeedbackRating(null);
+			// 		setAttendNextEvent(null);
+			// 		setOverallFeedback('');
+			// 	}
+			// } catch (error) {
+			// 	if (error.code === 'ERR_BAD_REQUEST') {
+			// 		ToastAndroid.show(
+			// 			'You have already given your precious feedback.',
+			// 			ToastAndroid.SHORT
+			// 		);
+			// 	}
+			// } finally {
+			// 	setLoading(false);
+			// }
+			router.push({
+				pathname: '/modal',
+				params: { status: 'FeedbackGiven' },
+			});
 		}
 	};
 
@@ -157,9 +191,7 @@ const ScreenFeeback = () => {
 					<View>
 						<Text color='#000'>Any overall feedback for the event?</Text>
 						<View>
-							<Input
-								autoCapitalize='none'
-								autoCorrect={false}
+							<TextArea
 								value={overallFeedback}
 								onChangeText={setOverallFeedback}
 								placeholder='Let us know your overall feeback'

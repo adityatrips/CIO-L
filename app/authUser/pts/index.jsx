@@ -6,7 +6,7 @@ import { AuthContext } from '@/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import PointsTable from '@/components/PointsTable';
 import { colors } from '@/constants';
-import LoadingComp from '../../../components/Loading';
+import LoadingComp from '@/components/Loading';
 import logo from '@/assets/images/Logo_GreenBlack.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowBigLeft, ChevronLeft } from '@tamagui/lucide-icons';

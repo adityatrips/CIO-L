@@ -1,151 +1,116 @@
 import React, { useContext, useEffect } from 'react';
-import { View, Text, ScrollView, Button } from 'tamagui';
-import { LinearGradient } from 'expo-linear-gradient';
+import {
+	View,
+	Text,
+	ScrollView,
+	Checkbox,
+	RadioGroup,
+	Button,
+	Image,
+} from 'tamagui';
 import { Dimensions, ToastAndroid } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import BouncyCheckboxGroup from 'react-native-bouncy-checkbox-group';
-import ImageTriangles from '@/components/ImageTriangles';
 import { colors } from '@/constants';
 import { AuthContext } from '@/context/AuthContext';
 import LoadingComp from '@/components/Loading';
-import { useLocalSearchParams } from 'expo-router';
-
-const demoQuiz = [
-	{
-		text: 'What is the capital of France?',
-		fillColor: colors.primary,
-		unfillColor: colors.primaryDark,
-		textStyle: {
-			textDecorationLine: 'none',
-		},
-		options: [
-			{
-				id: '0',
-				text: 'New York',
-			},
-			{
-				id: '1',
-				text: 'London',
-			},
-			{
-				id: '2',
-				text: 'Paris',
-			},
-			{
-				id: '3',
-				text: 'Dublin',
-			},
-		],
-	},
-	{
-		text: 'Who is CEO of Tesla?',
-		fillColor: colors.primary,
-		unfillColor: colors.primaryDark,
-		textStyle: {
-			textDecorationLine: 'none',
-		},
-		options: [
-			{
-				id: '0',
-				text: 'Jeff Bezos',
-			},
-			{
-				id: '1',
-				text: 'Elon Musk',
-			},
-			{
-				id: '2',
-				text: 'Bill Gates',
-			},
-			{
-				id: '3',
-				text: 'Tony Stark',
-			},
-		],
-	},
-	{
-		text: 'The iPhone was created by which company?',
-		fillColor: colors.primary,
-		unfillColor: colors.primaryDark,
-		textStyle: {
-			textDecorationLine: 'none',
-		},
-		options: [
-			{
-				id: '0',
-				text: 'Apple',
-			},
-			{
-				id: '1',
-				text: 'Intel',
-			},
-			{
-				id: '2',
-				text: 'Amazon',
-			},
-			{
-				id: '3',
-				text: 'Microsoft',
-			},
-		],
-	},
-	{
-		text: 'How many Harry Potter books are there?',
-		fillColor: colors.primary,
-		unfillColor: colors.primaryDark,
-		textStyle: {
-			textDecorationLine: 'none',
-		},
-		options: [
-			{
-				id: '0',
-				text: '1',
-			},
-			{
-				id: '1',
-				text: '4',
-			},
-			{
-				id: '2',
-				text: '6',
-			},
-			{
-				id: '3',
-				text: '7',
-			},
-		],
-	},
-];
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import axios from 'axios';
+import Divider from '@/components/Divider';
+import Header from '@/components/Header';
+import triangle from '@/assets/images/triangle.png';
 
 const MCQScreen = () => {
-	const [event, setEvent] = React.useState({});
+	const [quiz, setQuiz] = React.useState([]);
+	const [quizName, setQuizName] = React.useState('');
 	const [loading, setLoading] = React.useState(true);
 	const { userToken } = useContext(AuthContext);
 	const { mcq } = useLocalSearchParams();
+	const router = useRouter();
+	const [quizAnswers, setQuizAnswers] = React.useState(['', '', '', '', '']);
 
-	const getEvent = async () => {
+	const getQuiz = async () => {
 		try {
 			const res = await axios.get(
-				'https://cioleader.azurewebsites.net/api/event/past/all',
+				`https://cioleader.azurewebsites.net/api/quiz/${mcq}`,
 				{
 					headers: {
 						Authorization: `Token ${userToken}`,
 					},
 				}
 			);
-			setEvent(res.data.filter((e) => e.id === mcq));
+
+			if (quiz.name !== '') {
+				setQuizName(res.data.name);
+
+				for (let i = 1; i <= 5; i++) {
+					const question = res.data[`question${i}`];
+					const points = res.data[`question${i}points`];
+					const options = [];
+
+					options.push(res.data[`option1_${i}`]);
+					options.push(res.data[`option2_${i}`]);
+					options.push(res.data[`option3_${i}`]);
+					options.push(res.data[`option4_${i}`]);
+
+					setQuiz((prev) => [...prev, { question, points, options }]);
+				}
+			}
 		} catch (error) {
-			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			console.log(JSON.stringify(error));
 		} finally {
 			setLoading(false);
 		}
 	};
 
+	const submitQuiz = async () => {
+		setLoading(true);
+		console.log(userToken);
+		try {
+			const res = await axios.post(
+				`https://cioleader.azurewebsites.net/api/quiz/${mcq}/submit/`,
+				{
+					answer1: Number(quizAnswers[0] + 1).toString(),
+					answer2: Number(quizAnswers[1] + 1).toString(),
+					answer3: Number(quizAnswers[2] + 1).toString(),
+					answer4: Number(quizAnswers[3] + 1).toString(),
+					answer5: Number(quizAnswers[4] + 1).toString(),
+				},
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+
+			router.push({
+				pathname: '/modal',
+				params: {
+					status: 'UserGotMarks',
+					marksData: {
+						points: res.data.Points,
+						correct: res.data.Correct,
+						message: res.data.message,
+					},
+				},
+			});
+		} catch (error) {
+			if (error.code === 'ERR_BAD_REQUEST') {
+				router.push({
+					pathname: '/modal',
+					params: {
+						status: 'UserSubmittedTheQuiz',
+					},
+				});
+			}
+		}
+		setLoading(false);
+	};
+
 	useEffect(() => {
-		getEvent();
+		getQuiz();
 	}, []);
 
-	return loading && event != {} ? (
+	return loading ? (
 		<LoadingComp />
 	) : (
 		<SafeAreaView
@@ -153,93 +118,167 @@ const MCQScreen = () => {
 				flex: 1,
 			}}
 		>
-			<ImageTriangles />
+			<Header title='Quiz' />
 			<ScrollView flex={1}>
-				<LinearGradient
-					colors={[colors.primary, colors.primaryDark]}
-					start={{ x: 0, y: 0 }}
-					end={{ x: 1, y: 1 }}
-					style={{ flex: 1 }}
+				<Text
+					fontSize={20}
+					fontFamily={'InterBold'}
+					color='#616161'
+					paddingLeft={'5%'}
+					paddingTop={'5%'}
 				>
-					<View
-						flex={1}
-						backgroundColor={'#fff'}
-						paddingBottom={20}
-						alignSelf='center'
-						paddingHorizontal={20}
-						alignItems='center'
+					{quizName}
+				</Text>
+				<View
+					backgroundColor={colors.primary}
+					marginVertical={10}
+					paddingVertical={10}
+				>
+					<Text
+						fontSize={12.5}
+						fontFamily={'InterSemiBold'}
+						textAlign='center'
+						color='#fff'
 					>
-						<Text
-							fontSize={20}
-							fontWeight={'bold'}
-							padding={20}
-							color={'#000'}
-						>
-							{event.name}
-						</Text>
+						YOU WILL GET {quiz[0].points} POINTS FOR EACH CORRECT ANSWER
+					</Text>
+				</View>
 
+				<View
+					alignSelf='center'
+					width={'90%'}
+				>
+					{quiz.map((ques, idx) => (
 						<View
-							backgroundColor={colors.primary}
-							width={wW}
-							padding={10}
+							key={idx}
+							gap={10}
 						>
 							<Text
-								fontSize={12.5}
-								color={'#fff'}
-								textTransform={'uppercase'}
-								textAlign={'center'}
-								fontWeight={'bold'}
+								fontSize={13}
+								fontFamily={'InterMedium'}
+								color='#616161'
 							>
-								You will get 50 points for each correct answer
+								{ques.question}
 							</Text>
-						</View>
-
-						<View paddingTop={20}>
-							{demoQuiz.map((quiz, index) => (
-								<View
-									key={index}
-									marginBottom={20}
-								>
-									<Text
-										fontSize={16}
-										color={'#000'}
+							<RadioGroup
+								defaultValue={null}
+								gap={5}
+								accentColor={colors.primary}
+								onValueChange={(value) => {
+									console.log(value);
+									const [q, a] = value.split('_');
+									switch (q) {
+										case '0':
+											setQuizAnswers((prev) => {
+												prev[0] = a.toString();
+												return prev;
+											});
+											break;
+										case '1':
+											setQuizAnswers((prev) => {
+												prev[1] = a.toString();
+												return prev;
+											});
+											break;
+										case '2':
+											setQuizAnswers((prev) => {
+												prev[2] = a.toString();
+												return prev;
+											});
+											break;
+										case '3':
+											setQuizAnswers((prev) => {
+												prev[3] = a.toString();
+												return prev;
+											});
+											break;
+										case '4':
+											setQuizAnswers((prev) => {
+												prev[4] = a.toString();
+												return prev;
+											});
+											break;
+										default:
+											break;
+									}
+								}}
+							>
+								{ques.options.map((opt, i) => (
+									<View
+										key={i}
+										backgroundColor={'#fff'}
+										flexDirection='row'
+										gap={10}
+										alignItems='center'
+										paddingHorizontal={20}
+										paddingVertical={10}
+										borderRadius={4}
+										borderColor={'#AEAEAE'}
+										borderWidth={1}
 									>
-										{quiz.text}
-									</Text>
-
-									<View marginTop={10}>
-										<BouncyCheckboxGroup
-											data={quiz.options}
-											checkboxProps={{
-												fillColor: quiz.fillColor,
-												text: quiz.text,
-												textStyle: {
-													color: '#000',
-													textDecorationLine: 'none',
-												},
-												size: 25,
-												unFillColor: quiz.unfillColor,
+										<RadioGroup.Item
+											borderColor={'#AEAEAE'}
+											borderWidth={2}
+											value={`${idx}_${i}`}
+											backgroundColor={'#fff'}
+											pressStyle={{
+												backgroundColor: colors.primaryDark,
 											}}
-											style={{
-												flexDirection: 'column',
-												gap: 10,
-												color: '#000',
-											}}
-										/>
+										>
+											<RadioGroup.Indicator
+												backgroundColor={colors.primary}
+												padding={6.5}
+											/>
+										</RadioGroup.Item>
+										<Text
+											color='#000'
+											width={'90%'}
+										>
+											{opt}
+										</Text>
 									</View>
-								</View>
-							))}
+								))}
+							</RadioGroup>
+							{idx !== quiz.length - 1 && <Divider />}
 						</View>
-
-						<Button
-							width={wW * 0.9}
-							marginBottom='30'
-							bgColor={colors.primary}
+					))}
+					<Button
+						backgroundColor={colors.primary}
+						borderColor={colors.primary}
+						pressStyle={{
+							backgroundColor: colors.primaryDark,
+							borderColor: colors.primary,
+						}}
+						borderRadius={100 / 2}
+						height={50}
+						width={wW * 0.7}
+						alignSelf='center'
+						fontSize={10}
+						fontFamily={'InterBold'}
+						marginBottom={150}
+						marginTop={20}
+						onPress={submitQuiz}
+					>
+						<Text
+							fontSize={14}
+							fontFamily={'InterBold'}
+							textTransform='uppercase'
 						>
 							Submit
-						</Button>
-					</View>
-				</LinearGradient>
+						</Text>
+					</Button>
+					<Image
+						source={{
+							uri: triangle,
+						}}
+						width={wW}
+						height={wH * 0.3}
+						position='absolute'
+						bottom={-100}
+						left={0}
+						resizeMode='cover'
+					/>
+				</View>
 			</ScrollView>
 		</SafeAreaView>
 	);

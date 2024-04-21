@@ -9,23 +9,32 @@ import ImageTriangles from '@/components/ImageTriangles';
 import logo from '@/assets/images/Logo_White.png';
 import { Dimensions, KeyboardAvoidingView, ToastAndroid } from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
+import isEmail from 'validator/lib/isEmail';
+import { isMobilePhone, isMobilePhoneLocales } from 'validator';
 
 const ScreenLogin = () => {
 	const router = useRouter();
 	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
 		useContext(AuthContext);
-	const [username, setUsername] = useState('yashdakshita123@gmail.com');
+	const [username, setUsername] = useState('');
 
 	const handleLookupUser = async () => {
 		if (username.length === 0) {
-			alert('Please enter the username');
-			return;
+			ToastAndroid.show(
+				'Please enter your email or mobile number',
+				ToastAndroid.SHORT
+			);
+		} else if (!isEmail(username)) {
+			ToastAndroid.show('Invalid username', ToastAndroid.SHORT);
 		} else {
 			try {
 				await lookupUser(username);
 				router.push('/screenPassword');
 			} catch (error) {
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+				ToastAndroid.show(
+					"Can't find user, please sign up.",
+					ToastAndroid.SHORT
+				);
 			}
 		}
 	};
