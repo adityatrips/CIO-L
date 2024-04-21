@@ -12,7 +12,7 @@ import LoadingComp from '@/components/Loading';
 
 const ScreenPassword = () => {
 	const router = useRouter();
-	const [pword, setPword] = useState('india@123');
+	const [pword, setPword] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 
 	const { userToken, userInfo, loading, login, lookupUser, toggleAuth } =
