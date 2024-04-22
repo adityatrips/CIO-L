@@ -7,7 +7,6 @@ import { downloadAndOpenPdf } from '@/constants';
 import { useRouter } from 'expo-router';
 const { width, height } = Dimensions.get('window');
 import * as Sharing from 'expo-sharing';
-import * as IntentLauncher from 'expo-intent-launcher';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
 

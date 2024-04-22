@@ -192,6 +192,13 @@ const EventScreen = () => {
 												},
 											}
 										);
+										router.push({
+											pathname: '/modal',
+											params: {
+												status: 'eventRegistrationSuccess',
+											},
+										});
+										router;
 									} catch (error) {
 										console.log(error.code);
 										if (error.code === 'ERR_BAD_REQUEST') {
@@ -200,10 +207,7 @@ const EventScreen = () => {
 												ToastAndroid.SHORT
 											);
 										} else {
-											ToastAndroid.show(
-												'Thank you for showing interest in this event!',
-												ToastAndroid.SHORT
-											);
+											ToastAndroid.show('Aw Snap!', ToastAndroid.SHORT);
 										}
 									}
 								}}

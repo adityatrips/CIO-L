@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Dimensions, Linking } from 'react-native';
+import { Dimensions, Linking, ToastAndroid } from 'react-native';
 import { Button, Image, Text, View } from 'tamagui';
 import coin from '@/assets/images/Coin1.png';
 import { colors } from '@/constants';
@@ -108,11 +108,12 @@ const KnowledgeCard = ({ data, getFn }) => {
 								}
 							)
 							.then(() => {
-								Linking.openURL(
-									`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURI(
-										data.file
-									)}`
-								);
+								router.push({
+									pathname: '/pdf',
+									params: {
+										uri: data.file,
+									},
+								});
 								getFn();
 							});
 					}}
@@ -175,7 +176,7 @@ const KnowledgeCard = ({ data, getFn }) => {
 							fontSize={11}
 							fontFamily='InterSemiBold'
 						>
-							+0
+							+{data.quizpoints}
 						</Text>
 					</View>
 				</Button>

@@ -24,8 +24,6 @@ const ScreenLogin = () => {
 				'Please enter your email or mobile number',
 				ToastAndroid.SHORT
 			);
-		} else if (!isEmail(username)) {
-			ToastAndroid.show('Invalid username', ToastAndroid.SHORT);
 		} else {
 			try {
 				await lookupUser(username);

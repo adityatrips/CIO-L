@@ -30,6 +30,7 @@ import HeaderComp from '@/components/Header';
 import ResourceCard from '@/components/ResourceCard';
 import PodcastCard from '@/components/PodcastCard';
 import EditorialMags from '@/components/EditorialMags';
+import PointsTableHome from '../../../components/PointsTableHome';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -172,7 +173,12 @@ export default function HomeScreen() {
 				);
 
 				if (res.data.status === '2' || res.data.status === '3') {
-					router.push('modal');
+					router.push({
+						pathname: '/modal',
+						params: {
+							status: 'ApprovalPending',
+						},
+					});
 				} else {
 					setIsLoading(false);
 					setUserProfile(res.data);
@@ -694,7 +700,7 @@ export default function HomeScreen() {
 					>
 						{podcastData.map((item, index) => (
 							<PodcastCard
-								getFn={getPodcasts}
+								getFn={getPoints}
 								key={index}
 								data={item}
 							/>
@@ -703,7 +709,7 @@ export default function HomeScreen() {
 				) : podcastData.length === 1 ? (
 					<View width={'90%'}>
 						<PodcastCard
-							getFn={getPodcasts}
+							getFn={getPoints}
 							data={podcastData}
 						/>
 					</View>
@@ -784,9 +790,11 @@ export default function HomeScreen() {
 						marginLeft={Dimensions.get('screen').width * 0.1}
 						width={'100%'}
 					>
-						<PointsTable
-							isOnHome
+						<PointsTableHome
 							userToken={userToken}
+							getData={getPoints}
+							data={pointsData}
+							results={pointsData.results}
 						/>
 					</View>
 				) : (

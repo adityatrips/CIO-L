@@ -43,12 +43,13 @@ const ScreenRegister = () => {
 			ToastAndroid.show('Passwords do not match', ToastAndroid.SHORT);
 		} else {
 			try {
-				await axios.post(
+				const res = await axios.post(
 					'https://cioleader.azurewebsites.net/api/member/create/',
 					{
 						account: {
-							username: mobile,
+							username: email,
 							password: pword,
+							email: email,
 						},
 						fname,
 						lname,
@@ -58,6 +59,7 @@ const ScreenRegister = () => {
 						company: company === '' ? 'N/A' : company,
 					}
 				);
+				console.log(res.data);
 				setShown(true);
 				setModalMessage('Registration successful');
 				setTimeout(() => {
@@ -66,6 +68,7 @@ const ScreenRegister = () => {
 					router.push('/screenLogin');
 				}, 2000);
 			} catch (error) {
+				console.log(error);
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
 			}
 		}

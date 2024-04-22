@@ -18,16 +18,19 @@ export default function Modal() {
 	if (status === 'UserSubmittedTheQuiz') {
 		return (
 			<View
-				onLayout={() => {
-					setTimeout(() => {
-						router.push('/authUser/home');
-					}, 10000);
-				}}
 				flex={1}
 				alignItems={'center'}
 				justifyContent={'center'}
 				backgroundColor={'#fff'}
 			>
+				<X
+					color={'#000'}
+					size='$3'
+					position='absolute'
+					top={50}
+					right={20}
+					onPress={() => navigation.goBack()}
+				/>
 				<ImageTriangles bottom={-75} />
 				<Image
 					src={logo}
@@ -65,12 +68,15 @@ export default function Modal() {
 				alignItems={'center'}
 				justifyContent={'center'}
 				backgroundColor={'#fff'}
-				onLayout={() => {
-					setTimeout(() => {
-						router.push('/screenLogin');
-					}, 10000);
-				}}
 			>
+				<X
+					color={'#000'}
+					size='$3'
+					position='absolute'
+					top={50}
+					right={20}
+					onPress={() => router.push('/screenLogin')}
+				/>
 				<Image
 					src={logo}
 					resizeMode='contain'
@@ -106,6 +112,14 @@ export default function Modal() {
 					flex: 1,
 				}}
 			>
+				<X
+					color={'#000'}
+					size='$3'
+					position='absolute'
+					top={50}
+					right={20}
+					onPress={() => navigation.goBack()}
+				/>
 				<View
 					style={{
 						flex: 1,
@@ -176,16 +190,19 @@ export default function Modal() {
 			</SafeAreaView>
 		) : (
 			<View
-				onLayout={() => {
-					setTimeout(() => {
-						router.push('/authUser/home');
-					}, 2000);
-				}}
 				flex={1}
 				alignItems={'center'}
 				justifyContent={'center'}
 				backgroundColor={'#fff'}
 			>
+				<X
+					color={'#000'}
+					size='$3'
+					position='absolute'
+					top={50}
+					right={20}
+					onPress={() => navigation.goBack()}
+				/>
 				<ImageTriangles bottom={-75} />
 				<Image
 					src={logo}
@@ -391,11 +408,6 @@ export default function Modal() {
 					onPress={() => router.push('/authUser/pro')}
 				/>
 				<View
-					onLayout={() => {
-						setTimeout(() => {
-							router.push('/authUser/home');
-						}, 10000);
-					}}
 					style={{
 						flex: 1,
 						alignItems: 'center',

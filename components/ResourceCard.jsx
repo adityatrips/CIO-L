@@ -171,7 +171,7 @@ const ResourceCard = ({ data, getFn }) => {
 							fontSize={11}
 							fontFamily='InterSemiBold'
 						>
-							+0
+							+{data.quizpoints}
 						</Text>
 					</View>
 				</Button>

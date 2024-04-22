@@ -158,7 +158,7 @@ const VoucherCard = ({ data }) => {
 								pathname: '/modal',
 								params: {
 									status: 'PointsRedeemed',
-									refid: data.refid || 'XXXXXX',
+									refid: data.refid,
 								},
 							});
 						}

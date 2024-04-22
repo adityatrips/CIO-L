@@ -1,17 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Image, Text, View } from 'tamagui';
 import { colors } from '@/constants';
 import { Dimensions, Linking } from 'react-native';
 import play from '@/assets/images/play.png';
 import podcastAudio from '@/assets/images/podcastAudio.png';
 import podcastIcon from '@/assets/images/podcastIcon.png';
+import axios from 'axios';
+import { AuthContext } from '@/context/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 
 let wW = width;
 let wH = height;
 
-const PodcastCard = ({ data }) => {
+const PodcastCard = ({ data, getFn }) => {
+	const { userToken } = useContext(AuthContext);
+
 	return (
 		<View
 			backgroundColor={'#616161'}
@@ -90,8 +94,23 @@ const PodcastCard = ({ data }) => {
 				source={{
 					uri: play,
 				}}
-				onPress={() => {
-					Linking.openURL(data.link);
+				onPress={async () => {
+					const res = await axios
+						.post(
+							`https://cioleader.azurewebsites.net/api/podcast/${data.id}/viewed/`,
+							{},
+							{
+								headers: {
+									Authorization: `Token ${userToken}`,
+								},
+							}
+						)
+						.then(() => {
+							getFn();
+						})
+						.then(() => {
+							Linking.openURL(data.link);
+						});
 				}}
 				resizeMode='contain'
 				width={'40%'}

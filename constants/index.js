@@ -9,10 +9,7 @@ export const colors = {
 };
 export const baseUri = 'https://cioleader.azurewebsites.net/api';
 
-import * as IntentLauncher from 'expo-intent-launcher';
 import * as FileSystem from 'expo-file-system';
-import * as Permissions from 'expo-permissions';
-import * as Linking from 'expo-linking';
 import * as MediaLibrary from 'expo-media-library';
 export const downloadAndOpenPdf = async (pdfUrl, filename) => {
 	const fileUri = `${FileSystem.cacheDirectory}${filename}.pdf`;
