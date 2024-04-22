@@ -170,7 +170,7 @@ const EventScreen = () => {
 								backgroundColor={colors.primary}
 								borderColor={colors.primary}
 								pressStyle={{
-									backgroundColor: colors.primaryDark,
+									backgroundColor: colors.primary,
 									borderColor: colors.primary,
 								}}
 								width={wW * 0.4}
@@ -243,7 +243,7 @@ const EventScreen = () => {
 								backgroundColor={colors.primary}
 								borderColor={colors.primary}
 								pressStyle={{
-									backgroundColor: colors.primaryDark,
+									backgroundColor: colors.primary,
 									borderColor: colors.primary,
 								}}
 								onPress={async () => {
@@ -442,7 +442,7 @@ const EventScreen = () => {
 								backgroundColor={colors.primary}
 								borderColor={colors.primary}
 								pressStyle={{
-									backgroundColor: colors.primaryDark,
+									backgroundColor: colors.primary,
 									borderColor: colors.primary,
 								}}
 								borderRadius={100 / 2}
@@ -477,7 +477,7 @@ const EventScreen = () => {
 										backgroundColor={colors.primary}
 										borderColor={colors.primary}
 										pressStyle={{
-											backgroundColor: colors.primaryDark,
+											backgroundColor: colors.primary,
 											borderColor: colors.primary,
 										}}
 										width={wW * 0.4}
@@ -498,7 +498,7 @@ const EventScreen = () => {
 										backgroundColor={colors.primary}
 										borderColor={colors.primary}
 										pressStyle={{
-											backgroundColor: colors.primaryDark,
+											backgroundColor: colors.primary,
 											borderColor: colors.primary,
 										}}
 										width={wW * 0.4}

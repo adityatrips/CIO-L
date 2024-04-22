@@ -313,6 +313,11 @@ const PointsTable = ({ userToken, isOnHome = false }) => {
 								textAlign='right'
 								color='#fff'
 								backgroundColor={colors.primary}
+								borderColor={colors.primary}
+								pressStyle={{
+									backgroundColor: colors.primary,
+									borderColor: colors.primary,
+								}}
 								fontSize={12}
 								fontFamily='InterMedium'
 								height={30}
@@ -466,6 +471,11 @@ const PointsTable = ({ userToken, isOnHome = false }) => {
 						backgroundColor={
 							data.links.previous === null ? 'transparent' : colors.primary
 						}
+						borderColor={colors.primary}
+						pressStyle={{
+							backgroundColor: colors.primary,
+							borderColor: colors.primary,
+						}}
 					>
 						{!(data.links.previous === null) && <ChevronLeftCircle />}
 					</Button>
@@ -478,6 +488,11 @@ const PointsTable = ({ userToken, isOnHome = false }) => {
 						backgroundColor={
 							data.links.next === null ? 'transparent' : colors.primary
 						}
+						borderColor={colors.primary}
+						pressStyle={{
+							backgroundColor: colors.primary,
+							borderColor: colors.primary,
+						}}
 					>
 						{!(data.links.next === null) && <ChevronRightCircle />}
 					</Button>

@@ -17,6 +17,7 @@
 		"app/(tabs)/event.jsx",
 		"app/(tabs)/index.jsx",
 		"app/(tabs)/_layout.jsx",
-		"constants/index.js"
+		"constants/index.js",
+		"tamagui.config.ts"
 	]
 }

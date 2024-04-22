@@ -86,11 +86,11 @@ const KnowledgeCard = ({ data, getFn }) => {
 				alignItems='center'
 			>
 				<Button
-					backgroundColor={colors.primaryDark}
+					backgroundColor={colors.primary}
 					borderColor={colors.primary}
 					pressStyle={{
 						backgroundColor: colors.primary,
-						borderColor: colors.primaryDark,
+						borderColor: colors.primary,
 					}}
 					borderRadius={100 / 2}
 					width={'85%'}
@@ -145,7 +145,7 @@ const KnowledgeCard = ({ data, getFn }) => {
 					borderColor={colors.primary}
 					pressStyle={{
 						backgroundColor: colors.primary,
-						borderColor: colors.primaryDark,
+						borderColor: colors.primary,
 					}}
 					backgroundColor={!data.viewed ? colors.primaryDark : '#616161'}
 					disabled={data.viewed}

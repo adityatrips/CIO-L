@@ -159,12 +159,12 @@ const UpcomingEventCard = ({
 						<Button
 							justifyContent='space-between'
 							borderRadius={100 / 2}
-							backgroundColor={colors.primaryDark}
-							borderColor={colors.primaryDark}
 							disabled={missed}
+							backgroundColor={colors.primary}
+							borderColor={colors.primary}
 							pressStyle={{
 								backgroundColor: colors.primary,
-								borderColor: colors.primaryDark,
+								borderColor: colors.primary,
 							}}
 							height={30}
 							onPress={() => {
@@ -197,12 +197,12 @@ const UpcomingEventCard = ({
 						<Button
 							justifyContent='space-between'
 							borderRadius={100 / 2}
-							backgroundColor={colors.primaryDark}
-							borderColor={colors.primaryDark}
 							disabled={missed}
+							backgroundColor={colors.primary}
+							borderColor={colors.primary}
 							pressStyle={{
 								backgroundColor: colors.primary,
-								borderColor: colors.primaryDark,
+								borderColor: colors.primary,
 							}}
 							height={30}
 							onPress={() => {
@@ -245,7 +245,7 @@ const UpcomingEventCard = ({
 						disabled={missed}
 						pressStyle={{
 							backgroundColor: colors.primary,
-							borderColor: colors.primaryDark,
+							borderColor: colors.primary,
 						}}
 						height={30}
 						onPress={() => {

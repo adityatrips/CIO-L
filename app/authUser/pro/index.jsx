@@ -315,7 +315,7 @@ export default function ProfileScreen() {
 						backgroundColor={colors.primary}
 						borderColor={colors.primary}
 						pressStyle={{
-							backgroundColor: colors.primaryDark,
+							backgroundColor: colors.primary,
 							borderColor: colors.primary,
 						}}
 						width={'90%'}

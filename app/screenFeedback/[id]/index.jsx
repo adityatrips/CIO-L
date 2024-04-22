@@ -127,8 +127,8 @@ const ScreenFeeback = () => {
 						{ratingAssets.map((item, i) => (
 							<Button
 								pressStyle={{
-									borderWidth: 0,
-									backgroundColor: colors.primaryDark,
+									backgroundColor: colors.primary,
+									borderColor: colors.primary,
 								}}
 								key={i}
 								width={(wW * 0.8) / 5 - 5}
@@ -161,8 +161,8 @@ const ScreenFeeback = () => {
 							{yesNoAsset.map((item, i) => (
 								<Button
 									pressStyle={{
-										borderWidth: 0,
-										backgroundColor: colors.primaryDark,
+										backgroundColor: colors.primary,
+										borderColor: colors.primary,
 									}}
 									key={i}
 									width={(wW * 0.9) / 2 - 5}
@@ -213,6 +213,11 @@ const ScreenFeeback = () => {
 
 					<Button
 						backgroundColor={colors.primary}
+						borderColor={colors.primary}
+						pressStyle={{
+							backgroundColor: colors.primary,
+							borderColor: colors.primary,
+						}}
 						borderRadius={100 / 2}
 						width={'100%'}
 						elevate
@@ -220,10 +225,6 @@ const ScreenFeeback = () => {
 						height={50}
 						marginTop={20}
 						onPress={submitFeedback}
-						pressStyle={{
-							borderWidth: 0,
-							backgroundColor: colors.primaryDark,
-						}}
 					>
 						Submit
 					</Button>

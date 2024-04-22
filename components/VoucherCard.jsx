@@ -129,7 +129,7 @@ const VoucherCard = ({ data }) => {
 				backgroundColor={colors.primary}
 				borderColor={colors.primary}
 				pressStyle={{
-					backgroundColor: colors.primaryDark,
+					backgroundColor: colors.primary,
 					borderColor: colors.primary,
 				}}
 				width={wW * 0.4}

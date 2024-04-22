@@ -302,6 +302,11 @@ const ScreenRegister = () => {
 					marginBottom={20}
 					borderRadius={100 / 2}
 					backgroundColor={colors.primary}
+					borderColor={colors.primary}
+					pressStyle={{
+						backgroundColor: colors.primary,
+						borderColor: colors.primary,
+					}}
 					justifyContent='space-between'
 					paddingHorizontal={50}
 					alignItems='center'

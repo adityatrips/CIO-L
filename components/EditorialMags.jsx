@@ -109,7 +109,7 @@ const EditorialMags = ({ data, getFn }) => {
 					backgroundColor={colors.primary}
 					borderColor={colors.primary}
 					pressStyle={{
-						backgroundColor: colors.primaryDark,
+						backgroundColor: colors.primary,
 						borderColor: colors.primary,
 					}}
 					borderRadius={100 / 2}
