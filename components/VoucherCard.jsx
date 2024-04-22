@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Dimensions, ToastAndroid, TouchableOpacity } from 'react-native';
-import { Image, Text, Button, View } from 'tamagui';
+import { Image, Text, Button, View, ButtonFrame } from 'tamagui';
 import amazon from '@/assets/images/amazon.png';
 import flipkart from '@/assets/images/flipkart.png';
 import { colors } from '@/constants';
@@ -19,7 +19,7 @@ const VoucherCard = ({ data }) => {
 	return (
 		<View
 			width={wW * 0.5 - 20}
-			borderColor={'lightgrey'}
+			borderColor={'#515151'}
 			borderWidth={1}
 			height={wH * 0.385}
 			marginBottom={10}
@@ -34,7 +34,7 @@ const VoucherCard = ({ data }) => {
 				aspectRatio={4 / 3}
 				height={wH * 0.125}
 				resizeMode='contain'
-				borderColor={'lightgrey'}
+				borderColor={'#515151'}
 				borderRadius={10}
 				source={{
 					uri: data.image,
@@ -43,7 +43,7 @@ const VoucherCard = ({ data }) => {
 			<Text
 				fontSize={13}
 				fontFamily={'InterMedium'}
-				color='#616161'
+				color='#515151'
 			>
 				{data.name}
 			</Text>
@@ -63,49 +63,58 @@ const VoucherCard = ({ data }) => {
 				width={'100%'}
 				borderRadius={20}
 				borderWidth={1}
-				borderColor={'lightgrey'}
-				paddingHorizontal={15}
+				borderColor={'#515151'}
 			>
-				<TouchableOpacity
+				<Button
+					backgroundColor={'#fff'}
 					borderWidth={1}
-					borderRightColor={'lightgrey'}
+					borderRightColor={'#515151'}
+					borderRadius={100 / 2}
 					height={'100%'}
-					paddingRight={10}
 					alignItems={'center'}
 					justifyContent={'center'}
+					pressStyle={{
+						backgroundColor: colors.primary,
+						borderColor: colors.primary,
+					}}
 					onPress={() => {
 						if (quantity > 0) setQuantity(quantity - 1);
 					}}
 				>
 					<Text
-						color='#616161'
+						color='#515151'
 						fontWeight={'bold'}
 					>
 						-
 					</Text>
-				</TouchableOpacity>
+				</Button>
 				<Text
-					color='#616161'
+					color='#515151'
 					fontFamily={'InterBold'}
 				>
 					{quantity}
 				</Text>
-				<TouchableOpacity
+				<Button
 					borderWidth={1}
-					borderLeftColor={'lightgrey'}
+					borderLeftColor={'#515151'}
 					height={'100%'}
-					paddingLeft={10}
+					backgroundColor={'#fff'}
+					borderRadius={100 / 2}
 					alignItems={'center'}
 					justifyContent={'center'}
 					onPress={() => setQuantity(quantity + 1)}
+					pressStyle={{
+						backgroundColor: colors.primary,
+						borderColor: colors.primary,
+					}}
 				>
 					<Text
-						color='#616161'
+						color='#515151'
 						fontWeight={'bold'}
 					>
 						+
 					</Text>
-				</TouchableOpacity>
+				</Button>
 			</View>
 
 			<View
@@ -120,7 +129,7 @@ const VoucherCard = ({ data }) => {
 				/>
 				<Text
 					fontFamily={'InterBold'}
-					color='#616161'
+					color='#515151'
 				>
 					{data.points + ' Points'}
 				</Text>

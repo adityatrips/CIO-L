@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 const wW = Dimensions.get('window').width;
 const wH = Dimensions.get('window').height;
 
-const KnowledgeCard = ({ data, getFn }) => {
+const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 	const { userToken } = useContext(AuthContext);
 	const router = useRouter();
 
@@ -86,8 +86,8 @@ const KnowledgeCard = ({ data, getFn }) => {
 				alignItems='center'
 			>
 				<Button
-					backgroundColor={colors.primary}
-					borderColor={colors.primary}
+					backgroundColor={colors.primaryDark}
+					borderColor={colors.primaryDark}
 					pressStyle={{
 						backgroundColor: colors.primary,
 						borderColor: colors.primary,
@@ -97,23 +97,25 @@ const KnowledgeCard = ({ data, getFn }) => {
 					height={30}
 					justifyContent='space-between'
 					onPress={async () => {
-						axios
-							.post(
-								`https://cioleader.azurewebsites.net/api/whitepaper/${data.id}/viewed/`,
-								{},
-								{
-									headers: {
-										Authorization: `Token ${userToken}`,
-									},
-								}
-							)
+						Linking.openURL(
+							`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURI(
+								data.file
+							)}`
+						)
 							.then(() => {
-								Linking.openURL(
-									`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURI(
-										data.file
-									)}`
+								axios.post(
+									`https://cioleader.azurewebsites.net/api/whitepaper/${data.id}/viewed/`,
+									{},
+									{
+										headers: {
+											Authorization: `Token ${userToken}`,
+										},
+									}
 								);
+							})
+							.then(() => {
 								getFn();
+								setIsLoading(false);
 							});
 					}}
 				>
@@ -176,7 +178,7 @@ const KnowledgeCard = ({ data, getFn }) => {
 							fontSize={11}
 							fontFamily='InterSemiBold'
 						>
-							+0
+							+{data.quizpoints}
 						</Text>
 					</View>
 				</Button>

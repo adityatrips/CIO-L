@@ -7,18 +7,19 @@ import podcastAudio from '@/assets/images/podcastAudio.png';
 import podcastIcon from '@/assets/images/podcastIcon.png';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
+import coin from '@/assets/images/Coin1.png';
 
 const { width, height } = Dimensions.get('window');
 
 let wW = width;
 let wH = height;
 
-const PodcastCard = ({ data }) => {
+const PodcastCard = ({ data, getFn, setIsLoading }) => {
 	const { userToken } = useContext(AuthContext);
 
 	return (
 		<View
-			backgroundColor={'#616161'}
+			backgroundColor={'#515151'}
 			borderRadius={20}
 			overflow='hidden'
 			height={wH * 0.2}
@@ -90,23 +91,55 @@ const PodcastCard = ({ data }) => {
 				width={'75%'}
 				height={'30%'}
 			/>
+			<View
+				position='absolute'
+				bottom={0}
+				right={0}
+				backgroundColor={'#ffffff50'}
+				paddingHorizontal={10}
+				paddingVertical={5}
+				borderTopLeftRadius={10}
+			>
+				<View
+					flexDirection='row'
+					gap={5}
+					alignItems='center'
+				>
+					<Image
+						source={{
+							uri: coin,
+						}}
+						width={25}
+						height={25}
+					/>
+					<Text
+						fontFamily={'InterBold'}
+						fontSize={11}
+					>
+						+{data.viewingpoints}
+					</Text>
+				</View>
+			</View>
 			<Image
 				source={{
 					uri: play,
 				}}
 				onPress={async () => {
-					axios
-						.post(
-							`https://cioleader.azurewebsites.net/api/resource/${data.id}/viewed/`,
-							{},
-							{
-								headers: {
-									Authorization: `Token ${userToken}`,
-								},
-							}
-						)
+					Linking.openURL(data.link)
 						.then(() => {
-							Linking.openURL(data.link);
+							axios.post(
+								`https://cioleader.azurewebsites.net/api/resource/${data.id}/viewed/`,
+								{},
+								{
+									headers: {
+										Authorization: `Token ${userToken}`,
+									},
+								}
+							);
+						})
+						.then(() => {
+							getFn();
+							setIsLoading(false);
 						});
 				}}
 				resizeMode='contain'

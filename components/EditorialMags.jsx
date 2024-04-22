@@ -14,7 +14,7 @@ import { AuthContext } from '@/context/AuthContext';
 let wW = width;
 let wH = height;
 
-const EditorialMags = ({ data, getFn }) => {
+const EditorialMags = ({ data, getFn, setIsLoading }) => {
 	const { userToken } = useContext(AuthContext);
 
 	const magazinePoint = async () => {
@@ -30,6 +30,7 @@ const EditorialMags = ({ data, getFn }) => {
 			);
 			if (res.status === 200) {
 				getFn();
+				setIsLoading(false);
 			}
 		} catch (error) {
 			console.log(JSON.stringify(error));

@@ -149,98 +149,121 @@ const MCQScreen = () => {
 					width={'90%'}
 				>
 					{quiz.map((ques, idx) => (
-						<View
+						<RadioGroup
+							defaultValue={null}
 							key={idx}
-							gap={10}
+							gap={5}
+							style={{
+								width: '100%',
+							}}
+							accentColor={colors.primary}
+							onValueChange={(value) => {
+								console.log(value);
+								const [q, a] = value.split('_');
+								switch (q) {
+									case '0':
+										setQuizAnswers((prev) => {
+											prev[0] = a.toString();
+											return prev;
+										});
+										break;
+									case '1':
+										setQuizAnswers((prev) => {
+											prev[1] = a.toString();
+											return prev;
+										});
+										break;
+									case '2':
+										setQuizAnswers((prev) => {
+											prev[2] = a.toString();
+											return prev;
+										});
+										break;
+									case '3':
+										setQuizAnswers((prev) => {
+											prev[3] = a.toString();
+											return prev;
+										});
+										break;
+									case '4':
+										setQuizAnswers((prev) => {
+											prev[4] = a.toString();
+											return prev;
+										});
+										break;
+									default:
+										break;
+								}
+							}}
 						>
-							<Text
-								fontSize={13}
-								fontFamily={'InterMedium'}
-								color='#616161'
-							>
-								{ques.question}
-							</Text>
-							<RadioGroup
-								defaultValue={null}
-								gap={5}
-								accentColor={colors.primary}
-								onValueChange={(value) => {
-									console.log(value);
-									const [q, a] = value.split('_');
-									switch (q) {
-										case '0':
-											setQuizAnswers((prev) => {
-												prev[0] = a.toString();
-												return prev;
-											});
-											break;
-										case '1':
-											setQuizAnswers((prev) => {
-												prev[1] = a.toString();
-												return prev;
-											});
-											break;
-										case '2':
-											setQuizAnswers((prev) => {
-												prev[2] = a.toString();
-												return prev;
-											});
-											break;
-										case '3':
-											setQuizAnswers((prev) => {
-												prev[3] = a.toString();
-												return prev;
-											});
-											break;
-										case '4':
-											setQuizAnswers((prev) => {
-												prev[4] = a.toString();
-												return prev;
-											});
-											break;
-										default:
-											break;
-									}
-								}}
-							>
+							<View gap={10}>
+								<Text
+									fontSize={13}
+									fontFamily={'InterMedium'}
+									color='#616161'
+								>
+									{ques.question}
+								</Text>
 								{ques.options.map((opt, i) => (
-									<View
+									<RadioGroup.Item
 										key={i}
-										backgroundColor={'#fff'}
 										flexDirection='row'
 										gap={10}
 										alignItems='center'
 										paddingHorizontal={20}
-										paddingVertical={10}
+										paddingVertical={20}
 										borderRadius={4}
 										borderColor={'#AEAEAE'}
-										borderWidth={1}
+										borderWidth={2}
+										value={`${idx}_${i}`}
+										backgroundColor={'#fff'}
+										style={{
+											width: '100%',
+										}}
+										pressStyle={{
+											backgroundColor: colors.primary,
+										}}
 									>
-										<RadioGroup.Item
-											borderColor={'#AEAEAE'}
-											borderWidth={2}
-											value={`${idx}_${i}`}
-											backgroundColor={'#fff'}
-											pressStyle={{
-												backgroundColor: colors.primaryDark,
-											}}
+										<View
+											flexDirection='row'
+											gap={10}
+											alignItems='center'
 										>
-											<RadioGroup.Indicator
-												backgroundColor={colors.primary}
-												padding={6.5}
-											/>
-										</RadioGroup.Item>
-										<Text
-											color='#000'
-											width={'90%'}
-										>
-											{opt}
-										</Text>
-									</View>
+											<View
+												position='relative'
+												width={30}
+												height={30}
+												// backgroundColor={'#000'}
+												borderRadius={100 / 2}
+												alignItems='center'
+												justifyContent='center'
+												borderColor={colors.primary}
+												borderWidth={2}
+											>
+												<RadioGroup.Indicator
+													backgroundColor={colors.primary}
+													circular
+													width={20}
+													height={20}
+													borderColor={colors.primary}
+													borderWidth={2}
+												/>
+											</View>
+											<Text
+												position='absolute'
+												color='#000'
+												height={20}
+												left={'15%'}
+												width={'75%'}
+											>
+												{opt}
+											</Text>
+										</View>
+									</RadioGroup.Item>
 								))}
-							</RadioGroup>
-							{idx !== quiz.length - 1 && <Divider />}
-						</View>
+								{idx !== quiz.length - 1 && <Divider />}
+							</View>
+						</RadioGroup>
 					))}
 					<Button
 						backgroundColor={colors.primary}

@@ -22,7 +22,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Divider from '@/components/Divider';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
 import KnowledgeCard from '@/components/KnowledgeCard';
-import PointsTable from '@/components/PointsTable';
 import { useRouter } from 'expo-router';
 import LoadingComp from '@/components/Loading';
 import { StatusBar } from 'expo-status-bar';
@@ -30,6 +29,7 @@ import HeaderComp from '@/components/Header';
 import ResourceCard from '@/components/ResourceCard';
 import PodcastCard from '@/components/PodcastCard';
 import EditorialMags from '@/components/EditorialMags';
+import moment from 'moment';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -214,17 +214,14 @@ export default function HomeScreen() {
 	};
 
 	useEffect(() => {
-		(async () => {
-			getUserProfile();
-			getUpcomingEvents();
-			getKnowledgeCards();
-			getResourceList();
-			getPodcasts();
-			getPoints();
-			getMags();
-		})().then(() => {
-			setIsLoading(false);
-		});
+		getUserProfile();
+		getUpcomingEvents();
+		getKnowledgeCards();
+		getResourceList();
+		getPodcasts();
+		getPoints();
+		getMags();
+		setIsLoading(false);
 	}, []);
 
 	return !isLoading && !loading ? (
@@ -243,17 +240,14 @@ export default function HomeScreen() {
 						refreshing={loading}
 						onRefresh={() => {
 							setIsLoading(true);
-							(async () => {
-								getUserProfile();
-								getUpcomingEvents();
-								getKnowledgeCards();
-								getResourceList();
-								getPodcasts();
-								getPoints();
-								getMags();
-							})().then(() => {
-								setIsLoading(false);
-							});
+							getUserProfile();
+							getUpcomingEvents();
+							getKnowledgeCards();
+							getResourceList();
+							getPodcasts();
+							getPoints();
+							getMags();
+							setIsLoading(false);
 						}}
 					/>
 				}
@@ -526,6 +520,7 @@ export default function HomeScreen() {
 						{knowledgeCards.map((item, index) => (
 							<KnowledgeCard
 								getFn={getKnowledgeCards}
+								setIsLoading={setIsLoading}
 								key={index}
 								data={item}
 							/>
@@ -565,6 +560,7 @@ export default function HomeScreen() {
 								.map((item, index) => (
 									<EditorialMags
 										getFn={getMags}
+										setIsLoading={setIsLoading}
 										key={index}
 										data={item}
 									/>
@@ -576,6 +572,7 @@ export default function HomeScreen() {
 							.map((item, index) => (
 								<EditorialMags
 									getFn={getMags}
+									setIsLoading={setIsLoading}
 									key={index}
 									data={item}
 									width={'90%'}
@@ -594,6 +591,7 @@ export default function HomeScreen() {
 							.map((item, index) => (
 								<EditorialMags
 									getFn={getMags}
+									setIsLoading={setIsLoading}
 									key={index}
 									data={item}
 								/>
@@ -604,6 +602,7 @@ export default function HomeScreen() {
 						.map((item, index) => (
 							<EditorialMags
 								getFn={getMags}
+								setIsLoading={setIsLoading}
 								key={index}
 								data={item}
 								width={'90%'}
@@ -639,6 +638,7 @@ export default function HomeScreen() {
 							.map((item, index) => (
 								<EditorialMags
 									getFn={getMags}
+									setIsLoading={setIsLoading}
 									key={index}
 									data={item}
 								/>
@@ -650,6 +650,7 @@ export default function HomeScreen() {
 						.map((item, index) => (
 							<EditorialMags
 								getFn={getMags}
+								setIsLoading={setIsLoading}
 								key={index}
 								data={item}
 								width={'90%'}
@@ -668,6 +669,7 @@ export default function HomeScreen() {
 							.map((item, index) => (
 								<EditorialMags
 									getFn={getMags}
+									setIsLoading={setIsLoading}
 									key={index}
 									data={item}
 								/>
@@ -679,6 +681,7 @@ export default function HomeScreen() {
 						.map((item, index) => (
 							<EditorialMags
 								getFn={getMags}
+								setIsLoading={setIsLoading}
 								key={index}
 								data={item}
 								width={'90%'}
@@ -706,6 +709,7 @@ export default function HomeScreen() {
 						{podcastData.map((item, index) => (
 							<PodcastCard
 								getFn={getPodcasts}
+								setIsLoading={setIsLoading}
 								key={index}
 								data={item}
 							/>
@@ -715,6 +719,7 @@ export default function HomeScreen() {
 					<View width={'90%'}>
 						<PodcastCard
 							getFn={getPodcasts}
+							setIsLoading={setIsLoading}
 							data={podcastData}
 						/>
 					</View>
@@ -749,6 +754,7 @@ export default function HomeScreen() {
 						{resourceData.map((item, index) => (
 							<ResourceCard
 								getFn={getResourceList}
+								setIsLoading={setIsLoading}
 								key={index}
 								data={item}
 							/>
@@ -758,6 +764,7 @@ export default function HomeScreen() {
 					resourceData.map((item, index) => (
 						<ResourceCard
 							getFn={getResourceList}
+							setIsLoading={setIsLoading}
 							key={index}
 							data={item}
 							width={'90%'}
@@ -792,13 +799,262 @@ export default function HomeScreen() {
 								pts: e.nativeEvent.layout.y,
 							});
 						}}
-						marginLeft={Dimensions.get('screen').width * 0.1}
-						width={'100%'}
+						width={Dimensions.get('window').width * 0.9}
 					>
-						<PointsTable
-							isOnHome
-							userToken={userToken}
-						/>
+						<View
+							flexDirection={'row'}
+							justifyContent={'space-between'}
+							alignItems={'center'}
+							backgroundColor={'#EbEBEB'}
+							padding={10}
+							borderTopRightRadius={20}
+							borderTopLeftRadius={20}
+							borderWidth={0.5}
+							borderColor='#61616150'
+							width={Dimensions.get('window').width * 0.9}
+						>
+							<Text
+								textAlign={'center'}
+								flex={0.2}
+								textTransform={'uppercase'}
+								fontSize={10}
+								fontFamily={'InterBold'}
+								color={'#616161'}
+							>
+								Date
+							</Text>
+							<Text
+								textAlign={'center'}
+								flex={0.6}
+								textTransform={'uppercase'}
+								fontSize={10}
+								fontFamily={'InterBold'}
+								color={'#616161'}
+							>
+								Activity
+							</Text>
+							<Text
+								textAlign={'center'}
+								flex={0.2}
+								textTransform={'uppercase'}
+								fontSize={10}
+								fontFamily={'InterBold'}
+								color={'#616161'}
+							>
+								Points
+							</Text>
+						</View>
+						<View
+							borderBottomRightRadius={20}
+							borderBottomLeftRadius={20}
+							marginBottom={20}
+							borderColor='#61616150'
+							borderWidth={0.5}
+							backgroundColor={'#fff'}
+						>
+							{pointsData.results &&
+								pointsData.results.map((item, index) => {
+									return (
+										item && (
+											<View
+												key={index}
+												flexDirection={'row'}
+												justifyContent={'space-between'}
+												alignItems={'center'}
+												width={Dimensions.get('window').width * 0.9}
+												padding={10}
+												borderBottomColor={'#61616150'}
+												borderBottomWidth={0.5}
+												paddingVertical={10}
+											>
+												<Text
+													textAlign={'center'}
+													flex={0.2}
+													textTransform={'uppercase'}
+													color={'#616161'}
+													fontSize={10}
+												>
+													{moment(item.date, 'YYYY-MM-DD').format(
+														'MMM DD, YYYY'
+													)}
+												</Text>
+												<Text
+													textAlign={'center'}
+													flex={0.6}
+													textTransform={'uppercase'}
+													color={'#616161'}
+													fontSize={10}
+												>
+													{item.description}
+												</Text>
+												<View
+													flex={0.2}
+													flexDirection={'row'}
+													alignItems={'center'}
+													justifyContent={'center'}
+													fontSize={10}
+												>
+													<Image
+														source={require('@/assets/images/Coin1.png')}
+														height={20}
+														width={20}
+													/>
+													<Text
+														textAlign={'center'}
+														textTransform={'uppercase'}
+														color={item.type === '1' ? 'green' : '#CC3340'}
+														fontSize={11}
+														fontFamily={'InterMedium'}
+													>
+														{item.type === '1' ? '+' : '-'}
+														{item.amount}
+													</Text>
+												</View>
+											</View>
+										)
+									);
+								})}
+							<Button
+								onPress={() => {
+									router.push('/authUser/pts');
+								}}
+								textAlign='right'
+								color='#fff'
+								backgroundColor={colors.primary}
+								borderColor={colors.primary}
+								pressStyle={{
+									backgroundColor: colors.primary,
+									borderColor: colors.primary,
+								}}
+								fontSize={12}
+								fontFamily='InterMedium'
+								height={30}
+								marginVertical={5}
+								marginRight={5}
+								width={'40%'}
+								alignSelf='flex-end'
+							>
+								View More
+							</Button>
+
+							<View
+								backgroundColor={'#FFFFFF'}
+								borderRadius={20}
+								justifyContent={'space-between'}
+								alignItems={'center'}
+								flexDirection={'row'}
+								padding={10}
+								width={Dimensions.get('window').width * 0.9}
+								marginBottom={5}
+							>
+								<View
+									justifyContent={'space-between'}
+									alignItems={'center'}
+									borderRightWidth={1}
+									borderColor={'#61616150'}
+									flexGrow={1}
+									flex={1}
+								>
+									<Text
+										fontWeight={'bold'}
+										textTransform={'uppercase'}
+										fontSize={10}
+										color={'green'}
+									>
+										Total Earned
+									</Text>
+									<View
+										alignItems={'center'}
+										justifyContent={'center'}
+										flexDirection={'row'}
+									>
+										<Image
+											source={require('@/assets/images/Coin1.png')}
+											height={20}
+											width={20}
+										/>
+										<Text
+											color={'green'}
+											fontWeight={'bold'}
+											fontSize={10}
+										>
+											{pointsData.earned}
+										</Text>
+									</View>
+								</View>
+
+								<View
+									justifyContent={'space-between'}
+									alignItems={'center'}
+									borderRightWidth={1}
+									borderColor={'#61616150'}
+									width={'90%'}
+									flexGrow={1}
+									flex={1}
+								>
+									<Text
+										fontWeight={'bold'}
+										textTransform={'uppercase'}
+										fontSize={10}
+										color={'#CC3340'}
+									>
+										Total Redeem
+									</Text>
+									<View
+										alignItems={'center'}
+										justifyContent={'center'}
+										flexDirection={'row'}
+									>
+										<Image
+											source={require('@/assets/images/Coin1.png')}
+											height={20}
+											width={20}
+										/>
+										<Text
+											color={'#CC3340'}
+											fontWeight={'bold'}
+											fontSize={10}
+										>
+											{pointsData.redeemed}
+										</Text>
+									</View>
+								</View>
+
+								<View
+									justifyContent={'space-between'}
+									alignItems={'center'}
+									flexGrow={1}
+									flex={1}
+								>
+									<Text
+										fontWeight={'bold'}
+										textTransform={'uppercase'}
+										fontSize={10}
+										color={'#616161'}
+									>
+										Balance
+									</Text>
+									<View
+										alignItems={'center'}
+										justifyContent={'center'}
+										flexDirection={'row'}
+									>
+										<Image
+											source={require('@/assets/images/Coin1.png')}
+											height={20}
+											width={20}
+										/>
+										<Text
+											color={'green'}
+											fontWeight={'bold'}
+											fontSize={10}
+										>
+											{pointsData.balance}
+										</Text>
+									</View>
+								</View>
+							</View>
+						</View>
 					</View>
 				) : (
 					<View width={'90%'}>

@@ -18,16 +18,19 @@ export default function Modal() {
 	if (status === 'UserSubmittedTheQuiz') {
 		return (
 			<View
-				onLayout={() => {
-					setTimeout(() => {
-						router.push('/authUser/home');
-					}, 10000);
-				}}
 				flex={1}
 				alignItems={'center'}
 				justifyContent={'center'}
 				backgroundColor={'#fff'}
 			>
+				<X
+					color={'#000'}
+					size='$3'
+					position='absolute'
+					top={50}
+					right={20}
+					onPress={() => router.push('/authUser/home')}
+				/>
 				<ImageTriangles bottom={-75} />
 				<Image
 					src={logo}

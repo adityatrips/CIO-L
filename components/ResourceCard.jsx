@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 const wW = Dimensions.get('window').width;
 const wH = Dimensions.get('window').height;
 
-const ResourceCard = ({ data, getFn }) => {
+const ResourceCard = ({ data, getFn, setIsLoading }) => {
 	const { userToken } = useContext(AuthContext);
 	const router = useRouter();
 
@@ -90,8 +90,8 @@ const ResourceCard = ({ data, getFn }) => {
 				alignItems='center'
 			>
 				<Button
-					backgroundColor={colors.primary}
-					borderColor={colors.primary}
+					backgroundColor={colors.primaryDark}
+					borderColor={colors.primaryDark}
 					pressStyle={{
 						backgroundColor: colors.primary,
 						borderColor: colors.primary,
@@ -101,19 +101,21 @@ const ResourceCard = ({ data, getFn }) => {
 					height={30}
 					justifyContent='space-between'
 					onPress={async () => {
-						axios
-							.post(
-								`https://cioleader.azurewebsites.net/api/resource/${data.id}/viewed/`,
-								{},
-								{
-									headers: {
-										Authorization: `Token ${userToken}`,
-									},
-								}
-							)
+						Linking.openURL(data.link)
 							.then(() => {
-								Linking.openURL(data.link);
+								axios.post(
+									`https://cioleader.azurewebsites.net/api/resource/${data.id}/viewed/`,
+									{},
+									{
+										headers: {
+											Authorization: `Token ${userToken}`,
+										},
+									}
+								);
+							})
+							.then(() => {
 								getFn();
+								setIsLoading(false);
 							});
 					}}
 				>
@@ -176,7 +178,7 @@ const ResourceCard = ({ data, getFn }) => {
 							fontSize={11}
 							fontFamily='InterSemiBold'
 						>
-							+0
+							+{data.quizpoints}
 						</Text>
 					</View>
 				</Button>

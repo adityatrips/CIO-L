@@ -10,7 +10,7 @@ import logo from '@/assets/images/Logo_White.png';
 import { Dimensions, KeyboardAvoidingView, ToastAndroid } from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
 import isEmail from 'validator/lib/isEmail';
-import { isMobilePhone, isMobilePhoneLocales } from 'validator';
+import { isMobilePhone, isMobilePhoneLocales, isNumeric } from 'validator';
 
 const ScreenLogin = () => {
 	const router = useRouter();
@@ -24,7 +24,10 @@ const ScreenLogin = () => {
 				'Please enter your email or mobile number',
 				ToastAndroid.SHORT
 			);
-		} else if (!isEmail(username)) {
+		} else if (
+			(isEmail(username) === false && !isNumeric(username)) ||
+			(isMobilePhone(username, 'en-IN') === false && !isEmail(username))
+		) {
 			ToastAndroid.show('Invalid username', ToastAndroid.SHORT);
 		} else {
 			try {

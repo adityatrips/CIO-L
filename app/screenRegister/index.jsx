@@ -41,6 +41,18 @@ const ScreenRegister = () => {
 			);
 		} else if (pword !== confPword) {
 			ToastAndroid.show('Passwords do not match', ToastAndroid.SHORT);
+		} else if (
+			!fname === '' ||
+			!lname === '' ||
+			!email === '' ||
+			!mobile === '' ||
+			!pword === '' ||
+			!confPword === '' ||
+			!company === '' ||
+			!designation
+		) {
+			ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT);
+			return;
 		} else {
 			try {
 				await axios.post(
@@ -49,24 +61,35 @@ const ScreenRegister = () => {
 						account: {
 							username: mobile,
 							password: pword,
+							email: email,
 						},
 						fname,
 						lname,
 						mobile,
 						email,
 						designation,
-						company: company === '' ? 'N/A' : company,
+						company,
 					}
 				);
-				setShown(true);
-				setModalMessage('Registration successful');
-				setTimeout(() => {
-					setShown(false);
-					setModalMessage('');
-					router.push('/screenLogin');
-				}, 2000);
+				console.log('Redirecting');
+				router.push('/screenLogin');
 			} catch (error) {
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+				console.log(JSON.stringify(error));
+
+				if (error.code === 'ERR_BAD_REQUEST') {
+					ToastAndroid.show('User already exists', ToastAndroid.SHORT);
+				} else {
+					ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+				}
+
+				setFname('');
+				setLname('');
+				setMobile('');
+				setEmail('');
+				setCompany('');
+				setPword('');
+				setConfPword('');
+				setDesignation('');
 			}
 		}
 	};
