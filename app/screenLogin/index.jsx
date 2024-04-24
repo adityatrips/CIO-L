@@ -16,7 +16,7 @@ const ScreenLogin = () => {
 	const router = useRouter();
 	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
 		useContext(AuthContext);
-	const [username, setUsername] = useState('yashdakshita123@gmail.com');
+	const [username, setUsername] = useState('');
 
 	const handleLookupUser = async () => {
 		if (username.length === 0) {
@@ -41,6 +41,7 @@ const ScreenLogin = () => {
 			}
 		}
 	};
+	const { height, width } = Dimensions.get('screen');
 
 	return (
 		<LinearGradient
@@ -70,9 +71,9 @@ const ScreenLogin = () => {
 					<Image
 						marginTop={'40%'}
 						marginBottom={'20%'}
-						source={logo}
-						maxWidth={'90%'}
-						height={'10%'}
+						source={{ uri: logo }}
+						width={width * 0.75}
+						height={height * 0.1}
 						resizeMode='contain'
 					/>
 					<View

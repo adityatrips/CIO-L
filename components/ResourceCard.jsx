@@ -71,7 +71,7 @@ const ResourceCard = ({ data, getFn, setIsLoading }) => {
 				height={'50%'}
 				borderRadius={20}
 				objectFit={'cover'}
-				src={data.image}
+				src={{ uri: data.image }}
 			/>
 
 			<View padding={10}>
@@ -101,17 +101,18 @@ const ResourceCard = ({ data, getFn, setIsLoading }) => {
 					height={30}
 					justifyContent='space-between'
 					onPress={async () => {
-						Linking.openURL(data.link)
+						axios
+							.post(
+								`https://cioleader.azurewebsites.net/api/resource/${data.id}/viewed/`,
+								{},
+								{
+									headers: {
+										Authorization: `Token ${userToken}`,
+									},
+								}
+							)
 							.then(() => {
-								axios.post(
-									`https://cioleader.azurewebsites.net/api/resource/${data.id}/viewed/`,
-									{},
-									{
-										headers: {
-											Authorization: `Token ${userToken}`,
-										},
-									}
-								);
+								Linking.openURL(data.link);
 							})
 							.then(() => {
 								getFn();
@@ -131,7 +132,7 @@ const ResourceCard = ({ data, getFn, setIsLoading }) => {
 						alignItems='center'
 					>
 						<Image
-							src={coin}
+							src={{ uri: coin }}
 							height={25}
 							width={25}
 						/>
@@ -149,14 +150,14 @@ const ResourceCard = ({ data, getFn, setIsLoading }) => {
 						backgroundColor: colors.primary,
 						borderColor: colors.primary,
 					}}
-					backgroundColor={!data.viewed ? colors.primaryDark : '#616161'}
-					disabled={data.viewed}
+					backgroundColor={!data.viewed ? '#616161' : colors.primaryDark}
+					disabled={!data.viewed}
 					borderRadius={100 / 2}
 					justifyContent='space-between'
 					width={'85%'}
 					height={30}
 					onPress={() => {
-						router.push('/authUser/mcq/' + data.quiz);
+						router.push(`/mcq/${data.quiz}`);
 					}}
 				>
 					<Text
@@ -170,7 +171,7 @@ const ResourceCard = ({ data, getFn, setIsLoading }) => {
 						alignItems='center'
 					>
 						<Image
-							src={coin}
+							src={{ uri: coin }}
 							height={25}
 							width={25}
 						/>

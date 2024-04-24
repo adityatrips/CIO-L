@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View } from 'tamagui';
 
-const Divider = ({ spacing = 20, ref, onLayout }) => {
+const Divider = React.forwardRef(function ({ spacing, onLayout }, ref) {
 	return (
 		<View
 			ref={ref}
@@ -15,6 +15,6 @@ const Divider = ({ spacing = 20, ref, onLayout }) => {
 			backgroundColor={'#CCC'}
 		></View>
 	);
-};
+});
 
 export default Divider;

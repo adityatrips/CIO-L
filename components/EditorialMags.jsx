@@ -17,26 +17,6 @@ let wH = height;
 const EditorialMags = ({ data, getFn, setIsLoading }) => {
 	const { userToken } = useContext(AuthContext);
 
-	const magazinePoint = async () => {
-		try {
-			const res = await axios.post(
-				`https://cioleader.azurewebsites.net/api/editorial/${data.id}/viewed/`,
-				null,
-				{
-					headers: {
-						Authorization: `Token ${userToken}`,
-					},
-				}
-			);
-			if (res.status === 200) {
-				getFn();
-				setIsLoading(false);
-			}
-		} catch (error) {
-			console.log(JSON.stringify(error));
-		}
-	};
-
 	const router = useRouter();
 	return (
 		<View
@@ -120,17 +100,28 @@ const EditorialMags = ({ data, getFn, setIsLoading }) => {
 					justifyContent='space-between'
 					fontFamily={'InterBold'}
 					onPress={async () => {
-						magazinePoint();
-						const uri = await downloadAndOpenPdf(
-							data.file,
-							`${data.magzine}_${data.edition}`
-						);
-						await Sharing.shareAsync(uri, {
-							mimeType: 'application/pdf',
-							dialogTitle: 'Share PDF',
-							dialogTitle: 'Share PDF',
-						});
-						console.log(uri);
+						axios
+							.post(
+								`https://cioleader.azurewebsites.net/api/editorial/${data.id}/viewed/`,
+								null,
+								{
+									headers: {
+										Authorization: `Token ${userToken}`,
+									},
+								}
+							)
+							.then(() => {
+								router.push({
+									pathname: '/pdf',
+									params: {
+										uri: data.file,
+									},
+								});
+							})
+							.then(() => {
+								getFn();
+								setIsLoading(false);
+							});
 					}}
 				>
 					<Text

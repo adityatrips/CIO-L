@@ -12,7 +12,7 @@ import LoadingComp from '@/components/Loading';
 
 const ScreenPassword = () => {
 	const router = useRouter();
-	const [pword, setPword] = useState('india@123');
+	const [pword, setPword] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 
 	const { userToken, userInfo, loading, login, lookupUser, toggleAuth } =
@@ -29,7 +29,7 @@ const ScreenPassword = () => {
 			try {
 				setIsLoading(true);
 				login(userInfo?.username, pword).then(() => {
-					router.push('/authUser/home');
+					router.push('/(authUser)/home');
 					setIsLoading(false);
 				});
 			} catch (error) {
@@ -80,7 +80,9 @@ const ScreenPassword = () => {
 							width={120}
 							resizeMode='cover'
 							borderRadius={75}
-							src={userInfo?.profilepicture || ankit}
+							source={{
+								uri: userInfo?.profilepicture || ankit,
+							}}
 						/>
 					</View>
 					<View
@@ -151,7 +153,6 @@ const ScreenPassword = () => {
 							}}
 							href='/screenRegister'
 						>
-							{' '}
 							Sign Up
 						</Link>
 					</Text>

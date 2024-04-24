@@ -5,7 +5,7 @@ import openTopRight from '@/assets/images/OpenTopRight.png';
 import OpenMiddle from '@/assets/images/OpenMiddle.png';
 import OpenLeftBottom from '@/assets/images/OpenLeftBottom.png';
 
-const ImageTriangles = ({ bottom = 0 }) => {
+const ImageTriangles = ({ bottom = 0, height = '110%' }) => {
 	return (
 		<View
 			bottom={bottom}
@@ -13,7 +13,7 @@ const ImageTriangles = ({ bottom = 0 }) => {
 			right={0}
 			position='absolute'
 			width={'100%'}
-			height={'110%'}
+			height={height}
 		>
 			<Image
 				position='absolute'
@@ -21,7 +21,7 @@ const ImageTriangles = ({ bottom = 0 }) => {
 				height={'33.88%'}
 				left={'-24%'}
 				top={'79.2%'}
-				source={OpenMiddle}
+				source={{ uri: OpenMiddle }}
 			/>
 			<Image
 				position='absolute'
@@ -29,7 +29,7 @@ const ImageTriangles = ({ bottom = 0 }) => {
 				height={'14.5%'}
 				left={'-20%'}
 				top={'88%'}
-				source={OpenLeftBottom}
+				source={{ uri: OpenLeftBottom }}
 			/>
 			<Image
 				position='absolute'
@@ -37,7 +37,7 @@ const ImageTriangles = ({ bottom = 0 }) => {
 				height={'23.63%'}
 				left={'37%'}
 				top={'76.4%'}
-				source={openTopRight}
+				source={{ uri: openTopRight }}
 			/>
 		</View>
 	);

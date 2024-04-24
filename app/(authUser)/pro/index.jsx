@@ -12,7 +12,7 @@ import Divider from '@/components/Divider';
 import logo from '@/assets/images/Logo_GreenBlack.png';
 import LoadingComp from '@/components/Loading';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ChevronLeft } from '@tamagui/lucide-icons';
+import { ChevronLeft, Pencil } from '@tamagui/lucide-icons';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
 import PTRView from 'react-native-pull-to-refresh';
 import HeaderComp from '@/components/Header';
@@ -65,7 +65,9 @@ export default function ProfileScreen() {
 		getEvents();
 		getUserProfile();
 		getUpcomingEvents();
-		setLoading(false);
+		setTimeout(() => {
+			setLoading(false);
+		}, 500);
 	}, []);
 
 	const getEvents = async () => {
@@ -126,13 +128,35 @@ export default function ProfileScreen() {
 				}
 				flex={1}
 			>
+				<Button
+					position='absolute'
+					top={10}
+					right={10}
+					zIndex={2}
+					icon={() => <Pencil />}
+					backgroundColor={'#FFFFFF00'}
+					borderColor={'#FFFFFF'}
+					borderWidth={2}
+					onPress={() => router.push('/screenEditProfile')}
+					pressStyle={{
+						backgroundColor: colors.primaryDark,
+						borderColor: '#fff',
+					}}
+				>
+					<Text
+						fontSize={14}
+						fontFamily={'InterSemiBold'}
+					>
+						Edit Profile
+					</Text>
+				</Button>
 				<View
 					flex={1}
 					alignItems='center'
 				>
-					<View height={height * 0.35}>
+					<View height={height * 0.5}>
 						<View
-							height={height * 0.35}
+							height={height * 0.5}
 							width={width}
 							alignItems='center'
 							justifyContent='center'
@@ -144,12 +168,15 @@ export default function ProfileScreen() {
 						>
 							<Image
 								position='absolute'
-								source={globe}
+								width={width * 0.9}
+								height={height * 0.5}
+								source={{ uri: globe }}
 								resizeMode='contain'
 							/>
 							<Image
 								height={110}
 								width={120}
+								marginLeft={Dimensions.get('screen').width * 0.05}
 								borderRadius={20}
 								source={{
 									uri: userProfile.profilepicture || ankit,
@@ -159,10 +186,12 @@ export default function ProfileScreen() {
 								<Text
 									fontSize={22}
 									fontFamily={'InterBold'}
+									width={width * 0.55}
 								>
 									{`${userProfile.fname} ${userProfile.lname}` || 'Ankit'}
 								</Text>
 								<Text
+									width={width * 0.55}
 									fontSize={16}
 									fontFamily={'InterMedium'}
 								>
@@ -171,6 +200,7 @@ export default function ProfileScreen() {
 								<Text
 									fontSize={16}
 									fontFamily={'InterMedium'}
+									width={width * 0.55}
 								>
 									{`${
 										userProfile.company === 'N/A'
@@ -254,6 +284,7 @@ export default function ProfileScreen() {
 							attendedEvents.map((event, index) => (
 								<UpcomingEventCard
 									attended
+									srcRoute='Profile'
 									key={index}
 									data={event}
 								/>
@@ -297,6 +328,7 @@ export default function ProfileScreen() {
 							missedEvents.map((event, index) => (
 								<UpcomingEventCard
 									key={index}
+									srcRoute='Profile'
 									data={event}
 									missed
 								/>
@@ -347,13 +379,13 @@ export default function ProfileScreen() {
 					flexGrow={1}
 					padding={5}
 					onPress={() => {
-						router.push('/authUser/home');
+						router.push('/home');
 					}}
 					justifyContent='center'
 					alignItems='center'
 				>
 					<Image
-						source={home}
+						source={{ uri: home }}
 						height={25}
 						width={'auto'}
 						aspectRatio={0.89}
@@ -370,13 +402,13 @@ export default function ProfileScreen() {
 					flexGrow={1}
 					padding={5}
 					onPress={() => {
-						router.push('/authUser/home');
+						router.push('/home');
 					}}
 					justifyContent='center'
 					alignItems='center'
 				>
 					<Image
-						source={evt}
+						source={{ uri: evt }}
 						height={25}
 						width={25}
 					/>
@@ -392,13 +424,13 @@ export default function ProfileScreen() {
 					flexGrow={1}
 					padding={5}
 					onPress={() => {
-						router.push('/authUser/home');
+						router.push('/home');
 					}}
 					justifyContent='center'
 					alignItems='center'
 				>
 					<Image
-						source={kc}
+						source={{ uri: kc }}
 						height={25}
 						width={25}
 					/>
@@ -414,13 +446,13 @@ export default function ProfileScreen() {
 					flexGrow={1}
 					padding={5}
 					onPress={() => {
-						router.push('/authUser/home');
+						router.push('/home');
 					}}
 					justifyContent='center'
 					alignItems='center'
 				>
 					<Image
-						source={points}
+						source={{ uri: points }}
 						height={25}
 						width={'auto'}
 						aspectRatio={1.25}
@@ -444,7 +476,7 @@ export default function ProfileScreen() {
 					width={30}
 				>
 					<Image
-						source={profile}
+						source={{ uri: profile }}
 						height={25}
 						width={'auto'}
 						aspectRatio={0.87}

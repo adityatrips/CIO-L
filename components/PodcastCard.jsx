@@ -125,17 +125,18 @@ const PodcastCard = ({ data, getFn, setIsLoading }) => {
 					uri: play,
 				}}
 				onPress={async () => {
-					Linking.openURL(data.link)
+					axios
+						.post(
+							`https://cioleader.azurewebsites.net/api/podcast/${data.id}/viewed/`,
+							{},
+							{
+								headers: {
+									Authorization: `Token ${userToken}`,
+								},
+							}
+						)
 						.then(() => {
-							axios.post(
-								`https://cioleader.azurewebsites.net/api/resource/${data.id}/viewed/`,
-								{},
-								{
-									headers: {
-										Authorization: `Token ${userToken}`,
-									},
-								}
-							);
+							Linking.openURL(data.link);
 						})
 						.then(() => {
 							getFn();

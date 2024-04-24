@@ -38,6 +38,7 @@ const UpcomingEventCard = ({
 				justifyContent='center'
 				alignItems='center'
 				flex={1}
+				overflow='hidden'
 			>
 				<Text
 					position='absolute'
@@ -53,11 +54,41 @@ const UpcomingEventCard = ({
 					In Partnership With
 				</Text>
 				<Image
-					src={data.sponsorpicture}
+					source={{
+						uri: data.sponsorpicture,
+					}}
 					width={'90%'}
 					aspectRatio={16 / 9}
 					resizeMode='contain'
 				/>
+				{srcRoute !== 'Profile' && (
+					<View
+						backgroundColor={'#FFFFFF80'}
+						flexDirection='row'
+						alignItems='center'
+						justifyContent='center'
+						position='absolute'
+						bottom={0}
+						left={0}
+						width={'100%'}
+						gap={5}
+					>
+						<Text
+							fontSize={10}
+							color={'#fff'}
+							fontFamily={'InterBold'}
+						>
+							Earn +{data.attendingpoint}
+						</Text>
+						<Image
+							source={{
+								uri: coin,
+							}}
+							height={25}
+							width={25}
+						/>
+					</View>
+				)}
 			</View>
 			<View
 				position={'absolute'}
@@ -88,9 +119,14 @@ const UpcomingEventCard = ({
 					}
 				>
 					<Image
-						source={
-							data.type === '2' ? Online : data.type === '1' ? Offline : Hybrid
-						}
+						source={{
+							uri:
+								data.type === '2'
+									? Online
+									: data.type === '1'
+									? Offline
+									: Hybrid,
+						}}
 						width={35}
 						height={35}
 					/>
@@ -113,7 +149,7 @@ const UpcomingEventCard = ({
 				>
 					{String(data.name)}
 				</Text>
-				<View flexGrow={1}>
+				<View>
 					<View
 						flexDirection='row'
 						alignItems='center'
@@ -130,7 +166,7 @@ const UpcomingEventCard = ({
 							backgroundColor={'#fff'}
 						></View>
 					</View>
-					<View>
+					<View flexGrow={1}>
 						<Text
 							marginVertical={5}
 							fontSize={11}
@@ -160,11 +196,11 @@ const UpcomingEventCard = ({
 							justifyContent='space-between'
 							borderRadius={100 / 2}
 							disabled={missed}
-							backgroundColor={colors.primary}
-							borderColor={colors.primary}
+							backgroundColor={colors.primaryDark}
+							borderColor={colors.primaryDark}
 							pressStyle={{
+								borderColor: colors.primaryDark,
 								backgroundColor: colors.primary,
-								borderColor: colors.primary,
 							}}
 							height={30}
 							onPress={() => {
@@ -198,16 +234,16 @@ const UpcomingEventCard = ({
 							justifyContent='space-between'
 							borderRadius={100 / 2}
 							disabled={missed}
-							backgroundColor={colors.primary}
-							borderColor={colors.primary}
+							backgroundColor={colors.primaryDark}
+							borderColor={colors.primaryDark}
 							pressStyle={{
+								borderColor: colors.primaryDark,
 								backgroundColor: colors.primary,
-								borderColor: colors.primary,
 							}}
 							height={30}
 							onPress={() => {
 								router.push({
-									pathname: `/authUser/event/${data.id}`,
+									pathname: `/event/${data.id}`,
 									state: { srcRoute: srcRoute },
 								});
 							}}
@@ -250,7 +286,7 @@ const UpcomingEventCard = ({
 						height={30}
 						onPress={() => {
 							router.push({
-								pathname: `/authUser/event/${data.id}`,
+								pathname: `/event/${data.id}`,
 								state: { srcRoute: srcRoute },
 							});
 						}}

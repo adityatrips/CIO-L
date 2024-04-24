@@ -12,6 +12,8 @@ import { KeyboardAvoidingView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 const Component = () => {
+	const { height, width } = Dimensions.get('screen');
+
 	const router = useRouter();
 
 	return (
@@ -41,9 +43,11 @@ const Component = () => {
 						justifyContent={'center'}
 					>
 						<Image
-							source={logo}
-							maxWidth={'100%'}
-							height={'10%'}
+							source={{
+								uri: logo,
+							}}
+							width={width * 0.75}
+							height={height * 0.1}
 							resizeMode='contain'
 							padding={0}
 							margin={0}

@@ -1,8 +1,7 @@
 import React, { useContext } from 'react';
 import { Dimensions, ToastAndroid, TouchableOpacity } from 'react-native';
 import { Image, Text, Button, View, ButtonFrame } from 'tamagui';
-import amazon from '@/assets/images/amazon.png';
-import flipkart from '@/assets/images/flipkart.png';
+import coin from '@/assets/images/Coin1.png';
 import { colors } from '@/constants';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
@@ -123,7 +122,7 @@ const VoucherCard = ({ data }) => {
 				justifyContent={'center'}
 			>
 				<Image
-					source={require('@/assets/images/Coin1.png')}
+					source={{ uri: coin }}
 					height={30}
 					width={30}
 				/>

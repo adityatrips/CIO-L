@@ -64,7 +64,7 @@ const EventScreen = () => {
 			>
 				<View style={{ flex: 1 }}>
 					<Image
-						src={evtData.picture}
+						source={{ uri: evtData.picture }}
 						width={wW}
 						height={wH * 0.3}
 					/>
@@ -192,6 +192,13 @@ const EventScreen = () => {
 												},
 											}
 										);
+										router.push({
+											pathname: '/modal',
+											params: {
+												status: 'eventRegistrationSuccess',
+												point: event.attendingpoint,
+											},
+										});
 									} catch (error) {
 										console.log(error.code);
 										if (error.code === 'ERR_BAD_REQUEST') {
@@ -230,7 +237,7 @@ const EventScreen = () => {
 										fontSize={10}
 										fontFamily={'InterBold'}
 									>
-										+50
+										+{event.attendingpoint}
 									</Text>
 								</View>
 							</Button>
@@ -247,14 +254,12 @@ const EventScreen = () => {
 									borderColor: colors.primary,
 								}}
 								onPress={async () => {
-									const uri = await downloadAndOpenPdf(
-										evtData.agenda,
-										`${evtData.name}_Agenda`
-									);
-									await Sharing.shareAsync(uri, {
-										mimeType: 'application/pdf',
-										dialogTitle: 'Share PDF',
-										dialogTitle: 'Share PDF',
+									console.log(evtData.agenda);
+									router.push({
+										pathname: '/pdf',
+										params: {
+											uri: evtData.agenda,
+										},
 									});
 								}}
 							>
@@ -294,7 +299,7 @@ const EventScreen = () => {
 						>
 							{evtData.speakers.length <= 6 ? (
 								evtData.speakers.map((speaker, index) => (
-									<View>
+									<View key={index}>
 										<View
 											key={index}
 											width={wW / 3 - 20}

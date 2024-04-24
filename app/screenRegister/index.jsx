@@ -1,6 +1,5 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 import { Button, Image, Input, ScrollView, Text, View } from 'tamagui';
 import { Dimensions, Modal, ToastAndroid } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
@@ -12,8 +11,11 @@ import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import { isAlpha, isMobilePhone } from 'validator';
 import isEmail from 'validator/lib/isEmail';
+import { useNavigation, useRouter } from 'expo-router';
+
 const ScreenRegister = () => {
 	const router = useRouter();
+	const navigation = useNavigation();
 
 	const [fname, setFname] = React.useState('');
 	const [lname, setLname] = React.useState('');
@@ -24,23 +26,28 @@ const ScreenRegister = () => {
 	const [confPword, setConfPword] = React.useState('');
 	const [designation, setDesignation] = React.useState('');
 
-	const handleRegister = async () => {
+	const validate = () => {
 		if (!isAlpha(fname) && !isAlpha(lname)) {
 			ToastAndroid.show(
 				'First and last names should be alphabets',
 				ToastAndroid.SHORT
 			);
+			return false;
 		} else if (!isMobilePhone(mobile, 'en-IN')) {
 			ToastAndroid.show('Invalid mobile number', ToastAndroid.SHORT);
+			return false;
 		} else if (!isEmail(email)) {
 			ToastAndroid.show('Invalid email address', ToastAndroid.SHORT);
+			return false;
 		} else if (!pword.length >= 8) {
 			ToastAndroid.show(
 				'Password should be atleast 8 characters long',
 				ToastAndroid.SHORT
 			);
+			return false;
 		} else if (pword !== confPword) {
 			ToastAndroid.show('Passwords do not match', ToastAndroid.SHORT);
+			return false;
 		} else if (
 			!fname === '' ||
 			!lname === '' ||
@@ -52,10 +59,15 @@ const ScreenRegister = () => {
 			!designation
 		) {
 			ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT);
-			return;
-		} else {
+			return false;
+		}
+		return true;
+	};
+
+	const handleRegister = async () => {
+		if (validate()) {
 			try {
-				await axios.post(
+				const res = await axios.post(
 					'https://cioleader.azurewebsites.net/api/member/create/',
 					{
 						account: {
@@ -71,31 +83,36 @@ const ScreenRegister = () => {
 						company,
 					}
 				);
-				console.log('Redirecting');
-				router.push('/screenLogin');
+				if (res.status === 201) {
+					console.log('REGISTRATION SUCCESSFUL');
+					router.push({
+						pathname: '/modal',
+						params: {
+							status: 'UserRegistrationSuccess',
+						},
+					});
+				}
 			} catch (error) {
 				console.log(JSON.stringify(error));
-
 				if (error.code === 'ERR_BAD_REQUEST') {
 					ToastAndroid.show('User already exists', ToastAndroid.SHORT);
 				} else {
 					ToastAndroid.show('An error occured', ToastAndroid.SHORT);
 				}
-
-				setFname('');
-				setLname('');
-				setMobile('');
-				setEmail('');
-				setCompany('');
-				setPword('');
-				setConfPword('');
-				setDesignation('');
 			}
+		} else {
+			ToastAndroid.show('Invalid data', ToastAndroid.SHORT);
 		}
-	};
 
-	const [shown, setShown] = React.useState(false);
-	const [modalMessage, setModalMessage] = React.useState('');
+		setFname('');
+		setLname('');
+		setMobile('');
+		setEmail('');
+		setCompany('');
+		setPword('');
+		setConfPword('');
+		setDesignation('');
+	};
 
 	return (
 		<SafeAreaView
@@ -115,7 +132,7 @@ const ScreenRegister = () => {
 				}}
 			>
 				<Image
-					source={logo}
+					source={{ uri: logo }}
 					width={Dimensions.get('window').width * 0.5}
 					height={Dimensions.get('window').width * 0.2}
 					resizeMode='contain'
@@ -344,9 +361,9 @@ const ScreenRegister = () => {
 						<Image
 							height={40}
 							width={40}
-							source={coin}
+							source={{ uri: coin }}
 						/>
-						<Text>+50 Points</Text>
+						<Text>+100 Points</Text>
 					</View>
 				</Button>
 			</ScrollView>

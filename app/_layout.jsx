@@ -11,7 +11,6 @@ import { colors } from '@/constants';
 import { StatusBar } from 'expo-status-bar';
 export { ErrorBoundary } from 'expo-router';
 import * as Linking from 'expo-linking';
-import { Dimensions } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -50,7 +49,7 @@ function RootLayoutNav() {
 		const userInfo = await SecureStore.getItemAsync('userInfo');
 
 		if (userToken && userInfo) {
-			router.push('/authUser/home');
+			router.push('/(authUser)/home');
 		}
 	};
 
@@ -84,11 +83,15 @@ function RootLayoutNav() {
 						}}
 					>
 						<Stack.Screen name='index' />
-						<Stack.Screen name='screenStore/index' />
-						<Stack.Screen name='screenFeedback/index' />
+						<Stack.Screen name='pdf' />
+						<Stack.Screen name='(authUser)' />
+
 						<Stack.Screen name='screenLogin/index' />
 						<Stack.Screen name='screenPassword/index' />
 						<Stack.Screen name='screenRegister/index' />
+						<Stack.Screen name='screenEditProfile/index' />
+						<Stack.Screen name='screenStore/index' />
+						<Stack.Screen name='screenFeedback/[id]/index' />
 						<Stack.Screen
 							name='modal'
 							options={{

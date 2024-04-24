@@ -67,7 +67,7 @@ const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 				height={'50%'}
 				borderRadius={20}
 				objectFit={'cover'}
-				src={data.picture}
+				src={{ uri: data.picture }}
 			/>
 
 			<View padding={10}>
@@ -97,21 +97,23 @@ const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 					height={30}
 					justifyContent='space-between'
 					onPress={async () => {
-						Linking.openURL(
-							`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURI(
-								data.file
-							)}`
-						)
+						axios
+							.post(
+								`https://cioleader.azurewebsites.net/api/whitepaper/${data.id}/viewed/`,
+								{},
+								{
+									headers: {
+										Authorization: `Token ${userToken}`,
+									},
+								}
+							)
 							.then(() => {
-								axios.post(
-									`https://cioleader.azurewebsites.net/api/whitepaper/${data.id}/viewed/`,
-									{},
-									{
-										headers: {
-											Authorization: `Token ${userToken}`,
-										},
-									}
-								);
+								router.push({
+									pathname: '/pdf',
+									params: {
+										uri: data.file,
+									},
+								});
 							})
 							.then(() => {
 								getFn();
@@ -131,7 +133,7 @@ const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 						alignItems='center'
 					>
 						<Image
-							src={coin}
+							src={{ uri: coin }}
 							height={25}
 							width={25}
 						/>
@@ -145,18 +147,18 @@ const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 				</Button>
 				<Button
 					borderColor={colors.primary}
+					backgroundColor={!data.viewed ? '#616161' : colors.primaryDark}
 					pressStyle={{
-						backgroundColor: colors.primary,
+						backgroundColor: colors.primaryDark,
 						borderColor: colors.primary,
 					}}
-					backgroundColor={!data.viewed ? colors.primaryDark : '#616161'}
-					disabled={data.viewed}
+					disabled={!data.viewed}
 					borderRadius={100 / 2}
 					justifyContent='space-between'
 					width={'85%'}
 					height={30}
 					onPress={() => {
-						router.push('/authUser/mcq/' + data.quiz);
+						router.push(`/mcq/${data.quiz}`);
 					}}
 				>
 					<Text
@@ -170,7 +172,7 @@ const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 						alignItems='center'
 					>
 						<Image
-							src={coin}
+							src={{ uri: coin }}
 							height={25}
 							width={25}
 						/>

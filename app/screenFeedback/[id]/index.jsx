@@ -19,30 +19,36 @@ import axios from 'axios';
 import Divider from '@/components/Divider';
 import HeaderComp from '@/components/Header';
 
+import amazing from '@/assets/images/amazing.png';
+import good from '@/assets/images/good.png';
+import okay from '@/assets/images/okay.png';
+import bad from '@/assets/images/bad.png';
+import terrible from '@/assets/images/terrible.png';
+
 const ScreenFeeback = () => {
 	const { id } = useLocalSearchParams();
-	const [feebackRating, setFeedbackRating] = useState(null);
-	const [attendNextEvent, setAttendNextEvent] = useState(null);
+	const [feebackRating, setFeedbackRating] = useState(5);
+	const [attendNextEvent, setAttendNextEvent] = useState(true);
 	const [overallFeedback, setOverallFeedback] = useState('');
 
 	const ratingAssets = [
 		{
-			rating: 1,
-			src: require('@/assets/images/terrible.png'),
-			name: 'Terrible',
-		},
-		{ rating: 2, src: require('@/assets/images/bad.png'), name: 'Bad' },
-		{ rating: 3, src: require('@/assets/images/okay.png'), name: 'Okay' },
-		{ rating: 4, src: require('@/assets/images/good.png'), name: 'Good' },
-		{
 			rating: 5,
-			src: require('@/assets/images/amazing.png'),
+			src: amazing,
 			name: 'Amazing',
+		},
+		{ rating: 4, src: good, name: 'Good' },
+		{ rating: 3, src: okay, name: 'Okay' },
+		{ rating: 2, src: bad, name: 'Bad' },
+		{
+			rating: 1,
+			src: terrible,
+			name: 'Terrible',
 		},
 	];
 	const yesNoAsset = [
-		{ src: require('@/assets/images/good.png'), name: 'Yes', state: true },
-		{ src: require('@/assets/images/bad.png'), name: 'No', state: false },
+		{ src: good, name: 'Yes', state: true },
+		{ src: bad, name: 'No', state: false },
 	];
 
 	const [loading, setLoading] = useState(false);
@@ -58,37 +64,37 @@ const ScreenFeeback = () => {
 			ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT);
 			return;
 		} else {
-			// try {
-			// 	console.log(userToken);
-			// 	const res = await axios.post(
-			// 		`https://cioleader.azurewebsites.net/api/event/${id}/feedback/`,
-			// 		{
-			// 			Rating: feebackRating,
-			// 			NextEvent: attendNextEvent,
-			// 			Feedback: overallFeedback,
-			// 		},
-			// 		{
-			// 			headers: {
-			// 				Authorization: `Token ${userToken}`,
-			// 			},
-			// 		}
-			// 	);
+			try {
+				console.log(userToken);
+				const res = await axios.post(
+					`https://cioleader.azurewebsites.net/api/event/${id}/feedback/`,
+					{
+						Rating: feebackRating,
+						NextEvent: attendNextEvent,
+						Feedback: overallFeedback,
+					},
+					{
+						headers: {
+							Authorization: `Token ${userToken}`,
+						},
+					}
+				);
 
-			// 	if (res.status === 200) {
-			// 		setFeedbackRating(null);
-			// 		setAttendNextEvent(null);
-			// 		setOverallFeedback('');
-			// 	}
-			// } catch (error) {
-			// 	if (error.code === 'ERR_BAD_REQUEST') {
-			// 		ToastAndroid.show(
-			// 			'You have already given your precious feedback.',
-			// 			ToastAndroid.SHORT
-			// 		);
-			// 	}
-			// } finally {
-			// 	setLoading(false);
-			// }
+				if (res.status === 200) {
+					setFeedbackRating(null);
+					setAttendNextEvent(null);
+					setOverallFeedback('');
+				}
+			} catch (error) {
+				if (error.code === 'ERR_BAD_REQUEST') {
+					ToastAndroid.show(
+						'You have already given your precious feedback.',
+						ToastAndroid.SHORT
+					);
+				}
+			} finally {
+				setLoading(false);
+			}
 			router.push({
 				pathname: '/modal',
 				params: { status: 'FeedbackGiven' },
@@ -130,7 +136,7 @@ const ScreenFeeback = () => {
 									backgroundColor: colors.primary,
 									borderColor: colors.primary,
 								}}
-								key={i}
+								key={5 - i}
 								width={(wW * 0.8) / 5 - 5}
 								flexDirection={'column'}
 								justifyContent={'center'}
@@ -138,9 +144,9 @@ const ScreenFeeback = () => {
 								borderWidth={1}
 								borderRadius={10}
 								backgroundColor={
-									i === feebackRating - 1 ? colors.primary : '#FFF'
+									5 - i === feebackRating ? colors.primary : '#FFF'
 								}
-								borderColor={i === feebackRating - 1 ? colors.primary : '#000'}
+								borderColor={5 - i === feebackRating ? colors.primary : '#000'}
 								onPress={() => setFeedbackRating(item.rating)}
 							>
 								<Image source={item.src} />
@@ -148,7 +154,7 @@ const ScreenFeeback = () => {
 						))}
 					</View>
 
-					<Divider />
+					<Divider spacing={20} />
 
 					<View>
 						<Text color='#000'>Do You want to attend our next event? </Text>
@@ -186,10 +192,15 @@ const ScreenFeeback = () => {
 						</View>
 					</View>
 
-					<Divider />
+					<Divider spacing={20} />
 
 					<View>
-						<Text color='#000'>Any overall feedback for the event?</Text>
+						<Text
+							marginBottom={10}
+							color='#000'
+						>
+							Any overall feedback for the event?
+						</Text>
 						<View>
 							<TextArea
 								value={overallFeedback}

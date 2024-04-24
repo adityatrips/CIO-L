@@ -66,41 +66,46 @@ const MCQScreen = () => {
 		setLoading(true);
 		console.log(userToken);
 		try {
-			const res = await axios.post(
-				`https://cioleader.azurewebsites.net/api/quiz/${mcq}/submit/`,
-				{
-					answer1: Number(quizAnswers[0] + 1).toString(),
-					answer2: Number(quizAnswers[1] + 1).toString(),
-					answer3: Number(quizAnswers[2] + 1).toString(),
-					answer4: Number(quizAnswers[3] + 1).toString(),
-					answer5: Number(quizAnswers[4] + 1).toString(),
-				},
-				{
-					headers: {
-						Authorization: `Token ${userToken}`,
+			if (quizAnswers.includes('')) {
+				throw 'Please answer all the questions';
+			} else {
+				const res = await axios.post(
+					`https://cioleader.azurewebsites.net/api/quiz/${mcq}/submit/`,
+					{
+						answer1: Number(quizAnswers[0] + 1).toString(),
+						answer2: Number(quizAnswers[1] + 1).toString(),
+						answer3: Number(quizAnswers[2] + 1).toString(),
+						answer4: Number(quizAnswers[3] + 1).toString(),
+						answer5: Number(quizAnswers[4] + 1).toString(),
 					},
-				}
-			);
+					{
+						headers: {
+							Authorization: `Token ${userToken}`,
+						},
+					}
+				);
 
-			router.push({
-				pathname: '/modal',
-				params: {
-					status: 'UserGotMarks',
-					marksData: {
+				router.push({
+					pathname: '/modal',
+					params: {
+						status: 'UserGotMarks',
 						points: res.data.Points,
 						correct: res.data.Correct,
 						message: res.data.message,
 					},
-				},
-			});
+				});
+			}
 		} catch (error) {
 			if (error.code === 'ERR_BAD_REQUEST') {
+				console.log(error.code);
 				router.push({
 					pathname: '/modal',
 					params: {
 						status: 'UserSubmittedTheQuiz',
 					},
 				});
+			} else if (error === 'Please answer all the questions') {
+				ToastAndroid.show(error, ToastAndroid.SHORT);
 			}
 		}
 		setLoading(false);
@@ -210,8 +215,6 @@ const MCQScreen = () => {
 										flexDirection='row'
 										gap={10}
 										alignItems='center'
-										paddingHorizontal={20}
-										paddingVertical={20}
 										borderRadius={4}
 										borderColor={'#AEAEAE'}
 										borderWidth={2}
@@ -220,25 +223,29 @@ const MCQScreen = () => {
 										style={{
 											width: '100%',
 										}}
+										width={Dimensions.get('window').width * 0.85}
+										height={Dimensions.get('window').height * 0.075}
 										pressStyle={{
 											backgroundColor: colors.primary,
 										}}
 									>
 										<View
+											width={'100%'}
 											flexDirection='row'
-											gap={10}
+											gap={20}
 											alignItems='center'
+											justifyContent='flex-start'
 										>
 											<View
 												position='relative'
 												width={30}
 												height={30}
-												// backgroundColor={'#000'}
 												borderRadius={100 / 2}
 												alignItems='center'
 												justifyContent='center'
 												borderColor={colors.primary}
 												borderWidth={2}
+												marginLeft={10}
 											>
 												<RadioGroup.Indicator
 													backgroundColor={colors.primary}
@@ -250,11 +257,9 @@ const MCQScreen = () => {
 												/>
 											</View>
 											<Text
-												position='absolute'
 												color='#000'
-												height={20}
-												left={'15%'}
-												width={'75%'}
+												width={'90%'}
+												paddingVertical={5}
 											>
 												{opt}
 											</Text>
