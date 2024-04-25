@@ -14,9 +14,8 @@ import { isMobilePhone, isMobilePhoneLocales, isNumeric } from 'validator';
 
 const ScreenLogin = () => {
 	const router = useRouter();
-	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
-		useContext(AuthContext);
-	const [username, setUsername] = useState('');
+	const { lookupUser } = useContext(AuthContext);
+	const [username, setUsername] = useState('yashdakshita123@gmail.com');
 
 	const handleLookupUser = async () => {
 		if (username.length === 0) {
@@ -71,7 +70,7 @@ const ScreenLogin = () => {
 					<Image
 						marginTop={'40%'}
 						marginBottom={'20%'}
-						source={{ uri: logo }}
+						source={logo}
 						width={width * 0.75}
 						height={height * 0.1}
 						resizeMode='contain'

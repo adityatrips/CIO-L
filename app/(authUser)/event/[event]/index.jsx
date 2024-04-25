@@ -227,9 +227,7 @@ const EventScreen = () => {
 									alignItems='center'
 								>
 									<Image
-										source={{
-											uri: coin,
-										}}
+										source={coin}
 										height={25}
 										width={25}
 									/>

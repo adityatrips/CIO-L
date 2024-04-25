@@ -62,9 +62,7 @@ const PodcastCard = ({ data, getFn, setIsLoading }) => {
 				alignItems='center'
 			>
 				<Image
-					source={{
-						uri: podcastIcon,
-					}}
+					source={podcastIcon}
 					width={50}
 					height={50}
 				/>
@@ -84,9 +82,7 @@ const PodcastCard = ({ data, getFn, setIsLoading }) => {
 				</View>
 			</View>
 			<Image
-				source={{
-					uri: podcastAudio,
-				}}
+				source={podcastAudio}
 				resizeMode='contain'
 				width={'75%'}
 				height={'30%'}
@@ -106,9 +102,7 @@ const PodcastCard = ({ data, getFn, setIsLoading }) => {
 					alignItems='center'
 				>
 					<Image
-						source={{
-							uri: coin,
-						}}
+						source={coin}
 						width={25}
 						height={25}
 					/>
@@ -121,9 +115,7 @@ const PodcastCard = ({ data, getFn, setIsLoading }) => {
 				</View>
 			</View>
 			<Image
-				source={{
-					uri: play,
-				}}
+				source={play}
 				onPress={async () => {
 					axios
 						.post(

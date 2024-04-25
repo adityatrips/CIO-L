@@ -55,6 +55,8 @@ function RootLayoutNav() {
 
 	useEffect(() => {
 		checkAuth();
+
+		router.push('/screenEditProfile');
 	}, []);
 
 	const DarkTheme = {

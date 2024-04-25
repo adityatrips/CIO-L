@@ -81,9 +81,7 @@ const UpcomingEventCard = ({
 							Earn +{data.attendingpoint}
 						</Text>
 						<Image
-							source={{
-								uri: coin,
-							}}
+							source={coin}
 							height={25}
 							width={25}
 						/>
@@ -222,9 +220,7 @@ const UpcomingEventCard = ({
 									SHARE FEEDBACK
 								</Text>
 								<Image
-									source={{
-										uri: coin,
-									}}
+									source={coin}
 									width={25}
 									height={25}
 								/>
@@ -260,9 +256,7 @@ const UpcomingEventCard = ({
 									SHARE SELFIE
 								</Text>
 								<Image
-									source={{
-										uri: coin,
-									}}
+									source={coin}
 									width={25}
 									height={25}
 								/>

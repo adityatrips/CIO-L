@@ -132,7 +132,7 @@ const ScreenRegister = () => {
 				}}
 			>
 				<Image
-					source={{ uri: logo }}
+					source={logo}
 					width={Dimensions.get('window').width * 0.5}
 					height={Dimensions.get('window').width * 0.2}
 					resizeMode='contain'
@@ -361,7 +361,7 @@ const ScreenRegister = () => {
 						<Image
 							height={40}
 							width={40}
-							source={{ uri: coin }}
+							source={coin}
 						/>
 						<Text>+100 Points</Text>
 					</View>

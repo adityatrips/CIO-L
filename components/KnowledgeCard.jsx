@@ -133,7 +133,7 @@ const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 						alignItems='center'
 					>
 						<Image
-							src={{ uri: coin }}
+							src={coin}
 							height={25}
 							width={25}
 						/>
@@ -172,7 +172,7 @@ const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 						alignItems='center'
 					>
 						<Image
-							src={{ uri: coin }}
+							src={coin}
 							height={25}
 							width={25}
 						/>

@@ -170,7 +170,7 @@ export default function ProfileScreen() {
 								position='absolute'
 								width={width * 0.9}
 								height={height * 0.5}
-								source={{ uri: globe }}
+								source={globe}
 								resizeMode='contain'
 							/>
 							<Image
@@ -385,7 +385,7 @@ export default function ProfileScreen() {
 					alignItems='center'
 				>
 					<Image
-						source={{ uri: home }}
+						source={home}
 						height={25}
 						width={'auto'}
 						aspectRatio={0.89}
@@ -408,7 +408,7 @@ export default function ProfileScreen() {
 					alignItems='center'
 				>
 					<Image
-						source={{ uri: evt }}
+						source={evt}
 						height={25}
 						width={25}
 					/>
@@ -430,7 +430,7 @@ export default function ProfileScreen() {
 					alignItems='center'
 				>
 					<Image
-						source={{ uri: kc }}
+						source={kc}
 						height={25}
 						width={25}
 					/>
@@ -452,7 +452,7 @@ export default function ProfileScreen() {
 					alignItems='center'
 				>
 					<Image
-						source={{ uri: points }}
+						source={points}
 						height={25}
 						width={'auto'}
 						aspectRatio={1.25}
@@ -476,7 +476,7 @@ export default function ProfileScreen() {
 					width={30}
 				>
 					<Image
-						source={{ uri: profile }}
+						source={profile}
 						height={25}
 						width={'auto'}
 						aspectRatio={0.87}

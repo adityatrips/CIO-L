@@ -11,7 +11,6 @@ import {
 import React, { useContext, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Dimensions, ToastAndroid } from 'react-native';
-import coin from '@/assets/images/Coin1.png';
 import ankit from '@/assets/images/Ankit.png';
 import { colors } from '@/constants';
 import Header from '@/components/Header';
@@ -82,6 +81,7 @@ const ScreenEditProfile = () => {
 
 	const getMemberDetails = async () => {
 		try {
+			setLoading(true);
 			const res = await axios.get(
 				'https://cioleader.azurewebsites.net/api/member/',
 				{
@@ -91,8 +91,20 @@ const ScreenEditProfile = () => {
 				}
 			);
 			setMemberDetails(res.data);
+			getComapnySize();
+			getIndustries();
+
+			setImage(res.data.profilepicture);
+			setFname(res.data.fname);
+			setLname(res.data.lname);
+			setMobile(res.data.mobile);
+			setEmail(res.data.email);
+			setCompany(res.data.company);
+			setDesignation(res.data.designation);
 		} catch (error) {
 			ToastAndroid.show('Error fetching industries', ToastAndroid.SHORT);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -141,23 +153,15 @@ const ScreenEditProfile = () => {
 		}
 	};
 
+	const getData = async () => {
+		getMemberDetails();
+	};
+
 	useEffect(() => {
-		(async () => {
-			setLoading(true);
-			setImage(memberDetails.profilepicture);
-			getIndustries();
-			getComapnySize();
-			getMemberDetails();
-			setFname(memberDetails.fname);
-			setLname(memberDetails.lname);
-			setMobile(memberDetails.mobile);
-			setEmail(memberDetails.email);
-			setCompany(memberDetails.company);
-			setDesignation(memberDetails.designation);
-		})().then(() => setLoading(false));
+		getData();
 	}, []);
 
-	return loading || memberDetails == {} ? (
+	return loading ? (
 		<LoadingComp />
 	) : (
 		<SafeAreaView
@@ -204,9 +208,7 @@ const ScreenEditProfile = () => {
 							overflow={'hidden'}
 						>
 							<Image
-								source={{
-									uri: image || ankit,
-								}}
+								source={{ uri: image || ankit }}
 								width={Dimensions.get('screen').height * 0.2}
 								aspeectRatio={1}
 								height={Dimensions.get('screen').height * 0.2}
@@ -225,6 +227,7 @@ const ScreenEditProfile = () => {
 									backgroundColor: colors.primaryDark,
 									borderColor: '#fff',
 								}}
+								width={Dimensions.get('screen').width * 0.45}
 								borderRadius={100 / 2}
 							>
 								<Text
@@ -242,6 +245,7 @@ const ScreenEditProfile = () => {
 									backgroundColor: colors.primaryDark,
 									borderColor: '#fff',
 								}}
+								width={Dimensions.get('screen').width * 0.45}
 								borderRadius={100 / 2}
 							>
 								<Text
@@ -495,9 +499,7 @@ const ScreenEditProfile = () => {
 						</Text>
 					</Button>
 					<Image
-						source={{
-							uri: triangle,
-						}}
+						source={triangle}
 						marginTop={-120}
 						left={-Dimensions.get('screen').width * 0.1}
 						width={width * 1.1}

@@ -36,18 +36,14 @@ export default function Modal() {
 					height='120%'
 				/>
 				<Image
-					source={{
-						uri: logo,
-					}}
+					source={logo}
 					resizeMode='contain'
 					width={Dimensions.get('window').width * 0.75}
 					height={Dimensions.get('window').height * 0.15}
 				/>
 				<Image
 					marginTop={-40}
-					source={{
-						uri: oops,
-					}}
+					source={oops}
 					resizeMode='contain'
 					width={Dimensions.get('window').width}
 					height={Dimensions.get('window').height * 0.3}
@@ -76,9 +72,7 @@ export default function Modal() {
 				}}
 			>
 				<Image
-					source={{
-						uri: logo,
-					}}
+					source={logo}
 					resizeMode='contain'
 					width={Dimensions.get('window').width * 0.75}
 					height={Dimensions.get('window').height * 0.15}
@@ -87,9 +81,7 @@ export default function Modal() {
 					width={Dimensions.get('window').width * 0.6}
 					height={Dimensions.get('window').height * 0.3}
 					resizeMode='contain'
-					source={{
-						uri: hourglass,
-					}}
+					source={hourglass}
 					marginVertical={20}
 				/>
 				<Text
@@ -134,9 +126,7 @@ export default function Modal() {
 						height='120%'
 					/>
 					<Image
-						source={{
-							uri: logo,
-						}}
+						source={logo}
 						resizeMode='contain'
 						width={Dimensions.get('window').width * 0.75}
 						height={Dimensions.get('window').height * 0.15}
@@ -157,9 +147,7 @@ export default function Modal() {
 					</Text>
 					<View position='relative'>
 						<Image
-							source={{
-								uri: gift,
-							}}
+							source={gift}
 							marginLeft={'-2%'}
 							marginVertical={20}
 							resizeMode='contain'
@@ -212,14 +200,14 @@ export default function Modal() {
 					height='120%'
 				/>
 				<Image
-					source={{ uri: logo }}
+					source={logo}
 					resizeMode='contain'
 					width={Dimensions.get('window').width * 0.75}
 					height={Dimensions.get('window').height * 0.15}
 				/>
 				<Image
 					marginTop={-40}
-					source={{ uri: oops }}
+					source={oops}
 					resizeMode='contain'
 					width={Dimensions.get('window').width}
 					height={Dimensions.get('window').height * 0.3}
@@ -270,7 +258,7 @@ export default function Modal() {
 						height='120%'
 					/>
 					<Image
-						source={{ uri: logo }}
+						source={logo}
 						resizeMode='contain'
 						width={Dimensions.get('window').width * 0.75}
 						height={Dimensions.get('window').height * 0.15}
@@ -293,9 +281,7 @@ export default function Modal() {
 					</Text>
 					<View position='relative'>
 						<Image
-							source={{
-								uri: gift,
-							}}
+							source={gift}
 							marginLeft={'-2%'}
 							marginVertical={20}
 							resizeMode='contain'
@@ -363,16 +349,14 @@ export default function Modal() {
 						height='120%'
 					/>
 					<Image
-						source={{ uri: logo }}
+						source={logo}
 						resizeMode='contain'
 						width={Dimensions.get('window').width * 0.75}
 						height={Dimensions.get('window').height * 0.15}
 						marginTop={50}
 					/>
 					<Image
-						source={{
-							uri: done,
-						}}
+						source={done}
 						marginVertical={20}
 						resizeMode='contain'
 						marginLeft={30}
@@ -437,7 +421,7 @@ export default function Modal() {
 						height='120%'
 					/>
 					<Image
-						source={{ uri: logo }}
+						source={logo}
 						resizeMode='contain'
 						width={Dimensions.get('window').width * 0.75}
 						height={Dimensions.get('window').height * 0.15}
@@ -460,9 +444,7 @@ export default function Modal() {
 					</Text>
 					<View position='relative'>
 						<Image
-							source={{
-								uri: gift,
-							}}
+							source={gift}
 							marginLeft={'-2%'}
 							marginVertical={20}
 							resizeMode='contain'
@@ -526,7 +508,7 @@ export default function Modal() {
 						height='120%'
 					/>
 					<Image
-						source={{ uri: logo }}
+						source={logo}
 						resizeMode='contain'
 						width={Dimensions.get('window').width * 0.75}
 						height={Dimensions.get('window').height * 0.15}
@@ -549,9 +531,7 @@ export default function Modal() {
 					</Text>
 					<View position='relative'>
 						<Image
-							source={{
-								uri: gift,
-							}}
+							source={gift}
 							marginLeft={'-2%'}
 							marginVertical={20}
 							resizeMode='contain'

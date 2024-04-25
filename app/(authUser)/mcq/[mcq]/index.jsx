@@ -296,9 +296,7 @@ const MCQScreen = () => {
 						</Text>
 					</Button>
 					<Image
-						source={{
-							uri: triangle,
-						}}
+						source={triangle}
 						width={wW}
 						height={wH * 0.3}
 						position='absolute'

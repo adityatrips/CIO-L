@@ -32,6 +32,7 @@ import EditorialMags from '@/components/EditorialMags';
 import moment from 'moment';
 import CollapsibleText from '../../../components/CollapsableText';
 import triangle from '@/assets/images/triangle.png';
+import coin from '@/assets/images/Coin1.png';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -310,7 +311,7 @@ const HomeScreen = () => {
 								position='absolute'
 							>
 								<Image
-									source={{ uri: globe }}
+									source={globe}
 									resizeMode='contain'
 									height={Dimensions.get('screen').height * 0.4}
 									aspectRatio={1}
@@ -326,9 +327,7 @@ const HomeScreen = () => {
 								height={110}
 								width={120}
 								borderRadius={20}
-								source={{
-									uri: userProfile.profilepicture || ankit,
-								}}
+								source={{ uri: userProfile.profilepicture || ankit }}
 								marginBottom={10}
 							/>
 							<Text
@@ -370,7 +369,7 @@ const HomeScreen = () => {
 									gap={10}
 								>
 									<Image
-										source={{ uri: earn }}
+										source={earn}
 										height={35}
 										width={'auto'}
 										aspectRatio={0.837}
@@ -408,7 +407,7 @@ const HomeScreen = () => {
 									gap={10}
 								>
 									<Image
-										source={{ uri: rem }}
+										source={rem}
 										height={40}
 										width={'auto'}
 										aspectRatio={1.04}
@@ -852,9 +851,7 @@ const HomeScreen = () => {
 														fontSize={10}
 													>
 														<Image
-															source={{
-																uri: require('@/assets/images/Coin1.png'),
-															}}
+															source={coin}
 															height={20}
 															width={20}
 														/>
@@ -926,7 +923,7 @@ const HomeScreen = () => {
 											flexDirection={'row'}
 										>
 											<Image
-												source={{ uri: require('@/assets/images/Coin1.png') }}
+												source={coin}
 												height={20}
 												width={20}
 											/>
@@ -961,7 +958,7 @@ const HomeScreen = () => {
 											flexDirection={'row'}
 										>
 											<Image
-												source={{ uri: require('@/assets/images/Coin1.png') }}
+												source={coin}
 												height={20}
 												width={20}
 											/>
@@ -994,7 +991,7 @@ const HomeScreen = () => {
 											flexDirection={'row'}
 										>
 											<Image
-												source={{ uri: require('@/assets/images/Coin1.png') }}
+												source={coin}
 												height={20}
 												width={20}
 											/>
@@ -1045,9 +1042,7 @@ const HomeScreen = () => {
 					</Button>
 				</View>
 				<Image
-					source={{
-						uri: triangle,
-					}}
+					source={triangle}
 					marginTop={-50}
 					width={width}
 					height={height * 0.35}
@@ -1086,7 +1081,7 @@ const HomeScreen = () => {
 					}
 				>
 					<Image
-						source={{ uri: home }}
+						source={home}
 						height={25}
 						width={'auto'}
 						aspectRatio={0.89}
@@ -1117,7 +1112,7 @@ const HomeScreen = () => {
 					}
 				>
 					<Image
-						source={{ uri: evt }}
+						source={evt}
 						height={25}
 						width={25}
 					/>
@@ -1147,7 +1142,7 @@ const HomeScreen = () => {
 					}
 				>
 					<Image
-						source={{ uri: kc }}
+						source={kc}
 						height={25}
 						width={25}
 					/>
@@ -1175,7 +1170,7 @@ const HomeScreen = () => {
 					}
 				>
 					<Image
-						source={{ uri: points }}
+						source={points}
 						height={25}
 						aspectRatio={1.25}
 					/>

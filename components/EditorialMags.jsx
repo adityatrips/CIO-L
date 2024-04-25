@@ -137,9 +137,7 @@ const EditorialMags = ({ data, getFn, setIsLoading }) => {
 						alignItems='center'
 					>
 						<Image
-							source={{
-								uri: coin,
-							}}
+							source={coin}
 							width={25}
 							height={25}
 						/>

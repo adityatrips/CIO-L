@@ -125,7 +125,7 @@ export default function PointsScreen() {
 								flexDirection={'row'}
 							>
 								<Image
-									source={{ uri: coin }}
+									source={coin}
 									height={20}
 									width={20}
 								/>
@@ -165,7 +165,7 @@ export default function PointsScreen() {
 								flexDirection={'row'}
 							>
 								<Image
-									source={{ uri: coin }}
+									source={coin}
 									height={20}
 									width={20}
 								/>
@@ -205,7 +205,7 @@ export default function PointsScreen() {
 								flexDirection={'row'}
 							>
 								<Image
-									source={{ uri: coin }}
+									source={coin}
 									height={20}
 									width={20}
 								/>
@@ -313,9 +313,7 @@ export default function PointsScreen() {
 												fontSize={10}
 											>
 												<Image
-													source={{
-														uri: coin,
-													}}
+													source={coin}
 													height={20}
 													width={20}
 												/>

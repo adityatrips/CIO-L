@@ -10,14 +10,12 @@
 	"include": [
 		"**/*.ts",
 		"**/*.tsx",
+		"app/**/*.jsx",
+		"app/(tabs)/**/*.jsx",
+		"app/(authUser)/**/*.jsx",
+		"constants/index.js",
 		".expo/types/**/*.ts",
 		"expo-env.d.ts",
-		"app/modal.jsx",
-		"app/_layout.jsx",
-		"app/(tabs)/event.jsx",
-		"app/(tabs)/index.jsx",
-		"app/(tabs)/_layout.jsx",
-		"constants/index.js",
 		"tamagui.config.ts"
 	]
 }

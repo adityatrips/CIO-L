@@ -21,7 +21,7 @@ const ImageTriangles = ({ bottom = 0, height = '110%' }) => {
 				height={'33.88%'}
 				left={'-24%'}
 				top={'79.2%'}
-				source={{ uri: OpenMiddle }}
+				source={OpenMiddle}
 			/>
 			<Image
 				position='absolute'
@@ -29,7 +29,7 @@ const ImageTriangles = ({ bottom = 0, height = '110%' }) => {
 				height={'14.5%'}
 				left={'-20%'}
 				top={'88%'}
-				source={{ uri: OpenLeftBottom }}
+				source={OpenLeftBottom}
 			/>
 			<Image
 				position='absolute'
@@ -37,7 +37,7 @@ const ImageTriangles = ({ bottom = 0, height = '110%' }) => {
 				height={'23.63%'}
 				left={'37%'}
 				top={'76.4%'}
-				source={{ uri: openTopRight }}
+				source={openTopRight}
 			/>
 		</View>
 	);

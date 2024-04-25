@@ -43,9 +43,7 @@ const Component = () => {
 						justifyContent={'center'}
 					>
 						<Image
-							source={{
-								uri: logo,
-							}}
+							source={logo}
 							width={width * 0.75}
 							height={height * 0.1}
 							resizeMode='contain'

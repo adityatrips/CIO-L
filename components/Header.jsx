@@ -29,9 +29,7 @@ const HeaderComp = ({ title = 'CIO&Leader' }) => {
 				zIndex={100}
 			>
 				<Image
-					source={{
-						uri: logo,
-					}}
+					source={logo}
 					height={Dimensions.get('screen').height * 0.08}
 					width={Dimensions.get('screen').width * 0.4}
 					resizeMode='contain'

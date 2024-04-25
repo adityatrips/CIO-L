@@ -23,7 +23,7 @@ const Carousel = ({ images }) => {
 			position={'relative'}
 		>
 			<Image
-				source={{ uri: images[currentIndex] }}
+				source={images[currentIndex]}
 				width={'100%'}
 				height={'100%'}
 				objectFit={'cover'}

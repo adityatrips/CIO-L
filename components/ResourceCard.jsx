@@ -132,7 +132,7 @@ const ResourceCard = ({ data, getFn, setIsLoading }) => {
 						alignItems='center'
 					>
 						<Image
-							src={{ uri: coin }}
+							src={coin}
 							height={25}
 							width={25}
 						/>
@@ -171,7 +171,7 @@ const ResourceCard = ({ data, getFn, setIsLoading }) => {
 						alignItems='center'
 					>
 						<Image
-							src={{ uri: coin }}
+							src={coin}
 							height={25}
 							width={25}
 						/>

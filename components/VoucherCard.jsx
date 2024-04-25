@@ -122,7 +122,7 @@ const VoucherCard = ({ data }) => {
 				justifyContent={'center'}
 			>
 				<Image
-					source={{ uri: coin }}
+					source={coin}
 					height={30}
 					width={30}
 				/>
