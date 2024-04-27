@@ -1,5 +1,10 @@
 import React, { useContext } from 'react';
-import { Dimensions, ToastAndroid, TouchableOpacity } from 'react-native';
+import {
+	Dimensions,
+	ToastAndroid,
+	TouchableOpacity,
+	Vibration,
+} from 'react-native';
 import { Image, Text, Button, View, ButtonFrame } from 'tamagui';
 import coin from '@/assets/images/Coin1.png';
 import { colors } from '@/constants';
@@ -173,6 +178,7 @@ const VoucherCard = ({ data }) => {
 					} catch (error) {
 						if (error.code === 'ERR_BAD_REQUEST') {
 							ToastAndroid.show('Not enough points', ToastAndroid.SHORT);
+							Vibration.vibrate();
 						}
 					}
 				}}

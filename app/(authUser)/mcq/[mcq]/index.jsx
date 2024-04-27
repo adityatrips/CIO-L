@@ -8,7 +8,7 @@ import {
 	Button,
 	Image,
 } from 'tamagui';
-import { Dimensions, ToastAndroid } from 'react-native';
+import { Dimensions, ToastAndroid, Vibration } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/constants';
 import { AuthContext } from '@/context/AuthContext';
@@ -106,6 +106,7 @@ const MCQScreen = () => {
 				});
 			} else if (error === 'Please answer all the questions') {
 				ToastAndroid.show(error, ToastAndroid.SHORT);
+				Vibration.vibrate();
 			}
 		}
 		setLoading(false);

@@ -1,25 +1,30 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Link, useRouter } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import ImageTriangles from '@/components/ImageTriangles';
 import { Button, Image, Input, ScrollView, Text, View } from 'tamagui';
 import { colors } from '@/constants';
 import ankit from '@/assets/images/Ankit.png';
-import { Dimensions, ToastAndroid } from 'react-native';
+import { Dimensions, ToastAndroid, Vibration } from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LoadingComp from '@/components/Loading';
+import { Eye, EyeOff } from '@tamagui/lucide-icons';
+import { isEmail, isMobile } from 'validator';
 
 const ScreenPassword = () => {
+	const { email } = useLocalSearchParams();
 	const router = useRouter();
 	const [pword, setPword] = useState('india@123');
 	const [isLoading, setIsLoading] = useState(false);
+	const [HidePassword, setHidePassword] = useState(true);
 
 	const { userToken, userInfo, loading, login, lookupUser, toggleAuth } =
 		useContext(AuthContext);
 
 	const loginHandler = async () => {
 		if (pword.length === 0 || pword.length < 8) {
+			Vibration.vibrate();
 			ToastAndroid.show(
 				'Invalid password, please re-check',
 				ToastAndroid.SHORT
@@ -33,6 +38,7 @@ const ScreenPassword = () => {
 					setIsLoading(false);
 				});
 			} catch (error) {
+				Vibration.vibrate();
 				ToastAndroid.show(
 					'Invalid password, please try again!',
 					ToastAndroid.SHORT
@@ -104,25 +110,56 @@ const ScreenPassword = () => {
 						</Text>
 					</View>
 
-					<Input
-						autoCapitalize='none'
-						autoCorrect={false}
-						borderWidth={0}
+					<View
 						width={'100%'}
-						borderRadius={100 / 2}
-						elevate
-						secureTextEntry
-						elevation={5}
-						placeholder='ENTER PASSWORD'
-						placeholderTextColor={'#fff'}
-						textAlign='center'
+						alignItems='center'
+						justifyContent='space-between'
+						flexDirection='row'
 						backgroundColor={colors.primary}
-						height={50}
-						value={pword}
-						fontSize={14}
-						fontFamily={'InterMedium'}
-						onChangeText={(text) => setPword(text)}
-					/>
+						borderRadius={100 / 2}
+						overflow='hidden'
+					>
+						<Input
+							backgroundColor={colors.primary}
+							autoCapitalize='none'
+							autoCorrect={false}
+							borderWidth={0}
+							width={'100%'}
+							secureTextEntry={HidePassword}
+							placeholder='ENTER PASSWORD'
+							placeholderTextColor={'#fff'}
+							textAlign='center'
+							height={50}
+							value={pword}
+							fontSize={14}
+							fontFamily={'InterMedium'}
+							onChangeText={(text) => setPword(text)}
+						/>
+						{HidePassword ? (
+							<Eye
+								style={{
+									position: 'absolute',
+									right: 20,
+								}}
+								onPress={() => {
+									setHidePassword(false);
+								}}
+								color='#fff'
+							/>
+						) : (
+							<EyeOff
+								style={{
+									position: 'absolute',
+									right: 20,
+								}}
+								onPress={() => {
+									setHidePassword(true);
+								}}
+								color='#fff'
+							/>
+						)}
+					</View>
+
 					<Button
 						marginBottom={'30%'}
 						backgroundColor={colors.primary}
@@ -146,7 +183,7 @@ const ScreenPassword = () => {
 						</Text>
 					</Button>
 					<Text fontSize={15}>
-						Don't have any account?
+						Don't have any account?{' '}
 						<Link
 							style={{
 								fontWeight: 900,
@@ -155,6 +192,29 @@ const ScreenPassword = () => {
 						>
 							Sign Up
 						</Link>
+					</Text>
+					<Text fontSize={15}>
+						Forgot passowrd?{' '}
+						<Text
+							onPress={() => {
+								if (isEmail(email)) {
+									ToastAndroid.show(
+										`Reset email sent to ${email}`,
+										ToastAndroid.SHORT
+									);
+								} else if (isMobile(email, 'en-IN')) {
+									ToastAndroid.show(
+										`Please login from your email address to reset the password`,
+										ToastAndroid.SHORT
+									);
+								}
+							}}
+							style={{
+								fontWeight: 900,
+							}}
+						>
+							Send a reset email
+						</Text>
 					</Text>
 				</ScrollView>
 			</SafeAreaView>

@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ImageTriangles from '@/components/ImageTriangles';
-import { Dimensions, ToastAndroid } from 'react-native';
+import { Dimensions, ToastAndroid, Vibration } from 'react-native';
 import {
 	Button,
 	Image,
@@ -62,6 +62,7 @@ const ScreenFeeback = () => {
 			feebackRating === null
 		) {
 			ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT);
+			Vibration.vibrate();
 			return;
 		} else {
 			try {
@@ -87,6 +88,7 @@ const ScreenFeeback = () => {
 				}
 			} catch (error) {
 				if (error.code === 'ERR_BAD_REQUEST') {
+					Vibration.vibrate();
 					ToastAndroid.show(
 						'You have already given your precious feedback.',
 						ToastAndroid.SHORT

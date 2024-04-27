@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Button, Image, Text, ScrollView } from 'tamagui';
-import { Dimensions, StatusBar, ToastAndroid } from 'react-native';
+import { Dimensions, StatusBar, ToastAndroid, Vibration } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -39,6 +39,7 @@ const EventScreen = () => {
 			setEvtData(res.data);
 		} catch (error) {
 			ToastAndroid.show('An error has occurred', ToastAndroid.SHORT);
+			Vibration.vibrate();
 		} finally {
 			setLoading(false);
 		}
@@ -206,11 +207,13 @@ const EventScreen = () => {
 												'You have already registered for the event.',
 												ToastAndroid.SHORT
 											);
+											Vibration.vibrate();
 										} else {
 											ToastAndroid.show(
 												'Thank you for showing interest in this event!',
 												ToastAndroid.SHORT
 											);
+											Vibration.vibrate();
 										}
 									}
 								}}

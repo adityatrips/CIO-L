@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import { useRouter } from 'expo-router';
 import { ActivityIndicator, Dimensions } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
 const LoadingComp = () => {
 	const router = useRouter();
@@ -17,6 +18,7 @@ const LoadingComp = () => {
 				flex: 1,
 			}}
 		>
+			<StatusBar style='light' />
 			<SafeAreaView
 				style={{
 					height: Dimensions.get('window').height,

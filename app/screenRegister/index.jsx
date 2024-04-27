@@ -1,9 +1,9 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Image, Input, ScrollView, Text, View } from 'tamagui';
-import { Dimensions, Modal, ToastAndroid } from 'react-native';
+import { Dimensions, Modal, ToastAndroid, Vibration } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
-import { ChevronLeftCircle } from '@tamagui/lucide-icons';
+import { ChevronLeftCircle, Eye, EyeOff } from '@tamagui/lucide-icons';
 import coin from '@/assets/images/Coin1.png';
 import logo from '@/assets/images/Logo_GreenBlack.png';
 import { colors } from '@/constants';
@@ -25,28 +25,29 @@ const ScreenRegister = () => {
 	const [pword, setPword] = React.useState('');
 	const [confPword, setConfPword] = React.useState('');
 	const [designation, setDesignation] = React.useState('');
+	const [HidePassword, setHidePassword] = React.useState(true);
+	const [HideRePassword, setHideRePassword] = React.useState(true);
 
 	const validate = () => {
 		if (!isAlpha(fname) && !isAlpha(lname)) {
-			ToastAndroid.show(
-				'First and last names should be alphabets',
-				ToastAndroid.SHORT
-			);
+			Vibration.vibrate();
+			'First and last names should be alphabets', ToastAndroid.SHORT;
 			return false;
 		} else if (!isMobilePhone(mobile, 'en-IN')) {
-			ToastAndroid.show('Invalid mobile number', ToastAndroid.SHORT);
+			Vibration.vibrate();
+			'Invalid mobile number', ToastAndroid.SHORT;
 			return false;
 		} else if (!isEmail(email)) {
-			ToastAndroid.show('Invalid email address', ToastAndroid.SHORT);
+			Vibration.vibrate();
+			'Invalid email address', ToastAndroid.SHORT;
 			return false;
 		} else if (!pword.length >= 8) {
-			ToastAndroid.show(
-				'Password should be atleast 8 characters long',
-				ToastAndroid.SHORT
-			);
+			Vibration.vibrate();
+			'Password should be atleast 8 characters long', ToastAndroid.SHORT;
 			return false;
 		} else if (pword !== confPword) {
-			ToastAndroid.show('Passwords do not match', ToastAndroid.SHORT);
+			Vibration.vibrate();
+			'Passwords do not match', ToastAndroid.SHORT;
 			return false;
 		} else if (
 			!fname === '' ||
@@ -58,7 +59,8 @@ const ScreenRegister = () => {
 			!company === '' ||
 			!designation
 		) {
-			ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT);
+			Vibration.vibrate();
+			'Please fill all fields', ToastAndroid.SHORT;
 			return false;
 		}
 		return true;
@@ -95,13 +97,16 @@ const ScreenRegister = () => {
 			} catch (error) {
 				console.log(JSON.stringify(error));
 				if (error.code === 'ERR_BAD_REQUEST') {
-					ToastAndroid.show('User already exists', ToastAndroid.SHORT);
+					Vibration.vibrate();
+					'User already exists', ToastAndroid.SHORT;
 				} else {
-					ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+					Vibration.vibrate();
+					'An error occured', ToastAndroid.SHORT;
 				}
 			}
 		} else {
-			ToastAndroid.show('Invalid data', ToastAndroid.SHORT);
+			Vibration.vibrate();
+			'Invalid data', ToastAndroid.SHORT;
 		}
 
 		setFname('');
@@ -253,48 +258,112 @@ const ScreenRegister = () => {
 					value={email}
 					onChangeText={setEmail}
 				/>
-				<Input
-					autoCapitalize='none'
-					autoCorrect={false}
-					borderWidth={0}
-					color='#616161'
+				<View
 					width={'100%'}
+					flexDirection='row'
+					backgroundColor={'#FFF'}
 					borderRadius={100 / 2}
-					elevate
-					elevation={5}
-					secureTextEntry
-					placeholder='PASSWORD'
-					placeholderTextColor={'#616161'}
-					fontFamily={'InterMedium'}
-					fontSize={14}
-					textAlign='left'
-					backgroundColor={'#fff'}
-					paddingHorizontal={20}
-					height={50}
-					value={pword}
-					onChangeText={setPword}
-				/>
-				<Input
-					autoCapitalize='none'
-					autoCorrect={false}
-					borderWidth={0}
-					color='#616161'
+					alignItems='center'
+					justifyContent='center'
+				>
+					<Input
+						autoCapitalize='none'
+						autoCorrect={false}
+						borderWidth={0}
+						color='#616161'
+						borderRadius={100 / 2}
+						width={'100%'}
+						elevate
+						elevation={5}
+						secureTextEntry={HidePassword}
+						placeholder='PASSWORD'
+						placeholderTextColor={'#616161'}
+						fontFamily={'InterMedium'}
+						fontSize={14}
+						textAlign='left'
+						backgroundColor={'#fff'}
+						paddingHorizontal={20}
+						height={50}
+						value={pword}
+						onChangeText={setPword}
+					/>
+					{HidePassword ? (
+						<Eye
+							style={{
+								position: 'absolute',
+								right: 20,
+							}}
+							onPress={() => {
+								setHidePassword(false);
+							}}
+							color='#616161'
+						/>
+					) : (
+						<EyeOff
+							style={{
+								position: 'absolute',
+								right: 20,
+							}}
+							onPress={() => {
+								setHidePassword(true);
+							}}
+							color='#616161'
+						/>
+					)}
+				</View>
+				<View
 					width={'100%'}
+					flexDirection='row'
+					backgroundColor={'#FFF'}
 					borderRadius={100 / 2}
-					elevate
-					elevation={5}
-					secureTextEntry
-					placeholder='CONFIRM PASSWORD'
-					placeholderTextColor={'#616161'}
-					fontFamily={'InterMedium'}
-					fontSize={14}
-					textAlign='left'
-					backgroundColor={'#fff'}
-					paddingHorizontal={20}
-					height={50}
-					value={confPword}
-					onChangeText={setConfPword}
-				/>
+					alignItems='center'
+					justifyContent='center'
+				>
+					<Input
+						autoCapitalize='none'
+						autoCorrect={false}
+						borderWidth={0}
+						color='#616161'
+						width={'100%'}
+						borderRadius={100 / 2}
+						elevate
+						elevation={5}
+						secureTextEntry={HideRePassword}
+						placeholder='CONFIRM PASSWORD'
+						placeholderTextColor={'#616161'}
+						fontFamily={'InterMedium'}
+						fontSize={14}
+						textAlign='left'
+						backgroundColor={'#fff'}
+						paddingHorizontal={20}
+						height={50}
+						value={confPword}
+						onChangeText={setConfPword}
+					/>
+					{HideRePassword ? (
+						<Eye
+							style={{
+								position: 'absolute',
+								right: 20,
+							}}
+							onPress={() => {
+								setHideRePassword(false);
+							}}
+							color='#616161'
+						/>
+					) : (
+						<EyeOff
+							style={{
+								position: 'absolute',
+								right: 20,
+							}}
+							onPress={() => {
+								setHideRePassword(true);
+							}}
+							color='#616161'
+						/>
+					)}
+				</View>
 				<Input
 					autoCapitalize='none'
 					autoCorrect={false}

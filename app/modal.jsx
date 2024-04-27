@@ -67,7 +67,7 @@ export default function Modal() {
 				backgroundColor={'#fff'}
 				onLayout={() => {
 					setTimeout(() => {
-						router.push('/screenLogin');
+						router.push('/');
 					}, 10000);
 				}}
 			>

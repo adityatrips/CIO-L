@@ -4,7 +4,12 @@ import { useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import axios from 'axios';
-import { Dimensions, RefreshControl, ToastAndroid } from 'react-native';
+import {
+	Dimensions,
+	RefreshControl,
+	ToastAndroid,
+	Vibration,
+} from 'react-native';
 import { colors } from '@/constants';
 import ankit from '@/assets/images/Ankit.png';
 import globe from '@/assets/images/Globe.png';
@@ -54,6 +59,7 @@ export default function ProfileScreen() {
 				setUserProfile(res.data);
 			} catch (error) {
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+				Vibration.vibrate();
 				setUserProfile({});
 				return error.status;
 			}
@@ -84,6 +90,7 @@ export default function ProfileScreen() {
 			setMissedEvents(res.data.filter((evt) => evt.registered === '3'));
 		} catch (error) {
 			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			Vibration.vibrate();
 		}
 	};
 
@@ -101,7 +108,7 @@ export default function ProfileScreen() {
 				setRegisteredEvents(res.data.filter((evt) => evt.registered === '1'));
 			} catch (error) {
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-
+				Vibration.vibrate();
 				setUserProfile([]);
 			}
 		}
@@ -230,7 +237,8 @@ export default function ProfileScreen() {
 							fontFamily={'InterMedium'}
 							color='#616161'
 						>
-							Total {registeredEvents.length.toString()} Events
+							Total {registeredEvents.length.toString()}{' '}
+							{registeredEvents.length > 1 ? 'Events' : 'Event'}
 						</Text>
 					</View>
 					<Divider spacing={20} />
@@ -274,7 +282,8 @@ export default function ProfileScreen() {
 							fontFamily={'InterMedium'}
 							color='#616161'
 						>
-							Total {attendedEvents.length.toString()} Events
+							Total {attendedEvents.length.toString()}{' '}
+							{registeredEvents.length > 1 ? 'Events' : 'Event'}
 						</Text>
 					</View>
 					<Divider spacing={20} />
@@ -318,7 +327,8 @@ export default function ProfileScreen() {
 							fontFamily={'InterMedium'}
 							color='#616161'
 						>
-							Total {missedEvents.length.toString()} Events
+							Total {missedEvents.length.toString()}{' '}
+							{registeredEvents.length > 1 ? 'Events' : 'Event'}
 						</Text>
 					</View>
 					<Divider spacing={20} />

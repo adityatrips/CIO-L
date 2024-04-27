@@ -7,7 +7,12 @@ import { colors } from '@/constants';
 import { Link, useRouter } from 'expo-router';
 import ImageTriangles from '@/components/ImageTriangles';
 import logo from '@/assets/images/Logo_White.png';
-import { Dimensions, KeyboardAvoidingView, ToastAndroid } from 'react-native';
+import {
+	Dimensions,
+	KeyboardAvoidingView,
+	ToastAndroid,
+	Vibration,
+} from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
 import isEmail from 'validator/lib/isEmail';
 import { isMobilePhone, isMobilePhoneLocales, isNumeric } from 'validator';
@@ -23,16 +28,24 @@ const ScreenLogin = () => {
 				'Please enter your email or mobile number',
 				ToastAndroid.SHORT
 			);
+			Vibration.vibrate();
 		} else if (
 			(isEmail(username) === false && !isNumeric(username)) ||
 			(isMobilePhone(username, 'en-IN') === false && !isEmail(username))
 		) {
 			ToastAndroid.show('Invalid username', ToastAndroid.SHORT);
+			Vibration.vibrate();
 		} else {
 			try {
 				await lookupUser(username);
-				router.push('/screenPassword');
+				router.push({
+					pathname: '/screenPassword',
+					params: {
+						email: username,
+					},
+				});
 			} catch (error) {
+				Vibration.vibrate();
 				ToastAndroid.show(
 					"Can't find user, please sign up.",
 					ToastAndroid.SHORT

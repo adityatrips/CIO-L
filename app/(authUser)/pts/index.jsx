@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
-import { Dimensions, ToastAndroid } from 'react-native';
+import { Dimensions, ToastAndroid, Vibration } from 'react-native';
 import { View, Text, Image, ScrollView, Button } from 'tamagui';
 import { AuthContext } from '@/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -45,6 +45,7 @@ export default function PointsScreen() {
 			setData(res.data);
 		} catch (error) {
 			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			Vibration.vibrate();
 		} finally {
 			setIsLoading(false);
 		}
@@ -67,6 +68,7 @@ export default function PointsScreen() {
 			setResults(res.data.results);
 		} catch (error) {
 			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			Vibration.vibrate();
 		}
 	};
 

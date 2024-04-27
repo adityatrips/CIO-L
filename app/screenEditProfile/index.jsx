@@ -10,8 +10,8 @@ import {
 } from 'tamagui';
 import React, { useContext, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Dimensions, ToastAndroid } from 'react-native';
-import ankit from '@/assets/images/Ankit.png';
+import { BackHandler, Dimensions, ToastAndroid, Vibration } from 'react-native';
+import AnkitPic from '@/assets/images/Ankit.png';
 import { colors } from '@/constants';
 import Header from '@/components/Header';
 import SelectDropdown from 'react-native-select-dropdown';
@@ -21,6 +21,7 @@ import { AuthContext } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
 import triangle from '@/assets/images/triangle.png';
 import LoadingComp from '@/components/Loading';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const { width, height } = Dimensions.get('screen');
 const wW = Dimensions.get('window').width;
@@ -60,6 +61,7 @@ const ScreenEditProfile = () => {
 			setIndustries(res.data);
 		} catch (error) {
 			ToastAndroid.show('Error fetching industries', ToastAndroid.SHORT);
+			Vibration.vibrate();
 		}
 	};
 
@@ -76,6 +78,7 @@ const ScreenEditProfile = () => {
 			setCompanySizes(res.data);
 		} catch (error) {
 			ToastAndroid.show('Error fetching industries', ToastAndroid.SHORT);
+			Vibration.vibrate();
 		}
 	};
 
@@ -103,6 +106,7 @@ const ScreenEditProfile = () => {
 			setDesignation(res.data.designation);
 		} catch (error) {
 			ToastAndroid.show('Error fetching industries', ToastAndroid.SHORT);
+			Vibration.vibrate();
 		} finally {
 			setLoading(false);
 		}
@@ -142,13 +146,17 @@ const ScreenEditProfile = () => {
 				);
 
 				ToastAndroid.show('Profile updated successfully', ToastAndroid.SHORT);
+				Vibration.vibrate();
 				router.push('/(authUser)/pro');
 			}
 		} catch (error) {
 			if (error === 'Please fill all the fields') {
+				Vibration.vibrate();
 				ToastAndroid.show('Please fill all the fields', ToastAndroid.SHORT);
+				Vibration.vibrate();
 			} else {
 				ToastAndroid.show('Error updating profile', ToastAndroid.SHORT);
+				Vibration.vibrate();
 			}
 		}
 	};
@@ -159,6 +167,11 @@ const ScreenEditProfile = () => {
 
 	useEffect(() => {
 		getData();
+
+		BackHandler.addEventListener('hardwareBackPress', () => {
+			router.push('/(authUser)/pro');
+			return true;
+		});
 	}, []);
 
 	return loading ? (
@@ -208,7 +221,7 @@ const ScreenEditProfile = () => {
 							overflow={'hidden'}
 						>
 							<Image
-								source={{ uri: image || ankit }}
+								source={{ uri: image || AnkitPic }}
 								width={Dimensions.get('screen').height * 0.2}
 								aspeectRatio={1}
 								height={Dimensions.get('screen').height * 0.2}
@@ -234,12 +247,52 @@ const ScreenEditProfile = () => {
 									fontSize={14}
 									fontFamily={'InterMedium'}
 									textTransform='uppercase'
+									onPress={async () => {
+										const formdata = new FormData();
+										const res = await launchImageLibrary({
+											mediaType: 'photo',
+										});
+
+										console.log(res.assets[0].uri);
+
+										formdata.append('profilepicture', {
+											uri: res.assets[0].uri,
+											name: res.assets[0].fileName,
+											type: res.assets[0].type,
+										});
+										setImage(res.assets[0].uri);
+										await axios
+											.post(
+												'https://cioleader.azurewebsites.net/api/member/image/update/',
+												formdata,
+												{
+													headers: {
+														'Content-Type': 'multipart/form-data',
+														Authorization: `Token ${userToken}`,
+													},
+												}
+											)
+											.then((res) => {
+												ToastAndroid.show(
+													'Image updated successfully',
+													ToastAndroid.SHORT
+												);
+												Vibration.vibrate();
+											})
+											.catch((err) => {
+												console.log(JSON.stringify(err));
+												ToastAndroid.show(
+													'Error updating image',
+													ToastAndroid.SHORT
+												);
+												Vibration.vibrate();
+											});
+									}}
 								>
 									change image
 								</Text>
 							</Button>
 							<Button
-								onPress={() => {}}
 								backgroundColor={colors.primary}
 								pressStyle={{
 									backgroundColor: colors.primaryDark,
@@ -247,6 +300,53 @@ const ScreenEditProfile = () => {
 								}}
 								width={Dimensions.get('screen').width * 0.45}
 								borderRadius={100 / 2}
+								onPress={async () => {
+									const url = await axios.get(
+										'https://cioleader.azurewebsites.net/api/profile/default/',
+										{
+											headers: {
+												Authorization: `Token ${userToken}`,
+											},
+										}
+									);
+									const ankit = url.data.profile;
+
+									const formdata = new FormData();
+
+									formdata.append('profilepicture', {
+										uri: ankit,
+										name: 'ankit.png',
+										type: 'image/png',
+									});
+
+									await axios
+										.post(
+											'https://cioleader.azurewebsites.net/api/member/image/update/',
+											formdata,
+											{
+												headers: {
+													'Content-Type': 'multipart/form-data',
+													Authorization: `Token ${userToken}`,
+												},
+											}
+										)
+										.then((res) => {
+											ToastAndroid.show(
+												'Image updated successfully',
+												ToastAndroid.SHORT
+											);
+											Vibration.vibrate();
+											setImage(ankit);
+										})
+										.catch((err) => {
+											console.log(JSON.stringify(err));
+											ToastAndroid.show(
+												'Error updating image',
+												ToastAndroid.SHORT
+											);
+											Vibration.vibrate();
+										});
+								}}
 							>
 								<Text
 									fontSize={14}

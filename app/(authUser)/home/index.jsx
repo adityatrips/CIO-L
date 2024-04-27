@@ -7,6 +7,7 @@ import {
 	RefreshControl,
 	ScrollView,
 	ToastAndroid,
+	Vibration,
 } from 'react-native';
 import evt from '@/assets/icons/evt.png';
 import home from '@/assets/icons/home.png';
@@ -33,6 +34,8 @@ import moment from 'moment';
 import CollapsibleText from '../../../components/CollapsableText';
 import triangle from '@/assets/images/triangle.png';
 import coin from '@/assets/images/Coin1.png';
+import SelectDropdown from 'react-native-select-dropdown';
+import { ChevronDown } from '@tamagui/lucide-icons';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -48,6 +51,8 @@ const HomeScreen = () => {
 	const [podcastData, setPodcastData] = useState([]);
 	const [magData, setMagData] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [regions, setRegions] = useState([]);
+	const [filteredRegion, setFilteredRegion] = useState('');
 	const [offsetY, setOffsetY] = useState({
 		home: {
 			start: 0,
@@ -81,6 +86,23 @@ const HomeScreen = () => {
 		});
 	};
 
+	const getRegions = async () => {
+		try {
+			const res = await axios.get(
+				'https://cioleader.azurewebsites.net/api/regions/all/',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setRegions(res.data);
+		} catch (error) {
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			Vibration.vibrate();
+		}
+	};
+
 	const getUpcomingEvents = async () => {
 		setIsLoading(true);
 		if (userToken !== '' || userToken !== null || userToken !== undefined) {
@@ -96,6 +118,7 @@ const HomeScreen = () => {
 				setUpcomingEvents(res.data);
 			} catch (error) {
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+				Vibration.vibrate();
 				setUserProfile([]);
 			}
 		}
@@ -116,6 +139,7 @@ const HomeScreen = () => {
 				setPoints(res.data);
 			} catch (error) {
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+				Vibration.vibrate();
 			}
 		}
 	};
@@ -135,6 +159,7 @@ const HomeScreen = () => {
 				setMagData(res.data);
 			} catch (error) {
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+				Vibration.vibrate();
 			}
 		}
 	};
@@ -154,6 +179,7 @@ const HomeScreen = () => {
 				setResourceData(res.data);
 			} catch (error) {
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+				Vibration.vibrate();
 			}
 		}
 	};
@@ -173,6 +199,7 @@ const HomeScreen = () => {
 				setKnowledgeCards(res.data);
 			} catch (error) {
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+				Vibration.vibrate();
 			}
 		}
 	};
@@ -203,6 +230,7 @@ const HomeScreen = () => {
 			} catch (error) {
 				setUserProfile({});
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+				Vibration.vibrate();
 			}
 		}
 	};
@@ -223,6 +251,7 @@ const HomeScreen = () => {
 			} catch (error) {
 				setPodcastData([]);
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+				Vibration.vibrate();
 			}
 		}
 	};
@@ -235,6 +264,7 @@ const HomeScreen = () => {
 		getPodcasts();
 		getPoints();
 		getMags();
+		getRegions();
 		setTimeout(() => {
 			setIsLoading(false);
 		}, 1500);
@@ -262,6 +292,7 @@ const HomeScreen = () => {
 							getResourceList();
 							getPodcasts();
 							getPoints();
+							getRegions();
 							getMags();
 							setIsLoading(false);
 						}}
@@ -494,17 +525,87 @@ const HomeScreen = () => {
 						fontSize={16}
 						fontFamily={'InterBold'}
 						color={'#616161'}
-						marginBottom={20}
 					>
 						Upcoming Events
 					</Text>
+					<View>
+						<SelectDropdown
+							data={regions}
+							onSelect={(selectedItem, index) => {
+								setFilteredRegion(selectedItem.id);
+							}}
+							renderButton={(selectedItem, isOpened) => {
+								return (
+									<View>
+										<View
+											marginBottom={10}
+											backgroundColor={'#fff'}
+											borderColor='#00000050'
+											borderWidth={1}
+											borderRadius={100 / 2}
+											width={Dimensions.get('screen').width * 0.4}
+											flexDirection={'row'}
+											alignItems={'center'}
+											justifyContent={'space-between'}
+											paddingHorizontal={20}
+											height={30}
+										>
+											<Text color='#616161'>
+												{(selectedItem && selectedItem.name) || 'REGION'}
+											</Text>
+											<ChevronDown color='#616161' />
+										</View>
+									</View>
+								);
+							}}
+							renderItem={(item, index, isSelected) => {
+								return (
+									<View
+										justifyContent={'center'}
+										alignItems='center'
+										width={Dimensions.get('screen').width * 0.9}
+										backgroundColor={'#fff'}
+									>
+										<Text
+											paddingVertical={10}
+											paddingHorizontal={20}
+											color={'#616161'}
+											borderBottomColor={'#616161'}
+											borderBottomWidth={1}
+										>
+											{item.name}
+										</Text>
+									</View>
+								);
+							}}
+							dropdownStyle={{
+								width: Dimensions.get('screen').width * 0.9,
+								borderRadius: 30,
+								borderWidth: 1,
+								borderColor: '#00000050',
+							}}
+							dropdownOverlayColor='rgba(0,0,0,0.2)'
+							showsVerticalScrollIndicator={false}
+						/>
+					</View>
 					{upcomingEvents.length > 0 ? (
-						upcomingEvents.map((item, index) => (
-							<UpcomingEventCard
-								key={index}
-								data={item}
-							/>
-						))
+						filteredRegion !== '' ? (
+							upcomingEvents
+								.filter((item) => item.id !== filteredRegion)
+								.map((item, index) => (
+									<UpcomingEventCard
+										key={index}
+										data={item}
+									/>
+								))
+						) : (
+							upcomingEvents.map((item, index) => (
+								<UpcomingEventCard
+									key={index}
+									data={item}
+								/>
+							))
+						)
 					) : (
 						<View>
 							<Text
@@ -1043,10 +1144,10 @@ const HomeScreen = () => {
 				</View>
 				<Image
 					source={triangle}
-					marginTop={-50}
+					marginTop={-20}
 					width={width}
-					height={height * 0.35}
-					bottom={-50}
+					height={height * 0.5}
+					bottom={-100}
 				/>
 			</ScrollView>
 			<View
