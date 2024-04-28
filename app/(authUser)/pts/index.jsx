@@ -4,7 +4,7 @@ import { Dimensions, ToastAndroid, Vibration } from 'react-native';
 import { View, Text, Image, ScrollView, Button } from 'tamagui';
 import { AuthContext } from '@/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors } from '@/constants';
+import { colors, vibrateHeavy } from '@/constants';
 import LoadingComp from '@/components/Loading';
 import logo from '@/assets/images/Logo_GreenBlack.png';
 import coin from '@/assets/images/Coin1.png';
@@ -45,7 +45,7 @@ export default function PointsScreen() {
 			setData(res.data);
 		} catch (error) {
 			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-			Vibration.vibrate();
+			vibrateHeavy();
 		} finally {
 			setIsLoading(false);
 		}
@@ -68,7 +68,7 @@ export default function PointsScreen() {
 			setResults(res.data.results);
 		} catch (error) {
 			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-			Vibration.vibrate();
+			vibrateHeavy();
 		}
 	};
 

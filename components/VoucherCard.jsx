@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { Image, Text, Button, View, ButtonFrame } from 'tamagui';
 import coin from '@/assets/images/Coin1.png';
-import { colors } from '@/constants';
+import { colors, vibrateHeavy } from '@/constants';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
@@ -151,7 +151,6 @@ const VoucherCard = ({ data }) => {
 				fontSize={10}
 				fontFamily={'InterBold'}
 				onPress={async () => {
-					console.log(userToken);
 					try {
 						const res = await axios.post(
 							'https://cioleader.azurewebsites.net/api/voucher/redeem/',
@@ -178,7 +177,7 @@ const VoucherCard = ({ data }) => {
 					} catch (error) {
 						if (error.code === 'ERR_BAD_REQUEST') {
 							ToastAndroid.show('Not enough points', ToastAndroid.SHORT);
-							Vibration.vibrate();
+							vibrateHeavy();
 						}
 					}
 				}}

@@ -6,7 +6,7 @@ import { KeyboardAvoidingView } from 'react-native';
 import { ChevronLeftCircle, Eye, EyeOff } from '@tamagui/lucide-icons';
 import coin from '@/assets/images/Coin1.png';
 import logo from '@/assets/images/Logo_GreenBlack.png';
-import { colors } from '@/constants';
+import { colors, vibrateHeavy } from '@/constants';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import { isAlpha, isMobilePhone } from 'validator';
@@ -30,23 +30,23 @@ const ScreenRegister = () => {
 
 	const validate = () => {
 		if (!isAlpha(fname) && !isAlpha(lname)) {
-			Vibration.vibrate();
+			vibrateHeavy();
 			'First and last names should be alphabets', ToastAndroid.SHORT;
 			return false;
 		} else if (!isMobilePhone(mobile, 'en-IN')) {
-			Vibration.vibrate();
+			vibrateHeavy();
 			'Invalid mobile number', ToastAndroid.SHORT;
 			return false;
 		} else if (!isEmail(email)) {
-			Vibration.vibrate();
+			vibrateHeavy();
 			'Invalid email address', ToastAndroid.SHORT;
 			return false;
 		} else if (!pword.length >= 8) {
-			Vibration.vibrate();
+			vibrateHeavy();
 			'Password should be atleast 8 characters long', ToastAndroid.SHORT;
 			return false;
 		} else if (pword !== confPword) {
-			Vibration.vibrate();
+			vibrateHeavy();
 			'Passwords do not match', ToastAndroid.SHORT;
 			return false;
 		} else if (
@@ -59,7 +59,7 @@ const ScreenRegister = () => {
 			!company === '' ||
 			!designation
 		) {
-			Vibration.vibrate();
+			vibrateHeavy();
 			'Please fill all fields', ToastAndroid.SHORT;
 			return false;
 		}
@@ -86,7 +86,6 @@ const ScreenRegister = () => {
 					}
 				);
 				if (res.status === 201) {
-					console.log('REGISTRATION SUCCESSFUL');
 					router.push({
 						pathname: '/modal',
 						params: {
@@ -95,17 +94,16 @@ const ScreenRegister = () => {
 					});
 				}
 			} catch (error) {
-				console.log(JSON.stringify(error));
 				if (error.code === 'ERR_BAD_REQUEST') {
-					Vibration.vibrate();
+					vibrateHeavy();
 					'User already exists', ToastAndroid.SHORT;
 				} else {
-					Vibration.vibrate();
+					vibrateHeavy();
 					'An error occured', ToastAndroid.SHORT;
 				}
 			}
 		} else {
-			Vibration.vibrate();
+			vibrateHeavy();
 			'Invalid data', ToastAndroid.SHORT;
 		}
 

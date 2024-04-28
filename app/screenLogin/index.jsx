@@ -3,11 +3,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image, Input, Button, View, Text, ScrollView } from 'tamagui';
 import { ChevronRight } from '@tamagui/lucide-icons';
-import { colors } from '@/constants';
+import { colors, vibrateHeavy } from '@/constants';
 import { Link, useRouter } from 'expo-router';
 import ImageTriangles from '@/components/ImageTriangles';
 import logo from '@/assets/images/Logo_White.png';
 import {
+	ActivityIndicator,
 	Dimensions,
 	KeyboardAvoidingView,
 	ToastAndroid,
@@ -22,21 +23,24 @@ const ScreenLogin = () => {
 	const { lookupUser } = useContext(AuthContext);
 	const [username, setUsername] = useState('yashdakshita123@gmail.com');
 
+	const [isLoading, setIsLoading] = useState(false);
+
 	const handleLookupUser = async () => {
 		if (username.length === 0) {
 			ToastAndroid.show(
 				'Please enter your email or mobile number',
 				ToastAndroid.SHORT
 			);
-			Vibration.vibrate();
+			vibrateHeavy();
 		} else if (
 			(isEmail(username) === false && !isNumeric(username)) ||
 			(isMobilePhone(username, 'en-IN') === false && !isEmail(username))
 		) {
 			ToastAndroid.show('Invalid username', ToastAndroid.SHORT);
-			Vibration.vibrate();
+			vibrateHeavy();
 		} else {
 			try {
+				setIsLoading(true);
 				await lookupUser(username);
 				router.push({
 					pathname: '/screenPassword',
@@ -45,11 +49,13 @@ const ScreenLogin = () => {
 					},
 				});
 			} catch (error) {
-				Vibration.vibrate();
+				vibrateHeavy();
 				ToastAndroid.show(
 					"Can't find user, please sign up.",
 					ToastAndroid.SHORT
 				);
+			} finally {
+				setIsLoading(false);
 			}
 		}
 	};
@@ -150,7 +156,14 @@ const ScreenLogin = () => {
 								fontSize={14}
 								fontFamily={'InterBold'}
 							>
-								LOGIN
+								{isLoading ? (
+									<ActivityIndicator
+										size='small'
+										color='#fff'
+									/>
+								) : (
+									<Text>LOGIN</Text>
+								)}
 							</Text>
 						</Button>
 					</View>

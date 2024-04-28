@@ -78,7 +78,7 @@ const UpcomingEventCard = ({
 							color={'#fff'}
 							fontFamily={'InterBold'}
 						>
-							Earn +{data.attendingpoint}
+							Earn upto +{data.totalpoints}
 						</Text>
 						<Image
 							source={coin}
@@ -239,8 +239,10 @@ const UpcomingEventCard = ({
 							height={30}
 							onPress={() => {
 								router.push({
-									pathname: `/event/${data.id}`,
-									state: { srcRoute: srcRoute },
+									pathname: '/selfie',
+									params: {
+										event: data.id,
+									},
 								});
 							}}
 						>

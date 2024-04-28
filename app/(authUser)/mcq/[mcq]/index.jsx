@@ -10,7 +10,7 @@ import {
 } from 'tamagui';
 import { Dimensions, ToastAndroid, Vibration } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '@/constants';
+import { colors, vibrateHeavy } from '@/constants';
 import { AuthContext } from '@/context/AuthContext';
 import LoadingComp from '@/components/Loading';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -56,7 +56,6 @@ const MCQScreen = () => {
 				}
 			}
 		} catch (error) {
-			console.log(JSON.stringify(error));
 		} finally {
 			setLoading(false);
 		}
@@ -64,7 +63,6 @@ const MCQScreen = () => {
 
 	const submitQuiz = async () => {
 		setLoading(true);
-		console.log(userToken);
 		try {
 			if (quizAnswers.includes('')) {
 				throw 'Please answer all the questions';
@@ -97,7 +95,6 @@ const MCQScreen = () => {
 			}
 		} catch (error) {
 			if (error.code === 'ERR_BAD_REQUEST') {
-				console.log(error.code);
 				router.push({
 					pathname: '/modal',
 					params: {
@@ -106,7 +103,7 @@ const MCQScreen = () => {
 				});
 			} else if (error === 'Please answer all the questions') {
 				ToastAndroid.show(error, ToastAndroid.SHORT);
-				Vibration.vibrate();
+				vibrateHeavy();
 			}
 		}
 		setLoading(false);
@@ -164,7 +161,6 @@ const MCQScreen = () => {
 							}}
 							accentColor={colors.primary}
 							onValueChange={(value) => {
-								console.log(value);
 								const [q, a] = value.split('_');
 								switch (q) {
 									case '0':

@@ -13,7 +13,7 @@ import {
 	TextArea,
 	View,
 } from 'tamagui';
-import { colors } from '@/constants';
+import { colors, vibrateHeavy } from '@/constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import axios from 'axios';
 import Divider from '@/components/Divider';
@@ -62,11 +62,10 @@ const ScreenFeeback = () => {
 			feebackRating === null
 		) {
 			ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT);
-			Vibration.vibrate();
+			vibrateHeavy();
 			return;
 		} else {
 			try {
-				console.log(userToken);
 				const res = await axios.post(
 					`https://cioleader.azurewebsites.net/api/event/${id}/feedback/`,
 					{
@@ -88,7 +87,7 @@ const ScreenFeeback = () => {
 				}
 			} catch (error) {
 				if (error.code === 'ERR_BAD_REQUEST') {
-					Vibration.vibrate();
+					vibrateHeavy();
 					ToastAndroid.show(
 						'You have already given your precious feedback.',
 						ToastAndroid.SHORT

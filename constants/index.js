@@ -14,10 +14,10 @@ import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import * as Linking from 'expo-linking';
 import * as MediaLibrary from 'expo-media-library';
+import * as Haptics from 'expo-haptics';
+
 export const downloadAndOpenPdf = async (pdfUrl, filename) => {
 	const fileUri = `${FileSystem.cacheDirectory}${filename}.pdf`;
-
-	console.log(fileUri);
 
 	try {
 		const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -28,7 +28,6 @@ export const downloadAndOpenPdf = async (pdfUrl, filename) => {
 
 		const response = await FileSystem.downloadAsync(pdfUrl, fileUri);
 		if (response.status === 200) {
-			console.log('PDF downloaded successfully:', response.uri);
 			return response.uri;
 		} else {
 			console.error('Failed to download PDF:', response);
@@ -38,4 +37,8 @@ export const downloadAndOpenPdf = async (pdfUrl, filename) => {
 		console.error('Error downloading PDF:', error);
 		return null;
 	}
+};
+
+export const vibrateHeavy = () => {
+	Haptics.selectionAsync(Haptics.ImpactFeedbackStyle.Heavy);
 };

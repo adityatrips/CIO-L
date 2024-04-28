@@ -27,7 +27,6 @@ const ScreenStore = ({ navigation }) => {
 					},
 				}
 			);
-			console.log(response.data);
 			setVouchers(response.data);
 		} catch (error) {
 			console.error(error);

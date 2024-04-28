@@ -10,7 +10,7 @@ import {
 	ToastAndroid,
 	Vibration,
 } from 'react-native';
-import { colors } from '@/constants';
+import { colors, vibrateHeavy } from '@/constants';
 import ankit from '@/assets/images/Ankit.png';
 import globe from '@/assets/images/Globe.png';
 import Divider from '@/components/Divider';
@@ -59,7 +59,7 @@ export default function ProfileScreen() {
 				setUserProfile(res.data);
 			} catch (error) {
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				Vibration.vibrate();
+				vibrateHeavy();
 				setUserProfile({});
 				return error.status;
 			}
@@ -71,9 +71,7 @@ export default function ProfileScreen() {
 		getEvents();
 		getUserProfile();
 		getUpcomingEvents();
-		setTimeout(() => {
-			setLoading(false);
-		}, 500);
+		setLoading(false);
 	}, []);
 
 	const getEvents = async () => {
@@ -90,7 +88,7 @@ export default function ProfileScreen() {
 			setMissedEvents(res.data.filter((evt) => evt.registered === '3'));
 		} catch (error) {
 			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-			Vibration.vibrate();
+			vibrateHeavy();
 		}
 	};
 
@@ -108,7 +106,7 @@ export default function ProfileScreen() {
 				setRegisteredEvents(res.data.filter((evt) => evt.registered === '1'));
 			} catch (error) {
 				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				Vibration.vibrate();
+				vibrateHeavy();
 				setUserProfile([]);
 			}
 		}
@@ -238,7 +236,7 @@ export default function ProfileScreen() {
 							color='#616161'
 						>
 							Total {registeredEvents.length.toString()}{' '}
-							{registeredEvents.length > 1 ? 'Events' : 'Event'}
+							{registeredEvents.length === 1 ? 'Event' : 'Events'}
 						</Text>
 					</View>
 					<Divider spacing={20} />
@@ -283,7 +281,7 @@ export default function ProfileScreen() {
 							color='#616161'
 						>
 							Total {attendedEvents.length.toString()}{' '}
-							{registeredEvents.length > 1 ? 'Events' : 'Event'}
+							{attendedEvents.length === 1 ? 'Event' : 'Events'}
 						</Text>
 					</View>
 					<Divider spacing={20} />
@@ -328,7 +326,7 @@ export default function ProfileScreen() {
 							color='#616161'
 						>
 							Total {missedEvents.length.toString()}{' '}
-							{registeredEvents.length > 1 ? 'Events' : 'Event'}
+							{missedEvents.length === 1 ? 'Event' : 'Events'}
 						</Text>
 					</View>
 					<Divider spacing={20} />

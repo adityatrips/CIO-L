@@ -3,9 +3,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import ImageTriangles from '@/components/ImageTriangles';
 import { Button, Image, Input, ScrollView, Text, View } from 'tamagui';
-import { colors } from '@/constants';
+import { colors, vibrateHeavy } from '@/constants';
 import ankit from '@/assets/images/Ankit.png';
-import { Dimensions, ToastAndroid, Vibration } from 'react-native';
+import {
+	ActivityIndicator,
+	Dimensions,
+	ToastAndroid,
+	Vibration,
+} from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LoadingComp from '@/components/Loading';
@@ -24,7 +29,7 @@ const ScreenPassword = () => {
 
 	const loginHandler = async () => {
 		if (pword.length === 0 || pword.length < 8) {
-			Vibration.vibrate();
+			vibrateHeavy();
 			ToastAndroid.show(
 				'Invalid password, please re-check',
 				ToastAndroid.SHORT
@@ -33,16 +38,17 @@ const ScreenPassword = () => {
 		} else {
 			try {
 				setIsLoading(true);
-				login(userInfo?.username, pword).then(() => {
-					router.push('/(authUser)/home');
-					setIsLoading(false);
+				await login(userInfo?.username, pword).then(() => {
+					router.push('/home');
 				});
 			} catch (error) {
-				Vibration.vibrate();
+				vibrateHeavy();
 				ToastAndroid.show(
 					'Invalid password, please try again!',
 					ToastAndroid.SHORT
 				);
+			} finally {
+				setIsLoading(false);
 			}
 		}
 	};
@@ -175,12 +181,19 @@ const ScreenPassword = () => {
 						height={50}
 						onPress={loginHandler}
 					>
-						<Text
-							fontSize={14}
-							fontFamily={'InterBold'}
-						>
-							LOGIN
-						</Text>
+						{isLoading ? (
+							<ActivityIndicator
+								size='small'
+								color='#fff'
+							/>
+						) : (
+							<Text
+								fontSize={14}
+								fontFamily={'InterBold'}
+							>
+								LOGIN
+							</Text>
+						)}
 					</Button>
 					<Text fontSize={15}>
 						Don't have any account?{' '}

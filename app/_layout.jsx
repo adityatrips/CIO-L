@@ -49,7 +49,7 @@ function RootLayoutNav() {
 		const userInfo = await SecureStore.getItemAsync('userInfo');
 
 		if (userToken && userInfo) {
-			router.push('/(authUser)/home');
+			router.push('/home');
 		}
 	};
 
@@ -84,6 +84,7 @@ function RootLayoutNav() {
 					>
 						<Stack.Screen name='index' />
 						<Stack.Screen name='pdf' />
+						<Stack.Screen name='selfie' />
 						<Stack.Screen name='(authUser)' />
 
 						<Stack.Screen name='screenLogin/index' />

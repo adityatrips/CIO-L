@@ -11,14 +11,14 @@ import {
 import React, { useContext, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BackHandler, Dimensions, ToastAndroid, Vibration } from 'react-native';
-import AnkitPic from '@/assets/images/Ankit.png';
-import { colors } from '@/constants';
+import ankit from '@/assets/images/Ankit.png';
+import { colors, vibrateHeavy } from '@/constants';
 import Header from '@/components/Header';
 import SelectDropdown from 'react-native-select-dropdown';
 import { ChevronDown } from '@tamagui/lucide-icons';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import triangle from '@/assets/images/triangle.png';
 import LoadingComp from '@/components/Loading';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -61,7 +61,7 @@ const ScreenEditProfile = () => {
 			setIndustries(res.data);
 		} catch (error) {
 			ToastAndroid.show('Error fetching industries', ToastAndroid.SHORT);
-			Vibration.vibrate();
+			vibrateHeavy();
 		}
 	};
 
@@ -78,7 +78,7 @@ const ScreenEditProfile = () => {
 			setCompanySizes(res.data);
 		} catch (error) {
 			ToastAndroid.show('Error fetching industries', ToastAndroid.SHORT);
-			Vibration.vibrate();
+			vibrateHeavy();
 		}
 	};
 
@@ -106,7 +106,7 @@ const ScreenEditProfile = () => {
 			setDesignation(res.data.designation);
 		} catch (error) {
 			ToastAndroid.show('Error fetching industries', ToastAndroid.SHORT);
-			Vibration.vibrate();
+			vibrateHeavy();
 		} finally {
 			setLoading(false);
 		}
@@ -146,17 +146,17 @@ const ScreenEditProfile = () => {
 				);
 
 				ToastAndroid.show('Profile updated successfully', ToastAndroid.SHORT);
-				Vibration.vibrate();
+				vibrateHeavy();
 				router.push('/(authUser)/pro');
 			}
 		} catch (error) {
 			if (error === 'Please fill all the fields') {
-				Vibration.vibrate();
+				vibrateHeavy();
 				ToastAndroid.show('Please fill all the fields', ToastAndroid.SHORT);
-				Vibration.vibrate();
+				vibrateHeavy();
 			} else {
 				ToastAndroid.show('Error updating profile', ToastAndroid.SHORT);
-				Vibration.vibrate();
+				vibrateHeavy();
 			}
 		}
 	};
@@ -165,12 +165,13 @@ const ScreenEditProfile = () => {
 		getMemberDetails();
 	};
 
+	const navigation = useNavigation();
+
 	useEffect(() => {
 		getData();
 
 		BackHandler.addEventListener('hardwareBackPress', () => {
-			router.push('/(authUser)/pro');
-			return true;
+			navigation.goBack();
 		});
 	}, []);
 
@@ -253,8 +254,6 @@ const ScreenEditProfile = () => {
 											mediaType: 'photo',
 										});
 
-										console.log(res.assets[0].uri);
-
 										formdata.append('profilepicture', {
 											uri: res.assets[0].uri,
 											name: res.assets[0].fileName,
@@ -277,15 +276,14 @@ const ScreenEditProfile = () => {
 													'Image updated successfully',
 													ToastAndroid.SHORT
 												);
-												Vibration.vibrate();
+												vibrateHeavy();
 											})
 											.catch((err) => {
-												console.log(JSON.stringify(err));
 												ToastAndroid.show(
 													'Error updating image',
 													ToastAndroid.SHORT
 												);
-												Vibration.vibrate();
+												vibrateHeavy();
 											});
 									}}
 								>
@@ -301,51 +299,29 @@ const ScreenEditProfile = () => {
 								width={Dimensions.get('screen').width * 0.45}
 								borderRadius={100 / 2}
 								onPress={async () => {
-									const url = await axios.get(
-										'https://cioleader.azurewebsites.net/api/profile/default/',
-										{
-											headers: {
-												Authorization: `Token ${userToken}`,
-											},
-										}
-									);
-									const ankit = url.data.profile;
-
-									const formdata = new FormData();
-
-									formdata.append('profilepicture', {
-										uri: ankit,
-										name: 'ankit.png',
-										type: 'image/png',
-									});
-
-									await axios
-										.post(
-											'https://cioleader.azurewebsites.net/api/member/image/update/',
-											formdata,
+									try {
+										await axios.post(
+											'https://cioleader.azurewebsites.net/api/member/image/remove/',
+											{},
 											{
 												headers: {
-													'Content-Type': 'multipart/form-data',
 													Authorization: `Token ${userToken}`,
 												},
 											}
-										)
-										.then((res) => {
-											ToastAndroid.show(
-												'Image updated successfully',
-												ToastAndroid.SHORT
-											);
-											Vibration.vibrate();
-											setImage(ankit);
-										})
-										.catch((err) => {
-											console.log(JSON.stringify(err));
-											ToastAndroid.show(
-												'Error updating image',
-												ToastAndroid.SHORT
-											);
-											Vibration.vibrate();
-										});
+										);
+										ToastAndroid.show(
+											'Image updated successfully',
+											ToastAndroid.SHORT
+										);
+										vibrateHeavy();
+										setImage(ankit);
+									} catch (error) {
+										ToastAndroid.show(
+											'Error updating image',
+											ToastAndroid.SHORT
+										);
+										vibrateHeavy();
+									}
 								}}
 							>
 								<Text

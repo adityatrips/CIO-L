@@ -1,13 +1,12 @@
 import { forwardRef, useContext, useEffect, useState } from 'react';
 import { Button, Image, Text, View } from 'tamagui';
 import { AuthContext } from '@/context/AuthContext';
-import { colors } from '@/constants';
+import { colors, vibrateHeavy } from '@/constants';
 import {
 	Dimensions,
 	RefreshControl,
 	ScrollView,
 	ToastAndroid,
-	Vibration,
 } from 'react-native';
 import evt from '@/assets/icons/evt.png';
 import home from '@/assets/icons/home.png';
@@ -18,13 +17,11 @@ import earn from '@/assets/icons/earn.png';
 import rem from '@/assets/icons/rem.png';
 import ankit from '@/assets/images/Ankit.png';
 import globe from '@/assets/images/Globe.png';
-import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Divider from '@/components/Divider';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
 import KnowledgeCard from '@/components/KnowledgeCard';
-import { useRouter } from 'expo-router';
-import LoadingComp from '@/components/Loading';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import HeaderComp from '@/components/Header';
 import ResourceCard from '@/components/ResourceCard';
@@ -36,23 +33,30 @@ import triangle from '@/assets/images/triangle.png';
 import coin from '@/assets/images/Coin1.png';
 import SelectDropdown from 'react-native-select-dropdown';
 import { ChevronDown } from '@tamagui/lucide-icons';
+import axios from 'axios';
+import LoadingComp from '@/components/Loading';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
 
+const eventMode = [
+	{ id: 1, name: 'Online' },
+	{ id: 2, name: 'Offline' },
+	{ id: 3, name: 'Hybrid' },
+];
+
 const HomeScreen = () => {
-	const { userToken, userInfo, loading, error, login, lookupUser, toggleAuth } =
-		useContext(AuthContext);
 	const [userProfile, setUserProfile] = useState({});
 	const [upcomingEvents, setUpcomingEvents] = useState([]);
 	const [knowledgeCards, setKnowledgeCards] = useState([]);
 	const [pointsData, setPoints] = useState({});
-	const [resourceData, setResourceData] = useState([]);
+	const [ResourceData, setResourceData] = useState([]);
 	const [podcastData, setPodcastData] = useState([]);
 	const [magData, setMagData] = useState([]);
-	const [isLoading, setIsLoading] = useState(true);
 	const [regions, setRegions] = useState([]);
-	const [filteredRegion, setFilteredRegion] = useState('');
+	const [loading, setLoading] = useState(true);
+	const [filteredRegion, setFilteredRegion] = useState(null);
+	const [filteredMode, setFilteredMode] = useState(null);
 	const [offsetY, setOffsetY] = useState({
 		home: {
 			start: 0,
@@ -78,6 +82,107 @@ const HomeScreen = () => {
 	const kcRef = React.useRef(null);
 	const ptsRef = React.useRef(null);
 	const scrollRef = React.useRef(null);
+	const { userToken } = useContext(AuthContext);
+
+	const refresh = async () => {
+		getData();
+	};
+
+	useEffect(() => {
+		getData().then(() => {
+			setLoading(false);
+		});
+	}, []);
+
+	const getData = async () => {
+		try {
+			const reg = await axios.get(
+				'https://cioleader.azurewebsites.net/api/regions/all/',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setRegions(reg.data);
+			const evnt = await axios.get(
+				'https://cioleader.azurewebsites.net/api/event/all/',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setUpcomingEvents(evnt.data);
+			const pt = await axios.get(
+				'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=5',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setPoints(pt.data);
+			const mg = await axios.get(
+				'https://cioleader.azurewebsites.net/api/editorial/all',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setMagData(mg.data);
+			const rsc = await axios.get(
+				'https://cioleader.azurewebsites.net/api/resource/all/',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setResourceData(rsc.data);
+			const kcard = await axios.get(
+				'https://cioleader.azurewebsites.net/api/whitepaper/all/',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setKnowledgeCards(kcard.data);
+			const uprof = await axios.get(
+				'https://cioleader.azurewebsites.net/api/member/',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+
+			if (uprof.data.status === '2' || uprof.data.status === '3') {
+				router.push({
+					pathname: 'modal',
+					params: {
+						status: 'ApprovalPending',
+					},
+				});
+			} else {
+				setUserProfile(uprof.data);
+				const pcast = await axios.get(
+					'https://cioleader.azurewebsites.net/api/podcast/all/',
+					{
+						headers: {
+							Authorization: `Token ${userToken}`,
+						},
+					}
+				);
+				setPodcastData(pcast.data);
+			}
+		} catch (error) {
+			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			vibrateHeavy();
+		}
+	};
 
 	const scrollTo = (off) => {
 		scrollRef.current.scrollTo({
@@ -86,191 +191,9 @@ const HomeScreen = () => {
 		});
 	};
 
-	const getRegions = async () => {
-		try {
-			const res = await axios.get(
-				'https://cioleader.azurewebsites.net/api/regions/all/',
-				{
-					headers: {
-						Authorization: `Token ${userToken}`,
-					},
-				}
-			);
-			setRegions(res.data);
-		} catch (error) {
-			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-			Vibration.vibrate();
-		}
-	};
-
-	const getUpcomingEvents = async () => {
-		setIsLoading(true);
-		if (userToken !== '' || userToken !== null || userToken !== undefined) {
-			try {
-				const res = await axios.get(
-					'https://cioleader.azurewebsites.net/api/event/all/',
-					{
-						headers: {
-							Authorization: `Token ${userToken}`,
-						},
-					}
-				);
-				setUpcomingEvents(res.data);
-			} catch (error) {
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				Vibration.vibrate();
-				setUserProfile([]);
-			}
-		}
-	};
-
-	const getPoints = async () => {
-		setIsLoading(true);
-		if (userToken !== '' || userToken !== null || userToken !== undefined) {
-			try {
-				const res = await axios.get(
-					'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=5',
-					{
-						headers: {
-							Authorization: `Token ${userToken}`,
-						},
-					}
-				);
-				setPoints(res.data);
-			} catch (error) {
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				Vibration.vibrate();
-			}
-		}
-	};
-
-	const getMags = async () => {
-		setIsLoading(true);
-		if (userToken !== '' || userToken !== null || userToken !== undefined) {
-			try {
-				const res = await axios.get(
-					'https://cioleader.azurewebsites.net/api/editorial/all',
-					{
-						headers: {
-							Authorization: `Token ${userToken}`,
-						},
-					}
-				);
-				setMagData(res.data);
-			} catch (error) {
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				Vibration.vibrate();
-			}
-		}
-	};
-
-	const getResourceList = async () => {
-		setIsLoading(true);
-		if (userToken !== '' || userToken !== null || userToken !== undefined) {
-			try {
-				const res = await axios.get(
-					'https://cioleader.azurewebsites.net/api/resource/all/',
-					{
-						headers: {
-							Authorization: `Token ${userToken}`,
-						},
-					}
-				);
-				setResourceData(res.data);
-			} catch (error) {
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				Vibration.vibrate();
-			}
-		}
-	};
-
-	const getKnowledgeCards = async () => {
-		setIsLoading(true);
-		if (userToken !== '' || userToken !== null || userToken !== undefined) {
-			try {
-				const res = await axios.get(
-					'https://cioleader.azurewebsites.net/api/whitepaper/all/',
-					{
-						headers: {
-							Authorization: `Token ${userToken}`,
-						},
-					}
-				);
-				setKnowledgeCards(res.data);
-			} catch (error) {
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				Vibration.vibrate();
-			}
-		}
-	};
-
-	const getUserProfile = async () => {
-		setIsLoading(true);
-		if (userToken !== '' || userToken !== null || userToken !== undefined) {
-			try {
-				const res = await axios.get(
-					'https://cioleader.azurewebsites.net/api/member/',
-					{
-						headers: {
-							Authorization: `Token ${userToken}`,
-						},
-					}
-				);
-
-				if (res.data.status === '2' || res.data.status === '3') {
-					router.push({
-						pathname: 'modal',
-						params: {
-							status: 'ApprovalPending',
-						},
-					});
-				} else {
-					setUserProfile(res.data);
-				}
-			} catch (error) {
-				setUserProfile({});
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				Vibration.vibrate();
-			}
-		}
-	};
-
-	const getPodcasts = async () => {
-		setIsLoading(true);
-		if (userToken !== '' || userToken !== null || userToken !== undefined) {
-			try {
-				const res = await axios.get(
-					'https://cioleader.azurewebsites.net/api/podcast/all/',
-					{
-						headers: {
-							Authorization: `Token ${userToken}`,
-						},
-					}
-				);
-				setPodcastData(res.data);
-			} catch (error) {
-				setPodcastData([]);
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				Vibration.vibrate();
-			}
-		}
-	};
-
-	useEffect(() => {
-		getUserProfile();
-		getUpcomingEvents();
-		getKnowledgeCards();
-		getResourceList();
-		getPodcasts();
-		getPoints();
-		getMags();
-		getRegions();
-		setTimeout(() => {
-			setIsLoading(false);
-		}, 1500);
-	}, []);
-
-	return !isLoading && !loading ? (
+	return loading ? (
+		<LoadingComp />
+	) : (
 		<SafeAreaView
 			edges={['top', 'bottom', 'right', 'left']}
 			flex={1}
@@ -284,18 +207,7 @@ const HomeScreen = () => {
 				refreshControl={
 					<RefreshControl
 						refreshing={loading}
-						onRefresh={() => {
-							setIsLoading(true);
-							getUserProfile();
-							getUpcomingEvents();
-							getKnowledgeCards();
-							getResourceList();
-							getPodcasts();
-							getPoints();
-							getRegions();
-							getMags();
-							setIsLoading(false);
-						}}
+						onRefresh={refresh}
 					/>
 				}
 				ref={scrollRef}
@@ -342,7 +254,7 @@ const HomeScreen = () => {
 								position='absolute'
 							>
 								<Image
-									source={globe}
+									src={globe}
 									resizeMode='contain'
 									height={Dimensions.get('screen').height * 0.4}
 									aspectRatio={1}
@@ -358,7 +270,7 @@ const HomeScreen = () => {
 								height={110}
 								width={120}
 								borderRadius={20}
-								source={{ uri: userProfile.profilepicture || ankit }}
+								src={userProfile.profilepicture}
 								marginBottom={10}
 							/>
 							<Text
@@ -400,7 +312,7 @@ const HomeScreen = () => {
 									gap={10}
 								>
 									<Image
-										source={earn}
+										src={earn}
 										height={35}
 										width={'auto'}
 										aspectRatio={0.837}
@@ -438,7 +350,7 @@ const HomeScreen = () => {
 									gap={10}
 								>
 									<Image
-										source={rem}
+										src={rem}
 										height={40}
 										width={'auto'}
 										aspectRatio={1.04}
@@ -474,9 +386,7 @@ const HomeScreen = () => {
 						</Text>
 
 						<Image
-							source={{
-								uri: userProfile.qrcode,
-							}}
+							src={userProfile.qrcode}
 							height={200}
 							width={200}
 						/>
@@ -528,7 +438,10 @@ const HomeScreen = () => {
 					>
 						Upcoming Events
 					</Text>
-					<View>
+					<View
+						flexDirection='row'
+						justifyContent='space-between'
+					>
 						<SelectDropdown
 							data={regions}
 							onSelect={(selectedItem, index) => {
@@ -540,10 +453,10 @@ const HomeScreen = () => {
 										<View
 											marginBottom={10}
 											backgroundColor={'#fff'}
-											borderColor='#00000050'
+											borderColor='#616161'
 											borderWidth={1}
 											borderRadius={100 / 2}
-											width={Dimensions.get('screen').width * 0.4}
+											width={Dimensions.get('screen').width * 0.425}
 											flexDirection={'row'}
 											alignItems={'center'}
 											justifyContent={'space-between'}
@@ -565,6 +478,8 @@ const HomeScreen = () => {
 										alignItems='center'
 										width={Dimensions.get('screen').width * 0.9}
 										backgroundColor={'#fff'}
+										borderWidth={1}
+										borderColor='#616161'
 									>
 										<Text
 											paddingVertical={10}
@@ -579,19 +494,100 @@ const HomeScreen = () => {
 								);
 							}}
 							dropdownStyle={{
-								width: Dimensions.get('screen').width * 0.9,
+								width: Dimensions.get('screen').width * 0.425,
 								borderRadius: 30,
 								borderWidth: 1,
-								borderColor: '#00000050',
+								borderColor: '#616161',
+								position: 'absolute',
+								left: 0,
+							}}
+							dropdownOverlayColor='rgba(0,0,0,0.2)'
+							showsVerticalScrollIndicator={false}
+						/>
+						<SelectDropdown
+							data={eventMode}
+							onSelect={(selectedItem, index) => {
+								setFilteredMode(selectedItem.id);
+							}}
+							renderButton={(selectedItem, isOpened) => {
+								return (
+									<View>
+										<View
+											marginBottom={10}
+											backgroundColor={'#fff'}
+											borderColor='#616161'
+											borderWidth={1}
+											borderRadius={100 / 2}
+											width={Dimensions.get('screen').width * 0.425}
+											flexDirection={'row'}
+											alignItems={'center'}
+											justifyContent={'space-between'}
+											paddingHorizontal={20}
+											height={30}
+										>
+											<Text color='#616161'>
+												{(selectedItem && selectedItem.name) || 'MODE'}
+											</Text>
+											<ChevronDown color='#616161' />
+										</View>
+									</View>
+								);
+							}}
+							renderItem={(item, index, isSelected) => {
+								return (
+									<View
+										justifyContent={'center'}
+										alignItems='center'
+										backgroundColor={'#fff'}
+										borderWidth={1}
+										borderColor='#616161'
+									>
+										<Text
+											paddingVertical={10}
+											paddingHorizontal={20}
+											color={'#616161'}
+											borderBottomColor={'#616161'}
+											borderBottomWidth={1}
+										>
+											{item.name}
+										</Text>
+									</View>
+								);
+							}}
+							dropdownStyle={{
+								width: Dimensions.get('screen').width * 0.425,
+								borderRadius: 30,
+								borderWidth: 1,
+								borderColor: '#616161',
+								position: 'absolute',
+								left: 0,
 							}}
 							dropdownOverlayColor='rgba(0,0,0,0.2)'
 							showsVerticalScrollIndicator={false}
 						/>
 					</View>
-					{upcomingEvents.length > 0 ? (
-						filteredRegion !== '' ? (
+					{(upcomingEvents && upcomingEvents.length > 0) ||
+					(filteredMode !== null &&
+					upcomingEvents.filter((item) => item.region === filteredRegion)
+						.length > 0
+						? filteredRegion !== null &&
+						  upcomingEvents.filter(
+								(item) => item.type === filteredMode.toString()
+						  ).length > 0
+							? filteredRegion !== null &&
+							  filteredMode !== null &&
+							  upcomingEvents.filter(
+									(item) =>
+										item.type ===
+										filteredMode
+											.toString()
+											.filter((item) => item.region === filteredRegion)
+							  ).length > 0
+							: upcomingEvents.length > 0
+						: upcomingEvents.length > 0) ? (
+						filteredRegion !== null ? (
 							upcomingEvents
-								.filter((item) => item.id !== filteredRegion)
+								.filter((item) => item.region === filteredRegion)
 								.map((item, index) => (
 									<UpcomingEventCard
 										key={index}
@@ -612,7 +608,7 @@ const HomeScreen = () => {
 								textAlign='left'
 								color={colors.text}
 							>
-								No upcoming events for now...
+								No upcoming events in for now...
 							</Text>
 						</View>
 					)}
@@ -658,8 +654,8 @@ const HomeScreen = () => {
 						>
 							{knowledgeCards.map((item, index) => (
 								<KnowledgeCard
-									getFn={getKnowledgeCards}
-									setIsLoading={setIsLoading}
+									getFn={getData}
+									setIsLoading={setLoading}
 									key={index}
 									data={item}
 								/>
@@ -694,8 +690,8 @@ const HomeScreen = () => {
 								.filter((mag) => mag.magzine === '1')
 								.map((item, index) => (
 									<EditorialMags
-										getFn={getMags}
-										setIsLoading={setIsLoading}
+										getFn={getData}
+										setIsLoading={setLoading}
 										key={index}
 										data={item}
 									/>
@@ -706,8 +702,8 @@ const HomeScreen = () => {
 							.filter((mag) => mag.magzine === '1')
 							.map((item, index) => (
 								<EditorialMags
-									getFn={getMags}
-									setIsLoading={setIsLoading}
+									getFn={getData}
+									setIsLoading={setLoading}
 									key={index}
 									data={item}
 								/>
@@ -723,8 +719,8 @@ const HomeScreen = () => {
 								.filter((mag) => mag.magzine === '2')
 								.map((item, index) => (
 									<EditorialMags
-										getFn={getMags}
-										setIsLoading={setIsLoading}
+										getFn={getData}
+										setIsLoading={setLoading}
 										key={index}
 										data={item}
 									/>
@@ -735,8 +731,8 @@ const HomeScreen = () => {
 							.filter((mag) => mag.magzine === '2')
 							.map((item, index) => (
 								<EditorialMags
-									getFn={getMags}
-									setIsLoading={setIsLoading}
+									getFn={getData}
+									setIsLoading={setLoading}
 									key={index}
 									data={item}
 								/>
@@ -763,8 +759,8 @@ const HomeScreen = () => {
 					>
 						{podcastData.map((item, index) => (
 							<PodcastCard
-								getFn={getPodcasts}
-								setIsLoading={setIsLoading}
+								getFn={getData}
+								setIsLoading={setLoading}
 								key={index}
 								data={item}
 								width={width * 0.9}
@@ -774,8 +770,8 @@ const HomeScreen = () => {
 				) : podcastData.length === 1 ? (
 					<View width={width * 0.9}>
 						<PodcastCard
-							getFn={getPodcasts}
-							setIsLoading={setIsLoading}
+							getFn={getData}
+							setIsLoading={setLoading}
 							data={podcastData}
 						/>
 					</View>
@@ -800,28 +796,28 @@ const HomeScreen = () => {
 					Resource Libraries
 				</Text>
 
-				{resourceData.length > 1 ? (
+				{ResourceData.length > 1 ? (
 					<ScrollView
 						width={width * 0.9}
 						horizontal
 						gap={10}
 						marginBottom={10}
 					>
-						{resourceData.map((item, index) => (
+						{ResourceData.map((item, index) => (
 							<ResourceCard
-								getFn={getResourceList}
-								setIsLoading={setIsLoading}
+								getFn={getData}
+								setIsLoading={setLoading}
 								key={index}
 								data={item}
 							/>
 						))}
 					</ScrollView>
-				) : resourceData.length === 1 ? (
-					resourceData.map((item, index) => (
+				) : ResourceData.length === 1 ? (
+					ResourceData.map((item, index) => (
 						<ResourceCard
 							width={width * 0.9}
-							getFn={getResourceList}
-							setIsLoading={setIsLoading}
+							getFn={getData}
+							setIsLoading={setLoading}
 							key={index}
 							data={item}
 						/>
@@ -952,7 +948,7 @@ const HomeScreen = () => {
 														fontSize={10}
 													>
 														<Image
-															source={coin}
+															src={coin}
 															height={20}
 															width={20}
 														/>
@@ -1024,7 +1020,7 @@ const HomeScreen = () => {
 											flexDirection={'row'}
 										>
 											<Image
-												source={coin}
+												src={coin}
 												height={20}
 												width={20}
 											/>
@@ -1059,7 +1055,7 @@ const HomeScreen = () => {
 											flexDirection={'row'}
 										>
 											<Image
-												source={coin}
+												src={coin}
 												height={20}
 												width={20}
 											/>
@@ -1092,7 +1088,7 @@ const HomeScreen = () => {
 											flexDirection={'row'}
 										>
 											<Image
-												source={coin}
+												src={coin}
 												height={20}
 												width={20}
 											/>
@@ -1143,7 +1139,7 @@ const HomeScreen = () => {
 					</Button>
 				</View>
 				<Image
-					source={triangle}
+					src={triangle}
 					marginTop={-20}
 					width={width}
 					height={height * 0.5}
@@ -1182,7 +1178,7 @@ const HomeScreen = () => {
 					}
 				>
 					<Image
-						source={home}
+						src={home}
 						height={25}
 						width={'auto'}
 						aspectRatio={0.89}
@@ -1213,7 +1209,7 @@ const HomeScreen = () => {
 					}
 				>
 					<Image
-						source={evt}
+						src={evt}
 						height={25}
 						width={25}
 					/>
@@ -1243,7 +1239,7 @@ const HomeScreen = () => {
 					}
 				>
 					<Image
-						source={kc}
+						src={kc}
 						height={25}
 						width={25}
 					/>
@@ -1271,7 +1267,7 @@ const HomeScreen = () => {
 					}
 				>
 					<Image
-						source={points}
+						src={points}
 						height={25}
 						aspectRatio={1.25}
 					/>
@@ -1293,7 +1289,7 @@ const HomeScreen = () => {
 					alignItems='center'
 				>
 					<Image
-						source={{ uri: profile }}
+						src={{ uri: profile }}
 						height={25}
 						width={'auto'}
 						aspectRatio={0.87}
@@ -1308,8 +1304,6 @@ const HomeScreen = () => {
 				</View>
 			</View>
 		</SafeAreaView>
-	) : (
-		<LoadingComp />
 	);
 };
 export default HomeScreen;

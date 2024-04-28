@@ -18,8 +18,6 @@ const PdfScreen = () => {
 		}, 1000);
 	}, []);
 
-	console.log(uri);
-
 	return loading ? (
 		<Loading />
 	) : (

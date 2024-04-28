@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Button, Image, Text, ScrollView } from 'tamagui';
 import { Dimensions, StatusBar, ToastAndroid, Vibration } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '@/constants';
+import { colors, vibrateHeavy } from '@/constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
@@ -39,7 +39,7 @@ const EventScreen = () => {
 			setEvtData(res.data);
 		} catch (error) {
 			ToastAndroid.show('An error has occurred', ToastAndroid.SHORT);
-			Vibration.vibrate();
+			vibrateHeavy();
 		} finally {
 			setLoading(false);
 		}
@@ -180,7 +180,6 @@ const EventScreen = () => {
 								fontSize={10}
 								fontFamily={'InterBold'}
 								onPress={async () => {
-									console.log(userToken, event);
 									try {
 										const res = await axios.post(
 											'https://cioleader.azurewebsites.net/api/register/create/',
@@ -201,19 +200,18 @@ const EventScreen = () => {
 											},
 										});
 									} catch (error) {
-										console.log(error.code);
 										if (error.code === 'ERR_BAD_REQUEST') {
 											ToastAndroid.show(
 												'You have already registered for the event.',
 												ToastAndroid.SHORT
 											);
-											Vibration.vibrate();
+											vibrateHeavy();
 										} else {
 											ToastAndroid.show(
 												'Thank you for showing interest in this event!',
 												ToastAndroid.SHORT
 											);
-											Vibration.vibrate();
+											vibrateHeavy();
 										}
 									}
 								}}
@@ -255,7 +253,6 @@ const EventScreen = () => {
 									borderColor: colors.primary,
 								}}
 								onPress={async () => {
-									console.log(evtData.agenda);
 									router.push({
 										pathname: '/pdf',
 										params: {
