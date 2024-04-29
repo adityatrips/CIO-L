@@ -28,6 +28,7 @@ const ScreenPassword = () => {
 		useContext(AuthContext);
 
 	const loginHandler = async () => {
+		setIsLoading(true);
 		if (pword.length === 0 || pword.length < 8) {
 			vibrateHeavy();
 			ToastAndroid.show(
@@ -37,7 +38,6 @@ const ScreenPassword = () => {
 			return;
 		} else {
 			try {
-				setIsLoading(true);
 				await login(userInfo?.username, pword).then(() => {
 					router.push('/home');
 				});
@@ -181,7 +181,7 @@ const ScreenPassword = () => {
 						height={50}
 						onPress={loginHandler}
 					>
-						{isLoading ? (
+						{isLoading === true ? (
 							<ActivityIndicator
 								size='small'
 								color='#fff'

@@ -35,15 +35,10 @@ import SelectDropdown from 'react-native-select-dropdown';
 import { ChevronDown } from '@tamagui/lucide-icons';
 import axios from 'axios';
 import LoadingComp from '@/components/Loading';
+import FilteredResults from '@/components/FilteredResults';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
-
-const eventMode = [
-	{ id: 1, name: 'Online' },
-	{ id: 2, name: 'Offline' },
-	{ id: 3, name: 'Hybrid' },
-];
 
 const HomeScreen = () => {
 	const [userProfile, setUserProfile] = useState({});
@@ -438,180 +433,15 @@ const HomeScreen = () => {
 					>
 						Upcoming Events
 					</Text>
-					<View
-						flexDirection='row'
-						justifyContent='space-between'
-					>
-						<SelectDropdown
-							data={regions}
-							onSelect={(selectedItem, index) => {
-								setFilteredRegion(selectedItem.id);
-							}}
-							renderButton={(selectedItem, isOpened) => {
-								return (
-									<View>
-										<View
-											marginBottom={10}
-											backgroundColor={'#fff'}
-											borderColor='#616161'
-											borderWidth={1}
-											borderRadius={100 / 2}
-											width={Dimensions.get('screen').width * 0.425}
-											flexDirection={'row'}
-											alignItems={'center'}
-											justifyContent={'space-between'}
-											paddingHorizontal={20}
-											height={30}
-										>
-											<Text color='#616161'>
-												{(selectedItem && selectedItem.name) || 'REGION'}
-											</Text>
-											<ChevronDown color='#616161' />
-										</View>
-									</View>
-								);
-							}}
-							renderItem={(item, index, isSelected) => {
-								return (
-									<View
-										justifyContent={'center'}
-										alignItems='center'
-										width={Dimensions.get('screen').width * 0.9}
-										backgroundColor={'#fff'}
-										borderWidth={1}
-										borderColor='#616161'
-									>
-										<Text
-											paddingVertical={10}
-											paddingHorizontal={20}
-											color={'#616161'}
-											borderBottomColor={'#616161'}
-											borderBottomWidth={1}
-										>
-											{item.name}
-										</Text>
-									</View>
-								);
-							}}
-							dropdownStyle={{
-								width: Dimensions.get('screen').width * 0.425,
-								borderRadius: 30,
-								borderWidth: 1,
-								borderColor: '#616161',
-								position: 'absolute',
-								left: 0,
-							}}
-							dropdownOverlayColor='rgba(0,0,0,0.2)'
-							showsVerticalScrollIndicator={false}
-						/>
-						<SelectDropdown
-							data={eventMode}
-							onSelect={(selectedItem, index) => {
-								setFilteredMode(selectedItem.id);
-							}}
-							renderButton={(selectedItem, isOpened) => {
-								return (
-									<View>
-										<View
-											marginBottom={10}
-											backgroundColor={'#fff'}
-											borderColor='#616161'
-											borderWidth={1}
-											borderRadius={100 / 2}
-											width={Dimensions.get('screen').width * 0.425}
-											flexDirection={'row'}
-											alignItems={'center'}
-											justifyContent={'space-between'}
-											paddingHorizontal={20}
-											height={30}
-										>
-											<Text color='#616161'>
-												{(selectedItem && selectedItem.name) || 'MODE'}
-											</Text>
-											<ChevronDown color='#616161' />
-										</View>
-									</View>
-								);
-							}}
-							renderItem={(item, index, isSelected) => {
-								return (
-									<View
-										justifyContent={'center'}
-										alignItems='center'
-										backgroundColor={'#fff'}
-										borderWidth={1}
-										borderColor='#616161'
-									>
-										<Text
-											paddingVertical={10}
-											paddingHorizontal={20}
-											color={'#616161'}
-											borderBottomColor={'#616161'}
-											borderBottomWidth={1}
-										>
-											{item.name}
-										</Text>
-									</View>
-								);
-							}}
-							dropdownStyle={{
-								width: Dimensions.get('screen').width * 0.425,
-								borderRadius: 30,
-								borderWidth: 1,
-								borderColor: '#616161',
-								position: 'absolute',
-								left: 0,
-							}}
-							dropdownOverlayColor='rgba(0,0,0,0.2)'
-							showsVerticalScrollIndicator={false}
-						/>
-					</View>
-					{(upcomingEvents && upcomingEvents.length > 0) ||
-					(filteredMode !== null &&
-					upcomingEvents.filter((item) => item.region === filteredRegion)
-						.length > 0
-						? filteredRegion !== null &&
-						  upcomingEvents.filter(
-								(item) => item.type === filteredMode.toString()
-						  ).length > 0
-							? filteredRegion !== null &&
-							  filteredMode !== null &&
-							  upcomingEvents.filter(
-									(item) =>
-										item.type ===
-										filteredMode
-											.toString()
-											.filter((item) => item.region === filteredRegion)
-							  ).length > 0
-							: upcomingEvents.length > 0
-						: upcomingEvents.length > 0) ? (
-						filteredRegion !== null ? (
-							upcomingEvents
-								.filter((item) => item.region === filteredRegion)
-								.map((item, index) => (
-									<UpcomingEventCard
-										key={index}
-										data={item}
-									/>
-								))
-						) : (
-							upcomingEvents.map((item, index) => (
-								<UpcomingEventCard
-									key={index}
-									data={item}
-								/>
-							))
-						)
-					) : (
-						<View>
-							<Text
-								textAlign='left'
-								color={colors.text}
-							>
-								No upcoming events in for now...
-							</Text>
-						</View>
-					)}
+					<FilteredResults
+						upcomingEvents={upcomingEvents}
+						filteredMode={filteredMode}
+						filteredRegion={filteredRegion}
+						setFilteredMode={setFilteredMode}
+						setFilteredRegion={setFilteredRegion}
+						regions={regions}
+						eventMode={eventMode}
+					/>
 				</View>
 				<Divider
 					spacing={20}

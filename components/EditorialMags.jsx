@@ -1,13 +1,11 @@
-import React, { useContext } from 'react';
-import { Dimensions, Linking } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { ActivityIndicator, Dimensions, Linking } from 'react-native';
 import { Button, Image, Text, View } from 'tamagui';
 import { colors } from '@/constants';
 import coin from '@/assets/images/Coin1.png';
 import { downloadAndOpenPdf } from '@/constants';
 import { useRouter } from 'expo-router';
 const { width, height } = Dimensions.get('window');
-import * as Sharing from 'expo-sharing';
-import * as IntentLauncher from 'expo-intent-launcher';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
 
@@ -16,6 +14,8 @@ let wH = height;
 
 const EditorialMags = ({ data, getFn, setIsLoading }) => {
 	const { userToken } = useContext(AuthContext);
+
+	const [loading, setLoading] = useState(false);
 
 	const router = useRouter();
 	return (
@@ -90,16 +90,17 @@ const EditorialMags = ({ data, getFn, setIsLoading }) => {
 					backgroundColor={colors.primary}
 					borderColor={colors.primary}
 					pressStyle={{
-						backgroundColor: colors.primary,
-						borderColor: colors.primary,
+						backgroundColor: '#8DC63F90',
+						borderColor: '#8DC63F90',
 					}}
 					borderRadius={100 / 2}
 					height={30}
 					fontSize={10}
 					alignItems='center'
-					justifyContent='space-between'
+					justifyContent={loading ? 'center' : 'space-between'}
 					fontFamily={'InterBold'}
 					onPress={async () => {
+						setLoading(true);
 						axios
 							.post(
 								`https://cioleader.azurewebsites.net/api/editorial/${data.id}/viewed/`,
@@ -120,34 +121,44 @@ const EditorialMags = ({ data, getFn, setIsLoading }) => {
 							})
 							.then(() => {
 								getFn();
+								setLoading(false);
 								setIsLoading(false);
 							});
 					}}
 				>
-					<Text
-						fontFamily={'InterBold'}
-						fontSize={10}
-						textTransform='uppercase'
-					>
-						Open
-					</Text>
-					<View
-						flexDirection='row'
-						gap={5}
-						alignItems='center'
-					>
-						<Image
-							source={coin}
-							width={25}
-							height={25}
+					{loading ? (
+						<ActivityIndicator
+							size='small'
+							color='#fff'
 						/>
-						<Text
-							fontFamily={'InterBold'}
-							fontSize={11}
-						>
-							+{data.viewingpoints}
-						</Text>
-					</View>
+					) : (
+						<>
+							<Text
+								fontFamily={'InterBold'}
+								fontSize={10}
+								textTransform='uppercase'
+							>
+								Open
+							</Text>
+							<View
+								flexDirection='row'
+								gap={5}
+								alignItems='center'
+							>
+								<Image
+									source={coin}
+									width={25}
+									height={25}
+								/>
+								<Text
+									fontFamily={'InterBold'}
+									fontSize={11}
+								>
+									+{data.viewingpoints}
+								</Text>
+							</View>
+						</>
+					)}
 				</Button>
 			</View>
 		</View>

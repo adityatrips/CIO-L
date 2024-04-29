@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Image, Text, Button, View } from 'tamagui';
+import { Button, Image, Text, View } from 'tamagui';
 import { ChevronRight, Key } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import ImageTriangles from '@/components/ImageTriangles';

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions } from 'react-native';
 import { Button, Image, Text, View } from 'tamagui';
 import { colors } from '@/constants';
 import coin from '@/assets/images/Coin1.png';
@@ -8,6 +8,7 @@ import Online from '@/assets/images/Online.png';
 import Offline from '@/assets/images/Offline.png';
 import { useRouter } from 'expo-router';
 import moment from 'moment';
+import axios from 'axios';
 
 const UpcomingEventCard = ({
 	data,
@@ -16,6 +17,8 @@ const UpcomingEventCard = ({
 	attended = false,
 	srcRoute = 'EvtCard',
 }) => {
+	const [loading, setLoading] = useState(false);
+
 	const router = useRouter();
 	return (
 		<View
@@ -217,13 +220,20 @@ const UpcomingEventCard = ({
 									fontSize={10}
 									fontFamily={'InterBold'}
 								>
-									SHARE FEEDBACK
+									FEEDBACK
 								</Text>
 								<Image
 									source={coin}
 									width={25}
 									height={25}
 								/>
+								<Text
+									fontSize={10}
+									fontFamily={'InterBold'}
+									color='#fff'
+								>
+									+{data.feedbackpoint}50
+								</Text>
 							</View>
 						</Button>
 						<Button
@@ -255,13 +265,19 @@ const UpcomingEventCard = ({
 									fontSize={10}
 									fontFamily={'InterBold'}
 								>
-									SHARE SELFIE
+									ADD SELFIE
 								</Text>
 								<Image
 									source={coin}
 									width={25}
 									height={25}
 								/>
+								<Text
+									fontSize={10}
+									fontFamily={'InterBold'}
+								>
+									+{data.selfiepoint}50
+								</Text>
 							</View>
 						</Button>
 					</View>
@@ -274,25 +290,34 @@ const UpcomingEventCard = ({
 						borderColor={
 							registered ? '#7a7a7a' : missed ? '#CE3426' : colors.primaryDark
 						}
-						disabled={missed}
+						disabled={missed || attended}
 						pressStyle={{
-							backgroundColor: colors.primary,
-							borderColor: colors.primary,
+							backgroundColor: '#01934890',
+							borderColor: '#01934890',
 						}}
 						height={30}
 						onPress={() => {
+							setLoading(true);
 							router.push({
 								pathname: `/event/${data.id}`,
 								state: { srcRoute: srcRoute },
 							});
+							setLoading(false);
 						}}
 					>
-						<Text
-							fontSize={10}
-							fontFamily={'InterBold'}
-						>
-							{registered ? 'REGISTERED' : missed ? 'MISSED' : 'KNOW MORE'}
-						</Text>
+						{loading ? (
+							<ActivityIndicator
+								size='small'
+								color='#fff'
+							/>
+						) : (
+							<Text
+								fontSize={10}
+								fontFamily={'InterBold'}
+							>
+								{registered ? 'REGISTERED' : missed ? 'MISSED' : 'KNOW MORE'}
+							</Text>
+						)}
 					</Button>
 				)}
 			</View>

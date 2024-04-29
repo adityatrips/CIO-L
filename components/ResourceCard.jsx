@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Dimensions, Linking } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { ActivityIndicator, Dimensions, Linking } from 'react-native';
 import { Button, Image, Text, View } from 'tamagui';
 import coin from '@/assets/images/Coin1.png';
 import { colors } from '@/constants';
@@ -13,6 +13,9 @@ const wH = Dimensions.get('window').height;
 const ResourceCard = ({ data, getFn, setIsLoading }) => {
 	const { userToken } = useContext(AuthContext);
 	const router = useRouter();
+
+	const [readLoading, setReadLoading] = useState(false);
+	const [mcqLoading, setMcqLoading] = useState(false);
 
 	return (
 		<View
@@ -93,14 +96,15 @@ const ResourceCard = ({ data, getFn, setIsLoading }) => {
 					backgroundColor={colors.primaryDark}
 					borderColor={colors.primaryDark}
 					pressStyle={{
-						backgroundColor: colors.primary,
-						borderColor: colors.primary,
+						backgroundColor: '#01934890',
+						borderColor: '#01934890',
 					}}
 					borderRadius={100 / 2}
 					width={'85%'}
 					height={30}
-					justifyContent='space-between'
+					justifyContent={readLoading ? 'center' : 'space-between'}
 					onPress={async () => {
+						setReadLoading(true);
 						axios
 							.post(
 								`https://cioleader.azurewebsites.net/api/resource/${data.id}/viewed/`,
@@ -116,39 +120,49 @@ const ResourceCard = ({ data, getFn, setIsLoading }) => {
 							})
 							.then(() => {
 								getFn();
+								setReadLoading(false);
 								setIsLoading(false);
 							});
 					}}
 				>
-					<Text
-						fontSize={10}
-						fontFamily={'InterBold'}
-						textTransform='uppercase'
-					>
-						Read
-					</Text>
-					<View
-						flexDirection='row'
-						alignItems='center'
-					>
-						<Image
-							src={coin}
-							height={25}
-							width={25}
+					{readLoading ? (
+						<ActivityIndicator
+							size={'small'}
+							color='#fff'
 						/>
-						<Text
-							fontSize={11}
-							fontFamily='InterSemiBold'
-						>
-							+{data.viewingpoints}
-						</Text>
-					</View>
+					) : (
+						<>
+							<Text
+								fontSize={10}
+								fontFamily={'InterBold'}
+								textTransform='uppercase'
+							>
+								Read
+							</Text>
+							<View
+								flexDirection='row'
+								alignItems='center'
+							>
+								<Image
+									src={coin}
+									height={25}
+									width={25}
+								/>
+								<Text
+									fontSize={11}
+									fontFamily='InterSemiBold'
+								>
+									+{data.viewingpoints}
+								</Text>
+							</View>
+						</>
+					)}
 				</Button>
 				<Button
 					borderColor={colors.primary}
 					pressStyle={{
-						backgroundColor: colors.primary,
-						borderColor: colors.primary,
+						backgroundColor: '#01934890',
+						borderColor: '#01934890',
 					}}
 					backgroundColor={!data.viewed ? '#616161' : colors.primaryDark}
 					disabled={!data.viewed}
@@ -157,31 +171,42 @@ const ResourceCard = ({ data, getFn, setIsLoading }) => {
 					width={'85%'}
 					height={30}
 					onPress={() => {
+						setMcqLoading(true);
 						router.push(`/mcq/${data.quiz}`);
+						setMcqLoading(false);
 					}}
 				>
-					<Text
-						fontSize={10}
-						fontFamily={'InterBold'}
-					>
-						MCQ
-					</Text>
-					<View
-						flexDirection='row'
-						alignItems='center'
-					>
-						<Image
-							src={coin}
-							height={25}
-							width={25}
+					{mcqLoading ? (
+						<ActivityIndicator
+							size='small'
+							color='#fff'
 						/>
-						<Text
-							fontSize={11}
-							fontFamily='InterSemiBold'
-						>
-							+{data.quizpoints}
-						</Text>
-					</View>
+					) : (
+						<>
+							<Text
+								fontSize={10}
+								fontFamily={'InterBold'}
+							>
+								MCQ
+							</Text>
+							<View
+								flexDirection='row'
+								alignItems='center'
+							>
+								<Image
+									src={coin}
+									height={25}
+									width={25}
+								/>
+								<Text
+									fontSize={11}
+									fontFamily='InterSemiBold'
+								>
+									+{data.quizpoints}
+								</Text>
+							</View>
+						</>
+					)}
 				</Button>
 			</View>
 		</View>

@@ -45,38 +45,14 @@ export default function ProfileScreen() {
 		router.push('/');
 	};
 
-	const getUserProfile = async () => {
-		if (userToken !== '' || userToken !== null || userToken !== undefined) {
-			try {
-				const res = await axios.get(
-					'https://cioleader.azurewebsites.net/api/member/',
-					{
-						headers: {
-							Authorization: `Token ${userToken}`,
-						},
-					}
-				);
-				setUserProfile(res.data);
-			} catch (error) {
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				vibrateHeavy();
-				setUserProfile({});
-				return error.status;
-			}
-		}
-	};
-
 	useEffect(() => {
-		setLoading(true);
-		getEvents();
-		getUserProfile();
-		getUpcomingEvents();
-		setLoading(false);
+		getData();
 	}, []);
 
-	const getEvents = async () => {
+	const getData = async () => {
+		setLoading(true);
 		try {
-			const res = await axios.get(
+			const evt = await axios.get(
 				'https://cioleader.azurewebsites.net/api/event/past/all',
 				{
 					headers: {
@@ -84,32 +60,34 @@ export default function ProfileScreen() {
 					},
 				}
 			);
-			setAttendedEvents(res.data.filter((evt) => evt.registered === '2'));
-			setMissedEvents(res.data.filter((evt) => evt.registered === '3'));
+			setAttendedEvents(evt.data.filter((evt) => evt.registered === '2'));
+			setMissedEvents(evt.data.filter((evt) => evt.registered === '3'));
+			const allEvts = await axios.get(
+				'https://cioleader.azurewebsites.net/api/event/all/',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setRegisteredEvents(allEvts.data.filter((evt) => evt.registered === '1'));
+			const prof = await axios.get(
+				'https://cioleader.azurewebsites.net/api/member/',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setUserProfile(prof.data);
 		} catch (error) {
-			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			ToastAndroid.show(
+				'Error fetching details. Please try again in some time',
+				ToastAndroid.SHORT
+			);
 			vibrateHeavy();
 		}
-	};
-
-	const getUpcomingEvents = async () => {
-		if (userToken !== '' || userToken !== null || userToken !== undefined) {
-			try {
-				const res = await axios.get(
-					'https://cioleader.azurewebsites.net/api/event/all/',
-					{
-						headers: {
-							Authorization: `Token ${userToken}`,
-						},
-					}
-				);
-				setRegisteredEvents(res.data.filter((evt) => evt.registered === '1'));
-			} catch (error) {
-				ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
-				vibrateHeavy();
-				setUserProfile([]);
-			}
-		}
+		setLoading(false);
 	};
 
 	return loading ? (

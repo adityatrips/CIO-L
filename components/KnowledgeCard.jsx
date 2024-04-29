@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Dimensions, Linking } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { ActivityIndicator, Dimensions, Linking } from 'react-native';
 import { Button, Image, Text, View } from 'tamagui';
 import coin from '@/assets/images/Coin1.png';
 import { colors } from '@/constants';
@@ -13,6 +13,9 @@ const wH = Dimensions.get('window').height;
 const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 	const { userToken } = useContext(AuthContext);
 	const router = useRouter();
+
+	const [loading, setLoading] = useState(false);
+	const [mcqLoading, setMcqLoading] = useState(false);
 
 	return (
 		<View
@@ -89,14 +92,15 @@ const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 					backgroundColor={colors.primaryDark}
 					borderColor={colors.primaryDark}
 					pressStyle={{
-						backgroundColor: colors.primary,
-						borderColor: colors.primary,
+						backgroundColor: '#01934890',
+						borderColor: '#01934890',
 					}}
 					borderRadius={100 / 2}
 					width={'85%'}
 					height={30}
-					justifyContent='space-between'
+					justifyContent={loading ? 'center' : 'space-between'}
 					onPress={async () => {
+						setLoading(true);
 						axios
 							.post(
 								`https://cioleader.azurewebsites.net/api/whitepaper/${data.id}/viewed/`,
@@ -118,39 +122,49 @@ const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 							.then(() => {
 								getFn();
 								setIsLoading(false);
+								setLoading(false);
 							});
 					}}
 				>
-					<Text
-						fontSize={10}
-						fontFamily={'InterBold'}
-						textTransform='uppercase'
-					>
-						Download
-					</Text>
-					<View
-						flexDirection='row'
-						alignItems='center'
-					>
-						<Image
-							src={coin}
-							height={25}
-							width={25}
+					{loading ? (
+						<ActivityIndicator
+							size='small'
+							color='#fff'
 						/>
-						<Text
-							fontSize={11}
-							fontFamily='InterSemiBold'
-						>
-							+{data.viewingpoints}
-						</Text>
-					</View>
+					) : (
+						<>
+							<Text
+								fontSize={10}
+								fontFamily={'InterBold'}
+								textTransform='uppercase'
+							>
+								Download
+							</Text>
+							<View
+								flexDirection='row'
+								alignItems='center'
+							>
+								<Image
+									src={coin}
+									height={25}
+									width={25}
+								/>
+								<Text
+									fontSize={11}
+									fontFamily='InterSemiBold'
+								>
+									+{data.viewingpoints}
+								</Text>
+							</View>
+						</>
+					)}
 				</Button>
 				<Button
 					borderColor={colors.primary}
 					backgroundColor={!data.viewed ? '#616161' : colors.primaryDark}
 					pressStyle={{
-						backgroundColor: colors.primaryDark,
-						borderColor: colors.primary,
+						backgroundColor: '#01934890',
+						borderColor: '#01934890',
 					}}
 					disabled={!data.viewed}
 					borderRadius={100 / 2}
@@ -158,31 +172,42 @@ const KnowledgeCard = ({ data, getFn, setIsLoading }) => {
 					width={'85%'}
 					height={30}
 					onPress={() => {
+						setMcqLoading(true);
 						router.push(`/mcq/${data.quiz}`);
+						setMcqLoading(false);
 					}}
 				>
-					<Text
-						fontSize={10}
-						fontFamily={'InterBold'}
-					>
-						MCQ
-					</Text>
-					<View
-						flexDirection='row'
-						alignItems='center'
-					>
-						<Image
-							src={coin}
-							height={25}
-							width={25}
+					{mcqLoading ? (
+						<ActivityIndicator
+							size='small'
+							color='#fff'
 						/>
-						<Text
-							fontSize={11}
-							fontFamily='InterSemiBold'
-						>
-							+{data.quizpoints}
-						</Text>
-					</View>
+					) : (
+						<>
+							<Text
+								fontSize={10}
+								fontFamily={'InterBold'}
+							>
+								MCQ
+							</Text>
+							<View
+								flexDirection='row'
+								alignItems='center'
+							>
+								<Image
+									src={coin}
+									height={25}
+									width={25}
+								/>
+								<Text
+									fontSize={11}
+									fontFamily='InterSemiBold'
+								>
+									+{data.quizpoints}
+								</Text>
+							</View>
+						</>
+					)}
 				</Button>
 			</View>
 		</View>

@@ -1,6 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Button, Image, Text, ScrollView } from 'tamagui';
-import { Dimensions, StatusBar, ToastAndroid, Vibration } from 'react-native';
+import {
+	BackHandler,
+	Dimensions,
+	StatusBar,
+	ToastAndroid,
+	Vibration,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, vibrateHeavy } from '@/constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -12,8 +18,7 @@ import HeaderComp from '@/components/Header';
 import coin from '@/assets/images/Coin1.png';
 import * as Linking from 'expo-linking';
 import * as Sharing from 'expo-sharing';
-import { Share } from 'react-native';
-import { downloadAndOpenPdf } from '@/constants';
+import Share from 'react-native-share';
 
 const EventScreen = () => {
 	const { event } = useLocalSearchParams();
@@ -24,6 +29,10 @@ const EventScreen = () => {
 	const url = Linking.useURL();
 
 	const { srcRoute } = useLocalSearchParams();
+
+	BackHandler.addEventListener('hardwareBackPress', () => {
+		router.push('/home');
+	});
 
 	const getOneEvent = async () => {
 		setLoading(true);
@@ -196,7 +205,7 @@ const EventScreen = () => {
 											pathname: '/modal',
 											params: {
 												status: 'eventRegistrationSuccess',
-												point: event.attendingpoint,
+												point: evtData.attendingpoint,
 											},
 										});
 									} catch (error) {
@@ -236,7 +245,7 @@ const EventScreen = () => {
 										fontSize={10}
 										fontFamily={'InterBold'}
 									>
-										+{event.attendingpoint}
+										+{evtData.attendingpoint}
 									</Text>
 								</View>
 							</Button>
@@ -451,18 +460,23 @@ const EventScreen = () => {
 								borderRadius={100 / 2}
 								height={30}
 								onPress={async () => {
-									const res = await Share.share({
-										message: `CIO&Leader\n\nJoin me at ${
-											evtData.name
-										} on ${moment(evtData.date, 'YYYY-MM-DD').format(
-											'MMM DD, YYYY'
-										)} at ${moment(evtData.time, 'HH:mm:ss').format(
+									const encUrl = encodeURIComponent(
+										`cioleader://event/${event}`
+									);
+									const finUrl = `https://cioleader.azurewebsites.net/redirect/?url=${encUrl}`;
+
+									console.log(evtData.time);
+									console.log();
+
+									Share.open({
+										message: `CIO&Leader\n\nJoin me at Test Event 6 on ${moment(
+											evtData.data
+										).format('LL')} ${moment(evtData.time, 'HH:mm:ss').format(
 											'hh:mm A'
 										)} at ${
-											evtData.venue
-										} for an amazing event. Click the link below to view the agenda.\n\nRegister now at CIO&Leader.\n${
-											evtData.agenda
-										}`,
+											evtData.name
+										} for an amazing event. Click the link below to know more about the event.\n\nRegister now at CIO&Leader.\n\n`,
+										url: finUrl,
 									});
 								}}
 							>
