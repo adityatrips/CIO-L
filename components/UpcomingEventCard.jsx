@@ -232,7 +232,7 @@ const UpcomingEventCard = ({
 									fontFamily={'InterBold'}
 									color='#fff'
 								>
-									+{data.feedbackpoint}50
+									+{data.feedbackpoint}
 								</Text>
 							</View>
 						</Button>
@@ -276,7 +276,7 @@ const UpcomingEventCard = ({
 									fontSize={10}
 									fontFamily={'InterBold'}
 								>
-									+{data.selfiepoint}50
+									+{data.selfiepoint}
 								</Text>
 							</View>
 						</Button>
