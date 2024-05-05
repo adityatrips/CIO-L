@@ -58,6 +58,50 @@ export default function Modal() {
 				<StatusBar style='light' />
 			</View>
 		);
+	} else if (status === 'FeedbackAlreadyGiven') {
+		return (
+			<View
+				flex={1}
+				alignItems={'center'}
+				justifyContent={'center'}
+				backgroundColor={'#fff'}
+				paddingHorizontal={20}
+			>
+				<X
+					color={'#000'}
+					size='$3'
+					position='absolute'
+					top={50}
+					right={20}
+					onPress={() => navigation.goBack()}
+				/>
+				<ImageTriangles
+					bottom={-75}
+					height='120%'
+				/>
+				<Image
+					source={logo}
+					resizeMode='contain'
+					width={Dimensions.get('window').width * 0.75}
+					height={Dimensions.get('window').height * 0.15}
+				/>
+				<Image
+					marginTop={-40}
+					source={oops}
+					resizeMode='contain'
+					width={Dimensions.get('window').width}
+					height={Dimensions.get('window').height * 0.3}
+				/>
+				<Text
+					fontSize={17}
+					fontFamily={'InterBold'}
+					color='#000'
+				>
+					The feedback has already been submitted!
+				</Text>
+				<StatusBar style='light' />
+			</View>
+		);
 	} else if (status === 'ApprovalPending') {
 		return (
 			<View

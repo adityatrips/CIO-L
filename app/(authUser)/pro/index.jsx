@@ -103,8 +103,7 @@ export default function ProfileScreen() {
 				refreshControl={
 					<RefreshControl
 						onRefresh={() => {
-							getEvents();
-							getUserProfile();
+							getData();
 						}}
 						refreshing={loading}
 					/>

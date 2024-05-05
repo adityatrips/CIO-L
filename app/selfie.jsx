@@ -3,14 +3,15 @@ import { Button, Image, Text, View } from 'tamagui';
 import { launchCamera } from 'react-native-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HeaderComp from '@/components/Header';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import Share from 'react-native-share';
-import { Dimensions } from 'react-native';
+import { BackHandler, Dimensions } from 'react-native';
 import { colors } from '@/constants';
 
 const ShareSelfie = () => {
 	const [selfie, setSelfie] = useState(null);
 	const { event } = useLocalSearchParams();
+	const router = useRouter();
 
 	const getSelfie = async () => {
 		const response = await launchCamera({
@@ -19,6 +20,17 @@ const ShareSelfie = () => {
 		});
 		setSelfie(response.assets[0]);
 	};
+
+	useEffect(() => {
+		BackHandler.addEventListener('hardwareBackPress', () => {
+			router.push('/pro');
+			return true;
+		});
+
+		return () => {
+			BackHandler.removeEventListener('hardwareBackPress');
+		};
+	}, []);
 
 	const share = async () => {
 		try {

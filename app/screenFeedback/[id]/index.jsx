@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ImageTriangles from '@/components/ImageTriangles';
-import { Dimensions, ToastAndroid, Vibration } from 'react-native';
+import { BackHandler, Dimensions, ToastAndroid, Vibration } from 'react-native';
 import {
 	Button,
 	Image,
@@ -30,6 +30,17 @@ const ScreenFeeback = () => {
 	const [feebackRating, setFeedbackRating] = useState(5);
 	const [attendNextEvent, setAttendNextEvent] = useState(true);
 	const [overallFeedback, setOverallFeedback] = useState('');
+
+	useEffect(() => {
+		BackHandler.addEventListener('hardwareBackPress', () => {
+			router.push('/pro');
+			return true;
+		});
+
+		return () => {
+			BackHandler.removeEventListener('hardwareBackPress');
+		};
+	}, []);
 
 	const ratingAssets = [
 		{
@@ -80,11 +91,14 @@ const ScreenFeeback = () => {
 					}
 				);
 
-				if (res.status === 200) {
-					setFeedbackRating(null);
-					setAttendNextEvent(null);
-					setOverallFeedback('');
-				}
+				setFeedbackRating(null);
+				setAttendNextEvent(null);
+				setOverallFeedback('');
+
+				router.push({
+					pathname: '/modal',
+					params: { status: 'FeedbackGiven' },
+				});
 			} catch (error) {
 				if (error.code === 'ERR_BAD_REQUEST') {
 					vibrateHeavy();
@@ -92,14 +106,14 @@ const ScreenFeeback = () => {
 						'You have already given your precious feedback.',
 						ToastAndroid.SHORT
 					);
+					router.push({
+						pathname: '/modal',
+						params: { status: 'FeedbackAlreadyGiven' },
+					});
 				}
 			} finally {
 				setLoading(false);
 			}
-			router.push({
-				pathname: '/modal',
-				params: { status: 'FeedbackGiven' },
-			});
 		}
 	};
 

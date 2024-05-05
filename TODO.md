@@ -13,7 +13,7 @@
 [x] past event has multiple code <br/>
 [x] paper and submission also, it should be visible only if whitepaper is downloaded first<br/>
 [x] pdf file should open on download<br/>
-[ ] implement quiz in the white <br/>
-[ ] API now returns new status for white papers and resources etc.<br/>
-[ ] make design for remaining elements on homepage<br/>
-[-] highlights on navbar should tell you where you are<br/>
+[x] implement quiz in the white <br/>
+[x] API now returns new status for white papers and resources etc.<br/>
+[x] make design for remaining elements on homepage<br/>
+[x] highlights on navbar should tell you where you are<br/>

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View } from 'tamagui';
+import { Button, View } from 'tamagui';
 import UpcomingEventCard from './UpcomingEventCard';
 import SelectDropdown from 'react-native-select-dropdown';
 import { AuthContext } from '@/context/AuthContext';
@@ -7,37 +7,34 @@ import axios from 'axios';
 import { Dimensions } from 'react-native';
 import { Text } from 'tamagui';
 import { ChevronDown } from '@tamagui/lucide-icons';
+import { colors } from '@/constants';
 
 const FilteredResults = ({
-	upcomingEvents,
-	filteredMode,
-	filteredRegion,
 	setFilteredRegion,
 	setFilteredMode,
 	regions,
+	filteredMode,
+	filteredRegion,
 }) => {
-	const [region, setRegion] = useState(3);
 	const [allEvts, setAllEvts] = useState([]);
-
 	const { userToken } = useContext(AuthContext);
 
-	const getResource = async () => {
+	const getResource = async (reg = filteredRegion, typ = filteredMode) => {
 		try {
 			const res = await axios.get(
-				`https://cioleader.azurewebsites.net/api/event/all/?region=${region}&type=${type}`,
+				noFilter
+					? `https://cioleader.azurewebsites.net/api/event/all/`
+					: `https://cioleader.azurewebsites.net/api/event/all/?region=${reg}&type=${typ}`,
 				{
 					headers: {
 						Authorization: `Token ${userToken}`,
 					},
 				}
 			);
-			console.log(res.data);
-		} catch (error) {
-			console.log(error);
-		}
+		} catch (error) {}
 	};
 
-	const eventMode = [
+	const eventType = [
 		{ id: 1, name: 'Online' },
 		{ id: 2, name: 'Offline' },
 		{ id: 3, name: 'Hybrid' },
@@ -55,12 +52,9 @@ const FilteredResults = ({
 					}
 				);
 
-				console.log(res.data);
 				setAllEvts([]);
 				setAllEvts(res.data);
-			} catch (error) {
-				console.log(error);
-			}
+			} catch (error) {}
 		})();
 	}, []);
 
@@ -75,8 +69,8 @@ const FilteredResults = ({
 					data={regions}
 					onSelect={(selectedItem, index) => {
 						setFilteredRegion(selectedItem.id);
-						getResource();
 					}}
+					defaultValueByIndex={filteredRegion}
 					renderButton={(selectedItem, isOpened) => {
 						return (
 							<View>
@@ -135,12 +129,11 @@ const FilteredResults = ({
 					showsVerticalScrollIndicator={false}
 				/>
 				<SelectDropdown
-					data={eventMode}
+					data={eventType}
 					onSelect={(selectedItem, index) => {
 						setFilteredMode(selectedItem.id);
-						getResource();
 					}}
-					defaultValue={1}
+					defaultValueByIndex={filteredMode}
 					renderButton={(selectedItem, isOpened) => {
 						return (
 							<View>
@@ -197,6 +190,40 @@ const FilteredResults = ({
 					dropdownOverlayColor='rgba(0,0,0,0.2)'
 					showsVerticalScrollIndicator={false}
 				/>
+			</View>
+			<View
+				flexDirection='row'
+				alignItems='stretch'
+				justifyContent='space-between'
+			>
+				<Button
+					backgroundColor={colors.primary}
+					pressStyle={{
+						backgroundColor: colors.primaryDark,
+						borderColor: colors.primary,
+					}}
+					borderRadius={100000 / 2}
+					w={'47.5%'}
+					onPress={() => getResource()}
+				>
+					<Text>Filter</Text>
+				</Button>
+				<Button
+					onPress={() => {
+						getResource(null, null);
+						setFilteredMode(0);
+						setFilteredRegion(0);
+					}}
+					backgroundColor={colors.primary}
+					pressStyle={{
+						backgroundColor: colors.primaryDark,
+						borderColor: colors.primary,
+					}}
+					borderRadius={100000 / 2}
+					w={'47.5%'}
+				>
+					Clear
+				</Button>
 			</View>
 
 			<View gap={10}>

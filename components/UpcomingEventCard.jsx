@@ -290,7 +290,7 @@ const UpcomingEventCard = ({
 						borderColor={
 							registered ? '#7a7a7a' : missed ? '#CE3426' : colors.primaryDark
 						}
-						disabled={missed || attended}
+						disabled={missed || attended || attended}
 						pressStyle={{
 							backgroundColor: '#01934890',
 							borderColor: '#01934890',

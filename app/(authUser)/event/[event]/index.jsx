@@ -465,9 +465,6 @@ const EventScreen = () => {
 									);
 									const finUrl = `https://cioleader.azurewebsites.net/redirect/?url=${encUrl}`;
 
-									console.log(evtData.time);
-									console.log();
-
 									Share.open({
 										message: `CIO&Leader\n\nJoin me at Test Event 6 on ${moment(
 											evtData.data

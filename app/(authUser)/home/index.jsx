@@ -50,8 +50,8 @@ const HomeScreen = () => {
 	const [magData, setMagData] = useState([]);
 	const [regions, setRegions] = useState([]);
 	const [loading, setLoading] = useState(true);
-	const [filteredRegion, setFilteredRegion] = useState(null);
-	const [filteredMode, setFilteredMode] = useState(null);
+	const [filteredRegion, setFilteredRegion] = useState(0);
+	const [filteredMode, setFilteredMode] = useState(0);
 	const [offsetY, setOffsetY] = useState({
 		home: {
 			start: 0,
@@ -80,10 +80,14 @@ const HomeScreen = () => {
 	const { userToken } = useContext(AuthContext);
 
 	const refresh = async () => {
-		getData();
+		setLoading(true);
+		getData().then(() => {
+			setLoading(false);
+		});
 	};
 
 	useEffect(() => {
+		setLoading(true);
 		getData().then(() => {
 			setLoading(false);
 		});
@@ -440,7 +444,6 @@ const HomeScreen = () => {
 						setFilteredMode={setFilteredMode}
 						setFilteredRegion={setFilteredRegion}
 						regions={regions}
-						eventMode={eventMode}
 					/>
 				</View>
 				<Divider
