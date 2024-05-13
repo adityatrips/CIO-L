@@ -1,5 +1,4 @@
 import { Link, Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
 import { View, Text } from 'tamagui';
 
 export default function NotFoundScreen() {

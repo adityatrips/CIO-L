@@ -1,17 +1,8 @@
-import {
-	Image,
-	ScrollView,
-	Text,
-	Input,
-	View,
-	Button,
-	XStack,
-	Label,
-} from 'tamagui';
+import { Image, ScrollView, Text, Input, View, Button } from 'tamagui';
 import React, { useContext, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BackHandler, Dimensions, ToastAndroid, Vibration } from 'react-native';
-import ankit from '@/assets/images/Ankit.png';
+import { BackHandler, Dimensions } from 'react-native';
+import AnkitPic from '@/assets/images/Ankit.png';
 import { colors, vibrateHeavy } from '@/constants';
 import Header from '@/components/Header';
 import SelectDropdown from 'react-native-select-dropdown';
@@ -22,6 +13,7 @@ import { useNavigation, useRouter } from 'expo-router';
 import triangle from '@/assets/images/triangle.png';
 import LoadingComp from '@/components/Loading';
 import { launchImageLibrary } from 'react-native-image-picker';
+import Toast from 'react-native-root-toast';
 
 const { width, height } = Dimensions.get('screen');
 const wW = Dimensions.get('window').width;
@@ -60,7 +52,9 @@ const ScreenEditProfile = () => {
 			);
 			setIndustries(res.data);
 		} catch (error) {
-			ToastAndroid.show('Error fetching industries', ToastAndroid.SHORT);
+			Toast.show('Error fetching industries', {
+				duration: Toast.durations.SHORT,
+			});
 			vibrateHeavy();
 		}
 	};
@@ -77,14 +71,16 @@ const ScreenEditProfile = () => {
 			);
 			setCompanySizes(res.data);
 		} catch (error) {
-			ToastAndroid.show('Error fetching industries', ToastAndroid.SHORT);
+			Toast.show('Error fetching industries', {
+				duration: Toast.durations.SHORT,
+			});
 			vibrateHeavy();
 		}
 	};
 
 	const getMemberDetails = async () => {
+		setLoading(true);
 		try {
-			setLoading(true);
 			const res = await axios.get(
 				'https://cioleader.azurewebsites.net/api/member/',
 				{
@@ -93,10 +89,9 @@ const ScreenEditProfile = () => {
 					},
 				}
 			);
-			setMemberDetails(res.data);
 			getComapnySize();
 			getIndustries();
-
+			setMemberDetails(res.data);
 			setImage(res.data.profilepicture);
 			setFname(res.data.fname);
 			setLname(res.data.lname);
@@ -104,11 +99,18 @@ const ScreenEditProfile = () => {
 			setEmail(res.data.email);
 			setCompany(res.data.company);
 			setDesignation(res.data.designation);
+
+			setSelectedCompanySize(res.data.companysize - 1);
+			setSelectedIndustry(res.data.industry - 1);
 		} catch (error) {
-			ToastAndroid.show('Error fetching industries', ToastAndroid.SHORT);
+			Toast.show('Error fetching data', {
+				duration: Toast.durations.SHORT,
+			});
 			vibrateHeavy();
 		} finally {
-			setLoading(false);
+			setTimeout(() => {
+				setLoading(false);
+			}, 1000);
 		}
 	};
 
@@ -135,8 +137,8 @@ const ScreenEditProfile = () => {
 						email: email,
 						designation: designation,
 						company: company,
-						industry: selectedIndustry.toString(),
-						companysize: selectedCompanySize.toString(),
+						industry: selectedIndustry + 1,
+						companysize: selectedCompanySize + 1,
 					},
 					{
 						headers: {
@@ -145,34 +147,44 @@ const ScreenEditProfile = () => {
 					}
 				);
 
-				ToastAndroid.show('Profile updated successfully', ToastAndroid.SHORT);
+				Toast.show('Profile updated successfully', {
+					duration: Toast.durations.SHORT,
+				});
 				vibrateHeavy();
 				router.push('/(authUser)/pro');
 			}
 		} catch (error) {
 			if (error === 'Please fill all the fields') {
 				vibrateHeavy();
-				ToastAndroid.show('Please fill all the fields', ToastAndroid.SHORT);
+				Toast.show('Please fill all the fields', {
+					duration: Toast.durations.SHORT,
+				});
 				vibrateHeavy();
 			} else {
-				ToastAndroid.show('Error updating profile', ToastAndroid.SHORT);
+				Toast.show('Error updating profile', {
+					duration: Toast.durations.SHORT,
+				});
 				vibrateHeavy();
 			}
 		}
 	};
 
-	const getData = async () => {
-		getMemberDetails();
-	};
-
 	const navigation = useNavigation();
 
 	useEffect(() => {
-		getData();
+		getMemberDetails();
 
 		BackHandler.addEventListener('hardwareBackPress', () => {
 			navigation.goBack();
+			return true;
 		});
+
+		return () => {
+			BackHandler.removeEventListener('hardwareBackPress', () => {
+				navigation.goBack();
+				return true;
+			});
+		};
 	}, []);
 
 	return loading ? (
@@ -183,7 +195,11 @@ const ScreenEditProfile = () => {
 			width={wW}
 			backgroundColor={'#fff'}
 		>
-			<ScrollView alignSelf='center'>
+			<ScrollView
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
+				alignSelf='center'
+			>
 				<Header />
 				<View
 					flex={1}
@@ -272,17 +288,15 @@ const ScreenEditProfile = () => {
 												}
 											)
 											.then((res) => {
-												ToastAndroid.show(
-													'Image updated successfully',
-													ToastAndroid.SHORT
-												);
+												Toast.show('Image updated successfully', {
+													duration: Toast.durations.SHORT,
+												});
 												vibrateHeavy();
 											})
 											.catch((err) => {
-												ToastAndroid.show(
-													'Error updating image',
-													ToastAndroid.SHORT
-												);
+												Toast.show('Error updating image', {
+													duration: Toast.durations.SHORT,
+												});
 												vibrateHeavy();
 											});
 									}}
@@ -309,17 +323,15 @@ const ScreenEditProfile = () => {
 												},
 											}
 										);
-										ToastAndroid.show(
-											'Image updated successfully',
-											ToastAndroid.SHORT
-										);
+										Toast.show('Image updated successfully', {
+											duration: Toast.durations.SHORT,
+										});
 										vibrateHeavy();
 										setImage(ankit);
 									} catch (error) {
-										ToastAndroid.show(
-											'Error updating image',
-											ToastAndroid.SHORT
-										);
+										Toast.show('Error updating image', {
+											duration: Toast.durations.SHORT,
+										});
 										vibrateHeavy();
 									}
 								}}
@@ -444,6 +456,7 @@ const ScreenEditProfile = () => {
 						onSelect={(selectedItem, index) => {
 							setSelectedIndustry(selectedItem.id);
 						}}
+						defaultValueByIndex={selectedCompanySize}
 						renderButton={(selectedItem, isOpened) => {
 							return (
 								<View>
@@ -502,6 +515,7 @@ const ScreenEditProfile = () => {
 						onSelect={(selectedItem, index) => {
 							setSelectedCompanySize(selectedItem.id);
 						}}
+						defaultValueByIndex={selectedCompanySize}
 						renderButton={(selectedItem, isOpened) => {
 							return (
 								<View>

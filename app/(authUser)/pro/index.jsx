@@ -4,12 +4,7 @@ import { useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import axios from 'axios';
-import {
-	Dimensions,
-	RefreshControl,
-	ToastAndroid,
-	Vibration,
-} from 'react-native';
+import { Dimensions, RefreshControl, Vibration } from 'react-native';
 import { colors, vibrateHeavy } from '@/constants';
 import ankit from '@/assets/images/Ankit.png';
 import globe from '@/assets/images/Globe.png';
@@ -26,6 +21,9 @@ import home from '@/assets/icons/home.png';
 import points from '@/assets/icons/points.png';
 import profile from '@/assets/icons/profile.png';
 import kc from '@/assets/icons/kc.png';
+import Toast from 'react-native-root-toast';
+import RegisteredCard from '@/components/RegisteredCard';
+import MissedCard from '@/components/MissedCard';
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
 
@@ -36,7 +34,10 @@ export default function ProfileScreen() {
 	const [attendedEvents, setAttendedEvents] = useState([]);
 	const [registeredEvents, setRegisteredEvents] = useState([]);
 	const [missedEvents, setMissedEvents] = useState([]);
-	const [loading, setLoading] = useState(false);
+	const [profileLoading, setProfileLoading] = useState(true);
+	const [attendedEventLoading, setAttendedEventLoading] = useState(true);
+	const [registeredEventLoading, setRegisteredEventLoading] = useState(true);
+	const [missedEventLoading, setMissedEventLoading] = useState(true);
 
 	const logout = async () => {
 		await SecureStore.deleteItemAsync('userToken');
@@ -46,11 +47,29 @@ export default function ProfileScreen() {
 	};
 
 	useEffect(() => {
-		getData();
+		getProfile().then(() => {
+			getEvents();
+		});
 	}, []);
 
-	const getData = async () => {
-		setLoading(true);
+	const getProfile = async () => {
+		setProfileLoading(true);
+		const prof = await axios.get(
+			'https://cioleader.azurewebsites.net/api/member/',
+			{
+				headers: {
+					Authorization: `Token ${userToken}`,
+				},
+			}
+		);
+		setUserProfile(prof.data);
+		setProfileLoading(false);
+	};
+
+	const getEvents = async () => {
+		setAttendedEventLoading(true);
+		setMissedEventLoading(true);
+		setRegisteredEventLoading(true);
 		try {
 			const evt = await axios.get(
 				'https://cioleader.azurewebsites.net/api/event/past/all',
@@ -62,6 +81,8 @@ export default function ProfileScreen() {
 			);
 			setAttendedEvents(evt.data.filter((evt) => evt.registered === '2'));
 			setMissedEvents(evt.data.filter((evt) => evt.registered === '3'));
+			setAttendedEventLoading(false);
+			setMissedEventLoading(false);
 			const allEvts = await axios.get(
 				'https://cioleader.azurewebsites.net/api/event/all/',
 				{
@@ -71,26 +92,20 @@ export default function ProfileScreen() {
 				}
 			);
 			setRegisteredEvents(allEvts.data.filter((evt) => evt.registered === '1'));
-			const prof = await axios.get(
-				'https://cioleader.azurewebsites.net/api/member/',
-				{
-					headers: {
-						Authorization: `Token ${userToken}`,
-					},
-				}
-			);
-			setUserProfile(prof.data);
+			setRegisteredEventLoading(false);
 		} catch (error) {
-			ToastAndroid.show(
-				'Error fetching details. Please try again in some time',
-				ToastAndroid.SHORT
-			);
+			Toast.show('Error fetching details. Please try again in some time', {
+				duration: Toast.durations.SHORT,
+			});
 			vibrateHeavy();
+		} finally {
+			setAttendedEventLoading(false);
+			setMissedEventLoading(false);
+			setRegisteredEventLoading(false);
 		}
-		setLoading(false);
 	};
 
-	return loading ? (
+	return profileLoading ? (
 		<LoadingComp />
 	) : (
 		<SafeAreaView
@@ -100,12 +115,14 @@ export default function ProfileScreen() {
 		>
 			<HeaderComp title='Profile' />
 			<ScrollView
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
 				refreshControl={
 					<RefreshControl
 						onRefresh={() => {
 							getData();
 						}}
-						refreshing={loading}
+						refreshing={profileLoading}
 					/>
 				}
 				flex={1}
@@ -193,140 +210,162 @@ export default function ProfileScreen() {
 							</View>
 						</View>
 					</View>
-					<View
-						flexDirection='row'
-						alignItems='center'
-						justifyContent='space-between'
-						width={width * 0.9}
-						paddingTop={20}
-					>
-						<Text
-							fontSize={16}
-							fontFamily={'InterBold'}
-							color='#616161'
+					{registeredEventLoading ? (
+						<LoadingComp small />
+					) : (
+						<View
+							flexDirection='row'
+							alignItems='center'
+							justifyContent='space-between'
+							width={width * 0.9}
+							paddingTop={20}
 						>
-							Events Registered
-						</Text>
-						<Text
-							fontSize={14}
-							fontFamily={'InterMedium'}
-							color='#616161'
-						>
-							Total {registeredEvents.length.toString()}{' '}
-							{registeredEvents.length === 1 ? 'Event' : 'Events'}
-						</Text>
-					</View>
+							<Text
+								fontSize={16}
+								fontFamily={'InterBold'}
+								color='#616161'
+							>
+								Events Registered
+							</Text>
+							<Text
+								fontSize={14}
+								fontFamily={'InterMedium'}
+								color='#616161'
+							>
+								Total {registeredEvents.length.toString()}{' '}
+								{registeredEvents.length === 1 ? 'Event' : 'Events'}
+							</Text>
+						</View>
+					)}
 					<Divider spacing={20} />
 
-					<View gap={10}>
-						{registeredEvents.length > 0 ? (
-							registeredEvents.map((event, index) => (
-								<UpcomingEventCard
-									srcRoute='Profile'
-									key={index}
-									data={event}
-									registered
-								/>
-							))
-						) : (
-							<Text
-								color='#000'
-								marginBottom={20}
-							>
-								You haven't registered for any events till yet...
-							</Text>
-						)}
-					</View>
+					{registeredEventLoading ? (
+						<LoadingComp small />
+					) : (
+						<View gap={10}>
+							{registeredEvents.length > 0 ? (
+								registeredEvents.map((event, index) => (
+									<RegisteredCard
+										key={index}
+										data={event}
+									/>
+								))
+							) : (
+								<Text
+									color='#000'
+									marginBottom={20}
+								>
+									You haven't registered for any events till yet...
+								</Text>
+							)}
+						</View>
+					)}
 
-					<View
-						flexDirection='row'
-						alignItems='center'
-						justifyContent='space-between'
-						width={width * 0.9}
-						paddingTop={20}
-					>
-						<Text
-							fontSize={16}
-							fontFamily={'InterBold'}
-							color='#616161'
+					{attendedEventLoading ? (
+						<LoadingComp small />
+					) : (
+						<View
+							flexDirection='row'
+							alignItems='center'
+							justifyContent='space-between'
+							width={width * 0.9}
+							paddingTop={20}
 						>
-							Events Attended
-						</Text>
-						<Text
-							fontSize={14}
-							fontFamily={'InterMedium'}
-							color='#616161'
-						>
-							Total {attendedEvents.length.toString()}{' '}
-							{attendedEvents.length === 1 ? 'Event' : 'Events'}
-						</Text>
-					</View>
+							<Text
+								fontSize={16}
+								fontFamily={'InterBold'}
+								color='#616161'
+							>
+								Events Attended
+							</Text>
+							<Text
+								fontSize={14}
+								fontFamily={'InterMedium'}
+								color='#616161'
+							>
+								Total {attendedEvents.length.toString()}{' '}
+								{attendedEvents.length === 1 ? 'Event' : 'Events'}
+							</Text>
+						</View>
+					)}
 					<Divider spacing={20} />
 
-					<View gap={10}>
-						{attendedEvents.length > 0 ? (
-							attendedEvents.map((event, index) => (
-								<UpcomingEventCard
-									attended
-									srcRoute='Profile'
-									key={index}
-									data={event}
-								/>
-							))
-						) : (
-							<Text
-								color='#000'
-								marginBottom={20}
-							>
-								You haven't attended any events till yet...
-							</Text>
-						)}
-					</View>
+					{attendedEventLoading ? (
+						<LoadingComp small />
+					) : (
+						<View gap={10}>
+							{attendedEvents.length > 0 ? (
+								attendedEvents.map((event, index) => (
+									<UpcomingEventCard
+										attended
+										srcRoute='Profile'
+										key={index}
+										data={event}
+									/>
+								))
+							) : (
+								<Text
+									color='#000'
+									marginBottom={20}
+								>
+									You haven't attended any events till yet...
+								</Text>
+							)}
+						</View>
+					)}
 
-					<View
-						flexDirection='row'
-						alignItems='center'
-						justifyContent='space-between'
-						width={width * 0.9}
-						paddingTop={20}
-					>
-						<Text
-							fontSize={16}
-							fontFamily={'InterBold'}
-							color='#616161'
+					{missedEventLoading ? (
+						<LoadingComp small />
+					) : (
+						<View
+							flexDirection='row'
+							alignItems='center'
+							justifyContent='space-between'
+							width={width * 0.9}
+							paddingTop={20}
 						>
-							Events Missed
-						</Text>
-						<Text
-							fontSize={14}
-							fontFamily={'InterMedium'}
-							color='#616161'
-						>
-							Total {missedEvents.length.toString()}{' '}
-							{missedEvents.length === 1 ? 'Event' : 'Events'}
-						</Text>
-					</View>
+							<Text
+								fontSize={16}
+								fontFamily={'InterBold'}
+								color='#616161'
+							>
+								Events Missed
+							</Text>
+							<Text
+								fontSize={14}
+								fontFamily={'InterMedium'}
+								color='#616161'
+							>
+								Total {missedEvents.length.toString()}{' '}
+								{missedEvents.length === 1 ? 'Event' : 'Events'}
+							</Text>
+						</View>
+					)}
 					<Divider spacing={20} />
 
-					<View gap={10}>
-						{missedEvents.length > 0 ? (
-							missedEvents.map((event, index) => (
-								<UpcomingEventCard
-									key={index}
-									srcRoute='Profile'
-									data={event}
-									missed
-								/>
-							))
-						) : (
-							<Text
-								color='#000'
-								marginBottom={20}
-							>
-								You haven't missed any events, keep it up!
-							</Text>
-						)}
-					</View>
+					{missedEventLoading ? (
+						<LoadingComp small />
+					) : (
+						<View gap={10}>
+							{missedEvents.length > 0 ? (
+								missedEvents.map((event, index) => (
+									<MissedCard
+										key={index}
+										srcRoute='Profile'
+										data={event}
+										missed
+									/>
+								))
+							) : (
+								<Text
+									color='#000'
+									marginBottom={20}
+								>
+									You haven't missed any events, keep it up!
+								</Text>
+							)}
+						</View>
+					)}
 
 					<Button
 						backgroundColor={colors.primary}

@@ -8,43 +8,59 @@ import { Dimensions } from 'react-native';
 import { Text } from 'tamagui';
 import { ChevronDown } from '@tamagui/lucide-icons';
 import { colors } from '@/constants';
+import LoadingComp from './Loading';
 
-const FilteredResults = ({
-	setFilteredRegion,
-	setFilteredMode,
-	regions,
-	filteredMode,
-	filteredRegion,
-}) => {
-	const [allEvts, setAllEvts] = useState([]);
+const FilteredResults = () => {
 	const { userToken } = useContext(AuthContext);
+	const [regions, setRegions] = useState([]);
+	const [data, setData] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [filteredMode, setFilteredMode] = useState(-1);
+	const [filteredRegion, setFilteredRegion] = useState(-1);
 
-	const getResource = async (reg = filteredRegion, typ = filteredMode) => {
+	const getLink = (reg, mod) => {
+		if (reg === -1 && mod === -1) {
+			return `https://cioleader.azurewebsites.net/api/event/all/`;
+		} else if (reg === -1 || mod === -1) {
+			if (reg === -1) {
+				return `https://cioleader.azurewebsites.net/api/event/all/?type=${mod}`;
+			} else {
+				return `https://cioleader.azurewebsites.net/api/event/all/?region=${reg}`;
+			}
+		} else {
+			return `https://cioleader.azurewebsites.net/api/event/all/?region=${reg}&type=${mod}`;
+		}
+	};
+
+	const getResource = async (reg = filteredRegion, mod = filteredMode) => {
+		setLoading(true);
+		console.log(getLink(reg, mod));
 		try {
-			const res = await axios.get(
-				noFilter
-					? `https://cioleader.azurewebsites.net/api/event/all/`
-					: `https://cioleader.azurewebsites.net/api/event/all/?region=${reg}&type=${typ}`,
-				{
-					headers: {
-						Authorization: `Token ${userToken}`,
-					},
-				}
-			);
-		} catch (error) {}
+			const res = await axios.get(getLink(reg, mod), {
+				headers: {
+					Authorization: `Token ${userToken}`,
+				},
+			});
+			setData(res.data);
+		} catch (error) {
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const eventType = [
-		{ id: 1, name: 'Online' },
-		{ id: 2, name: 'Offline' },
+		{ id: -1, name: 'MODE' },
+		{ id: 2, name: 'Online' },
+		{ id: 1, name: 'Offline' },
 		{ id: 3, name: 'Hybrid' },
 	];
 
 	useEffect(() => {
+		getResource(-1, -1);
 		(async () => {
 			try {
 				const res = await axios.get(
-					`https://cioleader.azurewebsites.net/api/event/all/`,
+					`https://cioleader.azurewebsites.net/api/regions/all/`,
 					{
 						headers: {
 							Authorization: `Token ${userToken}`,
@@ -52,11 +68,13 @@ const FilteredResults = ({
 					}
 				);
 
-				setAllEvts([]);
-				setAllEvts(res.data);
+				setRegions([{ id: -1, name: 'REGION' }, ...res.data]);
 			} catch (error) {}
 		})();
 	}, []);
+
+	const regionRef = React.createRef();
+	const modeRef = React.createRef();
 
 	return (
 		<View>
@@ -66,12 +84,13 @@ const FilteredResults = ({
 				alignItems='center'
 			>
 				<SelectDropdown
+					ref={regionRef}
 					data={regions}
 					onSelect={(selectedItem, index) => {
 						setFilteredRegion(selectedItem.id);
 					}}
-					defaultValueByIndex={filteredRegion}
-					renderButton={(selectedItem, isOpened) => {
+					defaultValueByIndex={-1}
+					renderButton={(item) => {
 						return (
 							<View>
 								<View
@@ -87,15 +106,13 @@ const FilteredResults = ({
 									paddingHorizontal={20}
 									height={30}
 								>
-									<Text color='#616161'>
-										{(selectedItem && selectedItem.name) || 'REGION'}
-									</Text>
+									<Text color='#616161'>{(item && item.name) || 'REGION'}</Text>
 									<ChevronDown color='#616161' />
 								</View>
 							</View>
 						);
 					}}
-					renderItem={(item, index, isSelected) => {
+					renderItem={(item) => {
 						return (
 							<View
 								justifyContent={'center'}
@@ -133,8 +150,9 @@ const FilteredResults = ({
 					onSelect={(selectedItem, index) => {
 						setFilteredMode(selectedItem.id);
 					}}
-					defaultValueByIndex={filteredMode}
-					renderButton={(selectedItem, isOpened) => {
+					ref={modeRef}
+					defaultValueByIndex={-1}
+					renderButton={(selectedItem) => {
 						return (
 							<View>
 								<View
@@ -195,6 +213,7 @@ const FilteredResults = ({
 				flexDirection='row'
 				alignItems='stretch'
 				justifyContent='space-between'
+				marginBottom={10}
 			>
 				<Button
 					backgroundColor={colors.primary}
@@ -210,9 +229,14 @@ const FilteredResults = ({
 				</Button>
 				<Button
 					onPress={() => {
-						getResource(null, null);
-						setFilteredMode(0);
-						setFilteredRegion(0);
+						setLoading(true);
+						regionRef.current.reset();
+						modeRef.current.reset();
+						setFilteredMode(-1);
+						setFilteredRegion(-1);
+						getResource(-1, -1).then(() => {
+							setLoading(false);
+						});
 					}}
 					backgroundColor={colors.primary}
 					pressStyle={{
@@ -226,14 +250,18 @@ const FilteredResults = ({
 				</Button>
 			</View>
 
-			<View gap={10}>
-				{allEvts.map((evt, i) => (
-					<UpcomingEventCard
-						key={i}
-						data={evt}
-					/>
-				))}
-			</View>
+			{loading ? (
+				<LoadingComp small />
+			) : (
+				<View gap={10}>
+					{data.map((evt, i) => (
+						<UpcomingEventCard
+							key={i}
+							data={evt}
+						/>
+					))}
+				</View>
+			)}
 		</View>
 	);
 };

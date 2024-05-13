@@ -5,22 +5,18 @@ import ImageTriangles from '@/components/ImageTriangles';
 import { Button, Image, Input, ScrollView, Text, View } from 'tamagui';
 import { colors, vibrateHeavy } from '@/constants';
 import ankit from '@/assets/images/Ankit.png';
-import {
-	ActivityIndicator,
-	Dimensions,
-	ToastAndroid,
-	Vibration,
-} from 'react-native';
+import { ActivityIndicator, Dimensions, Vibration } from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LoadingComp from '@/components/Loading';
 import { Eye, EyeOff } from '@tamagui/lucide-icons';
 import { isEmail, isMobile } from 'validator';
+import Toast from 'react-native-root-toast';
 
 const ScreenPassword = () => {
 	const { email } = useLocalSearchParams();
 	const router = useRouter();
-	const [pword, setPword] = useState('india@123');
+	const [pword, setPword] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [HidePassword, setHidePassword] = useState(true);
 
@@ -31,10 +27,9 @@ const ScreenPassword = () => {
 		setIsLoading(true);
 		if (pword.length === 0 || pword.length < 8) {
 			vibrateHeavy();
-			ToastAndroid.show(
-				'Invalid password, please re-check',
-				ToastAndroid.SHORT
-			);
+			Toast.show('Invalid password, please re-check', {
+				duration: Toast.durations.SHORT,
+			});
 			return;
 		} else {
 			try {
@@ -43,10 +38,9 @@ const ScreenPassword = () => {
 				});
 			} catch (error) {
 				vibrateHeavy();
-				ToastAndroid.show(
-					'Invalid password, please try again!',
-					ToastAndroid.SHORT
-				);
+				Toast.show('Invalid password, please try again!', {
+					duration: Toast.durations.SHORT,
+				});
 			} finally {
 				setIsLoading(false);
 			}
@@ -73,6 +67,8 @@ const ScreenPassword = () => {
 				}}
 			>
 				<ScrollView
+					showsHorizontalScrollIndicator={false}
+					showsVerticalScrollIndicator={false}
 					contentContainerStyle={{
 						alignItems: 'center',
 						justifyContent: 'flex-start',
@@ -211,14 +207,13 @@ const ScreenPassword = () => {
 						<Text
 							onPress={() => {
 								if (isEmail(email)) {
-									ToastAndroid.show(
-										`Reset email sent to ${email}`,
-										ToastAndroid.SHORT
-									);
+									Toast.show(`Reset email sent to ${email}`, {
+										duration: Toast.durations.SHORT,
+									});
 								} else if (isMobile(email, 'en-IN')) {
-									ToastAndroid.show(
+									Toast.show(
 										`Please login from your email address to reset the password`,
-										ToastAndroid.SHORT
+										{ duration: Toast.durations.SHORT }
 									);
 								}
 							}}

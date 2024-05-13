@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
-import { Dimensions, ToastAndroid, Vibration } from 'react-native';
+import { Dimensions, Vibration } from 'react-native';
 import { View, Text, Image, ScrollView, Button } from 'tamagui';
 import { AuthContext } from '@/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -19,6 +19,7 @@ import { useRouter } from 'expo-router';
 import HeaderComp from '@/components/Header';
 import moment from 'moment';
 import CollapsibleText from '../../../components/CollapsableText';
+import Toast from 'react-native-root-toast';
 
 const wW = Dimensions.get('window').width;
 const wH = Dimensions.get('window').height;
@@ -44,7 +45,7 @@ export default function PointsScreen() {
 			setResults(res.data.results);
 			setData(res.data);
 		} catch (error) {
-			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			Toast.show('Error: ' + error, { duration: Toast.durations.SHORT });
 			vibrateHeavy();
 		} finally {
 			setIsLoading(false);
@@ -67,7 +68,7 @@ export default function PointsScreen() {
 			setData(res.data);
 			setResults(res.data.results);
 		} catch (error) {
-			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			Toast.show('Error: ' + error, { duration: Toast.durations.SHORT });
 			vibrateHeavy();
 		}
 	};

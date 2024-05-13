@@ -2,12 +2,7 @@ import { forwardRef, useContext, useEffect, useState } from 'react';
 import { Button, Image, Text, View } from 'tamagui';
 import { AuthContext } from '@/context/AuthContext';
 import { colors, vibrateHeavy } from '@/constants';
-import {
-	Dimensions,
-	RefreshControl,
-	ScrollView,
-	ToastAndroid,
-} from 'react-native';
+import { Dimensions, RefreshControl, ScrollView } from 'react-native';
 import evt from '@/assets/icons/evt.png';
 import home from '@/assets/icons/home.png';
 import points from '@/assets/icons/points.png';
@@ -36,6 +31,8 @@ import { ChevronDown } from '@tamagui/lucide-icons';
 import axios from 'axios';
 import LoadingComp from '@/components/Loading';
 import FilteredResults from '@/components/FilteredResults';
+import Toast from 'react-native-root-toast';
+import { useNetInfoInstance } from '@react-native-community/netinfo';
 
 const height = Dimensions.get('screen').height * 0.75;
 const width = Dimensions.get('screen').width;
@@ -78,22 +75,33 @@ const HomeScreen = () => {
 	const ptsRef = React.useRef(null);
 	const scrollRef = React.useRef(null);
 	const { userToken } = useContext(AuthContext);
+	const [regionLoading, setRegionLoading] = useState(true);
+	const [eventLoading, setEventLoading] = useState(true);
+	const [transactionLoading, setTransactionLoading] = useState(true);
+	const [magazineLoading, setMagazineLoading] = useState(true);
+	const [resourceLoading, setResourceLoading] = useState(true);
+	const [knowledgeLoading, setKnowledgeLoading] = useState(true);
+	const [podcastLoading, setPodcastLoading] = useState(true);
+	const [profileLoading, setProfileLoading] = useState(true);
 
-	const refresh = async () => {
-		setLoading(true);
-		getData().then(() => {
-			setLoading(false);
+	const refresh = () => {
+		getUserProfileData().then(() => {
+			getRegionData();
+			getEventData();
+			getTransactionData();
+			getMagazineData();
+			getResourceData();
+			getKnowledgeData();
+			getPodcastData();
 		});
 	};
 
 	useEffect(() => {
-		setLoading(true);
-		getData().then(() => {
-			setLoading(false);
-		});
+		refresh();
 	}, []);
 
-	const getData = async () => {
+	const getRegionData = async () => {
+		setRegionLoading(true);
 		try {
 			const reg = await axios.get(
 				'https://cioleader.azurewebsites.net/api/regions/all/',
@@ -104,6 +112,16 @@ const HomeScreen = () => {
 				}
 			);
 			setRegions(reg.data);
+		} catch (error) {
+			Toast.show({});
+		} finally {
+			setRegionLoading(false);
+		}
+	};
+
+	const getEventData = async () => {
+		setEventLoading(true);
+		try {
 			const evnt = await axios.get(
 				'https://cioleader.azurewebsites.net/api/event/all/',
 				{
@@ -113,6 +131,17 @@ const HomeScreen = () => {
 				}
 			);
 			setUpcomingEvents(evnt.data);
+		} catch (error) {
+			Toast.show('Error: ' + error, { duration: Toast.durations.SHORT });
+			vibrateHeavy();
+		} finally {
+			setEventLoading(false);
+		}
+	};
+
+	const getTransactionData = async () => {
+		setTransactionLoading(true);
+		try {
 			const pt = await axios.get(
 				'https://cioleader.azurewebsites.net/api/transactions/all?offset=0&limit=5',
 				{
@@ -122,6 +151,17 @@ const HomeScreen = () => {
 				}
 			);
 			setPoints(pt.data);
+		} catch (error) {
+			Toast.show('Error: ' + error, { duration: Toast.durations.SHORT });
+			vibrateHeavy();
+		} finally {
+			setTransactionLoading(false);
+		}
+	};
+
+	const getMagazineData = async () => {
+		setMagazineLoading(true);
+		try {
 			const mg = await axios.get(
 				'https://cioleader.azurewebsites.net/api/editorial/all',
 				{
@@ -131,6 +171,17 @@ const HomeScreen = () => {
 				}
 			);
 			setMagData(mg.data);
+		} catch (error) {
+			Toast.show('Error: ' + error, { duration: Toast.durations.SHORT });
+			vibrateHeavy();
+		} finally {
+			setMagazineLoading(false);
+		}
+	};
+
+	const getResourceData = async () => {
+		setResourceLoading(true);
+		try {
 			const rsc = await axios.get(
 				'https://cioleader.azurewebsites.net/api/resource/all/',
 				{
@@ -140,6 +191,17 @@ const HomeScreen = () => {
 				}
 			);
 			setResourceData(rsc.data);
+		} catch (error) {
+			Toast.show('Error: ' + error, { duration: Toast.durations.SHORT });
+			vibrateHeavy();
+		} finally {
+			setResourceLoading(false);
+		}
+	};
+
+	const getKnowledgeData = async () => {
+		setKnowledgeLoading(true);
+		try {
 			const kcard = await axios.get(
 				'https://cioleader.azurewebsites.net/api/whitepaper/all/',
 				{
@@ -149,6 +211,17 @@ const HomeScreen = () => {
 				}
 			);
 			setKnowledgeCards(kcard.data);
+		} catch (error) {
+			Toast.show('Error: ' + error, { duration: Toast.durations.SHORT });
+			vibrateHeavy();
+		} finally {
+			setKnowledgeLoading(false);
+		}
+	};
+
+	const getUserProfileData = async () => {
+		setProfileLoading(true);
+		try {
 			const uprof = await axios.get(
 				'https://cioleader.azurewebsites.net/api/member/',
 				{
@@ -157,6 +230,7 @@ const HomeScreen = () => {
 					},
 				}
 			);
+			setUserProfile(uprof.data);
 
 			if (uprof.data.status === '2' || uprof.data.status === '3') {
 				router.push({
@@ -165,21 +239,32 @@ const HomeScreen = () => {
 						status: 'ApprovalPending',
 					},
 				});
-			} else {
-				setUserProfile(uprof.data);
-				const pcast = await axios.get(
-					'https://cioleader.azurewebsites.net/api/podcast/all/',
-					{
-						headers: {
-							Authorization: `Token ${userToken}`,
-						},
-					}
-				);
-				setPodcastData(pcast.data);
 			}
 		} catch (error) {
-			ToastAndroid.show('Error: ' + error, ToastAndroid.SHORT);
+			Toast.show('Error: ' + error, { duration: Toast.durations.SHORT });
 			vibrateHeavy();
+		} finally {
+			setProfileLoading(false);
+		}
+	};
+
+	const getPodcastData = async () => {
+		setPodcastData(true);
+		try {
+			const pcast = await axios.get(
+				'https://cioleader.azurewebsites.net/api/podcast/all/',
+				{
+					headers: {
+						Authorization: `Token ${userToken}`,
+					},
+				}
+			);
+			setPodcastData(pcast.data);
+		} catch (error) {
+			Toast.show('Error: ' + error, { duration: Toast.durations.SHORT });
+			vibrateHeavy();
+		} finally {
+			setPodcastLoading(false);
 		}
 	};
 
@@ -190,7 +275,7 @@ const HomeScreen = () => {
 		});
 	};
 
-	return loading ? (
+	return profileLoading ? (
 		<LoadingComp />
 	) : (
 		<SafeAreaView
@@ -200,12 +285,14 @@ const HomeScreen = () => {
 			<StatusBar style='dark' />
 			<HeaderComp title='Welcome' />
 			<ScrollView
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
 				onScroll={(e) => {
 					setCurrScroll(e.nativeEvent.contentOffset.y);
 				}}
 				refreshControl={
 					<RefreshControl
-						refreshing={loading}
+						refreshing={profileLoading}
 						onRefresh={refresh}
 					/>
 				}
@@ -423,29 +510,33 @@ const HomeScreen = () => {
 						});
 					}}
 				/>
-				<View
-					paddingHorizontal={Dimensions.get('screen').width * 0.05}
-					width={width}
-					gap={10}
-					marginBottom={10}
-					flex={1}
-				>
-					<Text
-						fontSize={16}
-						fontFamily={'InterBold'}
-						color={'#616161'}
+				{eventLoading ? (
+					<LoadingComp small />
+				) : (
+					<View
+						paddingHorizontal={Dimensions.get('screen').width * 0.05}
+						width={width}
+						gap={10}
+						marginBottom={10}
+						flex={1}
 					>
-						Upcoming Events
-					</Text>
-					<FilteredResults
-						upcomingEvents={upcomingEvents}
-						filteredMode={filteredMode}
-						filteredRegion={filteredRegion}
-						setFilteredMode={setFilteredMode}
-						setFilteredRegion={setFilteredRegion}
-						regions={regions}
-					/>
-				</View>
+						<Text
+							fontSize={16}
+							fontFamily={'InterBold'}
+							color={'#616161'}
+						>
+							Upcoming Events
+						</Text>
+						<FilteredResults
+							upcomingEvents={upcomingEvents}
+							filteredMode={filteredMode}
+							filteredRegion={filteredRegion}
+							setFilteredMode={setFilteredMode}
+							setFilteredRegion={setFilteredRegion}
+							regions={regions}
+						/>
+					</View>
+				)}
 				<Divider
 					spacing={20}
 					ref={kcRef}
@@ -459,119 +550,133 @@ const HomeScreen = () => {
 						});
 					}}
 				/>
-				<View
-					flex={1}
-					paddingHorizontal={Dimensions.get('screen').width * 0.05}
-					width={width}
-				>
-					<Text
-						color='#616161'
-						fontSize={16}
-						fontFamily={'InterBold'}
+				{knowledgeLoading ? (
+					<LoadingComp small />
+				) : (
+					<View
+						flex={1}
+						paddingHorizontal={Dimensions.get('screen').width * 0.05}
+						width={width}
 					>
-						Knowledge Center
-					</Text>
-					<Text
-						color='#616161'
-						marginBottom={20}
-						fontSize={14}
-						fontFamily={'InterMedium'}
-					>
-						Whitepaper & Reports
-					</Text>
-					{knowledgeCards.length > 0 ? (
-						<ScrollView
-							horizontal
-							gap={10}
-							marginBottom={10}
-						>
-							{knowledgeCards.map((item, index) => (
-								<KnowledgeCard
-									getFn={getData}
-									setIsLoading={setLoading}
-									key={index}
-									data={item}
-								/>
-							))}
-						</ScrollView>
-					) : (
 						<Text
-							color='#000'
-							textAlign='center'
-							marginBottom={20}
+							color='#616161'
+							fontSize={16}
+							fontFamily={'InterBold'}
 						>
-							No whitepapers available...
+							Knowledge Center
 						</Text>
-					)}
-
-					<Text
-						color='#616161'
-						marginBottom={20}
-						fontSize={14}
-						fontFamily={'InterMedium'}
-					>
-						Editorial Magazines
-					</Text>
-
-					{magData.filter((mag) => mag.magzine === '1').length > 1 ? (
-						<ScrollView
-							horizontal
-							gap={10}
-							marginBottom={10}
+						<Text
+							color='#616161'
+							marginBottom={20}
+							fontSize={14}
+							fontFamily={'InterMedium'}
 						>
-							{magData
+							Whitepaper & Reports
+						</Text>
+						{knowledgeCards.length > 0 ? (
+							<ScrollView
+								showsHorizontalScrollIndicator={false}
+								showsVerticalScrollIndicator={false}
+								horizontal
+								gap={10}
+								marginBottom={10}
+							>
+								{knowledgeCards.map((item, index) => (
+									<KnowledgeCard
+										getFn={getKnowledgeData}
+										setIsLoading={setKnowledgeLoading}
+										key={index}
+										data={item}
+									/>
+								))}
+							</ScrollView>
+						) : (
+							<Text
+								color='#000'
+								textAlign='center'
+								marginBottom={20}
+							>
+								No whitepapers available...
+							</Text>
+						)}
+
+						<Text
+							color='#616161'
+							marginBottom={20}
+							fontSize={14}
+							fontFamily={'InterMedium'}
+						>
+							Editorial Magazines
+						</Text>
+
+						{magazineLoading ? (
+							<LoadingComp small />
+						) : magData.filter((mag) => mag.magzine === '1').length > 1 ? (
+							<ScrollView
+								showsHorizontalScrollIndicator={false}
+								showsVerticalScrollIndicator={false}
+								horizontal
+								gap={10}
+								marginBottom={10}
+							>
+								{magData
+									.filter((mag) => mag.magzine === '1')
+									.map((item, index) => (
+										<EditorialMags
+											getFn={getMagazineData}
+											setIsLoading={setMagazineLoading}
+											key={index}
+											data={item}
+										/>
+									))}
+							</ScrollView>
+						) : (
+							magData
 								.filter((mag) => mag.magzine === '1')
 								.map((item, index) => (
 									<EditorialMags
-										getFn={getData}
-										setIsLoading={setLoading}
+										getFn={getMagazineData}
+										setIsLoading={setMagazineLoading}
 										key={index}
 										data={item}
 									/>
-								))}
-						</ScrollView>
-					) : (
-						magData
-							.filter((mag) => mag.magzine === '1')
-							.map((item, index) => (
-								<EditorialMags
-									getFn={getData}
-									setIsLoading={setLoading}
-									key={index}
-									data={item}
-								/>
-							))
-					)}
-					{magData.filter((mag) => mag.magzine === '2').length > 1 ? (
-						<ScrollView
-							horizontal
-							gap={10}
-							marginBottom={10}
-						>
-							{magData
+								))
+						)}
+						{magazineLoading ? (
+							<LoadingComp small />
+						) : magData.filter((mag) => mag.magzine === '2').length > 1 ? (
+							<ScrollView
+								showsHorizontalScrollIndicator={false}
+								showsVerticalScrollIndicator={false}
+								horizontal
+								gap={10}
+								marginBottom={10}
+							>
+								{magData
+									.filter((mag) => mag.magzine === '2')
+									.map((item, index) => (
+										<EditorialMags
+											getFn={getMagazineData}
+											setIsLoading={setMagazineLoading}
+											key={index}
+											data={item}
+										/>
+									))}
+							</ScrollView>
+						) : (
+							magData
 								.filter((mag) => mag.magzine === '2')
 								.map((item, index) => (
 									<EditorialMags
-										getFn={getData}
-										setIsLoading={setLoading}
+										getFn={getMagazineData}
+										setIsLoading={setMagazineLoading}
 										key={index}
 										data={item}
 									/>
-								))}
-						</ScrollView>
-					) : (
-						magData
-							.filter((mag) => mag.magzine === '2')
-							.map((item, index) => (
-								<EditorialMags
-									getFn={getData}
-									setIsLoading={setLoading}
-									key={index}
-									data={item}
-								/>
-							))
-					)}
-				</View>
+								))
+						)}
+					</View>
+				)}
 
 				<Text
 					color='#616161'
@@ -583,8 +688,12 @@ const HomeScreen = () => {
 					Podcast
 				</Text>
 
-				{podcastData.length > 0 ? (
+				{podcastLoading ? (
+					<LoadingComp small />
+				) : podcastData.length > 0 ? (
 					<ScrollView
+						showsHorizontalScrollIndicator={false}
+						showsVerticalScrollIndicator={false}
 						horizontal
 						width={width * 0.9}
 						gap={10}
@@ -592,8 +701,8 @@ const HomeScreen = () => {
 					>
 						{podcastData.map((item, index) => (
 							<PodcastCard
-								getFn={getData}
-								setIsLoading={setLoading}
+								getFn={getPodcastData}
+								setIsLoading={setPodcastLoading}
 								key={index}
 								data={item}
 								width={width * 0.9}
@@ -603,8 +712,8 @@ const HomeScreen = () => {
 				) : podcastData.length === 1 ? (
 					<View width={width * 0.9}>
 						<PodcastCard
-							getFn={getData}
-							setIsLoading={setLoading}
+							getFn={getPodcastData}
+							setIsLoading={setPodcastLoading}
 							data={podcastData}
 						/>
 					</View>
@@ -629,8 +738,12 @@ const HomeScreen = () => {
 					Resource Libraries
 				</Text>
 
-				{ResourceData.length > 1 ? (
+				{resourceLoading ? (
+					<LoadingComp small />
+				) : ResourceData.length > 1 ? (
 					<ScrollView
+						showsHorizontalScrollIndicator={false}
+						showsVerticalScrollIndicator={false}
 						width={width * 0.9}
 						horizontal
 						gap={10}
@@ -638,8 +751,8 @@ const HomeScreen = () => {
 					>
 						{ResourceData.map((item, index) => (
 							<ResourceCard
-								getFn={getData}
-								setIsLoading={setLoading}
+								getFn={getResourceData}
+								setIsLoading={setResourceLoading}
 								key={index}
 								data={item}
 							/>
@@ -649,8 +762,8 @@ const HomeScreen = () => {
 					ResourceData.map((item, index) => (
 						<ResourceCard
 							width={width * 0.9}
-							getFn={getData}
-							setIsLoading={setLoading}
+							getFn={getResourceData}
+							setIsLoading={setResourceLoading}
 							key={index}
 							data={item}
 						/>
@@ -678,7 +791,7 @@ const HomeScreen = () => {
 					ref={ptsRef}
 				/>
 
-				<View>
+				<View width={width * 0.9}>
 					<Text
 						color='#616161'
 						fontSize={14}
@@ -687,7 +800,9 @@ const HomeScreen = () => {
 					>
 						CIO&Leader Loyalty Point History
 					</Text>
-					{pointsData.results && pointsData.results.length > 0 ? (
+					{transactionLoading ? (
+						<LoadingComp small />
+					) : pointsData.results && pointsData.results.length > 0 ? (
 						<View width={width * 0.9}>
 							<View
 								flexDirection={'row'}

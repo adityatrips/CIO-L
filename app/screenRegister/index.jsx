@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Image, Input, ScrollView, Text, View } from 'tamagui';
-import { Dimensions, Modal, ToastAndroid, Vibration } from 'react-native';
+import { Dimensions, Modal, Vibration } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
 import { ChevronLeftCircle, Eye, EyeOff } from '@tamagui/lucide-icons';
 import coin from '@/assets/images/Coin1.png';
@@ -31,23 +31,25 @@ const ScreenRegister = () => {
 	const validate = () => {
 		if (!isAlpha(fname) && !isAlpha(lname)) {
 			vibrateHeavy();
-			'First and last names should be alphabets', ToastAndroid.SHORT;
+			'First and last names should be alphabets',
+				{ duration: Toast.durations.SHORT };
 			return false;
 		} else if (!isMobilePhone(mobile, 'en-IN')) {
 			vibrateHeavy();
-			'Invalid mobile number', ToastAndroid.SHORT;
+			'Invalid mobile number', { duration: Toast.durations.SHORT };
 			return false;
 		} else if (!isEmail(email)) {
 			vibrateHeavy();
-			'Invalid email address', ToastAndroid.SHORT;
+			'Invalid email address', { duration: Toast.durations.SHORT };
 			return false;
 		} else if (!pword.length >= 8) {
 			vibrateHeavy();
-			'Password should be atleast 8 characters long', ToastAndroid.SHORT;
+			'Password should be atleast 8 characters long',
+				{ duration: Toast.durations.SHORT };
 			return false;
 		} else if (pword !== confPword) {
 			vibrateHeavy();
-			'Passwords do not match', ToastAndroid.SHORT;
+			'Passwords do not match', { duration: Toast.durations.SHORT };
 			return false;
 		} else if (
 			!fname === '' ||
@@ -60,7 +62,7 @@ const ScreenRegister = () => {
 			!designation
 		) {
 			vibrateHeavy();
-			'Please fill all fields', ToastAndroid.SHORT;
+			'Please fill all fields', { duration: Toast.durations.SHORT };
 			return false;
 		}
 		return true;
@@ -96,15 +98,15 @@ const ScreenRegister = () => {
 			} catch (error) {
 				if (error.code === 'ERR_BAD_REQUEST') {
 					vibrateHeavy();
-					'User already exists', ToastAndroid.SHORT;
+					'User already exists', { duration: Toast.durations.SHORT };
 				} else {
 					vibrateHeavy();
-					'An error occured', ToastAndroid.SHORT;
+					'An error occured', { duration: Toast.durations.SHORT };
 				}
 			}
 		} else {
 			vibrateHeavy();
-			'Invalid data', ToastAndroid.SHORT;
+			'Invalid data', { duration: Toast.durations.SHORT };
 		}
 
 		setFname('');
@@ -126,6 +128,8 @@ const ScreenRegister = () => {
 		>
 			<StatusBar style='auto' />
 			<ScrollView
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
 				contentContainerStyle={{
 					alignItems: 'flex-start',
 					justifyContent: 'flex-start',

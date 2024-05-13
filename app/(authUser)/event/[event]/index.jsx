@@ -1,12 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Button, Image, Text, ScrollView } from 'tamagui';
-import {
-	BackHandler,
-	Dimensions,
-	StatusBar,
-	ToastAndroid,
-	Vibration,
-} from 'react-native';
+import { BackHandler, Dimensions, StatusBar, Vibration } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, vibrateHeavy } from '@/constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -17,8 +11,8 @@ import moment from 'moment';
 import HeaderComp from '@/components/Header';
 import coin from '@/assets/images/Coin1.png';
 import * as Linking from 'expo-linking';
-import * as Sharing from 'expo-sharing';
 import Share from 'react-native-share';
+import Toast from 'react-native-root-toast';
 
 const EventScreen = () => {
 	const { event } = useLocalSearchParams();
@@ -47,7 +41,7 @@ const EventScreen = () => {
 			);
 			setEvtData(res.data);
 		} catch (error) {
-			ToastAndroid.show('An error has occurred', ToastAndroid.SHORT);
+			Toast.show('An error has occurred', { duration: Toast.durations.SHORT });
 			vibrateHeavy();
 		} finally {
 			setLoading(false);
@@ -68,6 +62,8 @@ const EventScreen = () => {
 			<HeaderComp title={evtData.name} />
 			<StatusBar barStyle='light' />
 			<ScrollView
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
 				style={{
 					flex: 1,
 				}}
@@ -210,15 +206,14 @@ const EventScreen = () => {
 										});
 									} catch (error) {
 										if (error.code === 'ERR_BAD_REQUEST') {
-											ToastAndroid.show(
-												'You have already registered for the event.',
-												ToastAndroid.SHORT
-											);
+											Toast.show('You have already registered for the event.', {
+												duration: Toast.durations.SHORT,
+											});
 											vibrateHeavy();
 										} else {
-											ToastAndroid.show(
+											Toast.show(
 												'Thank you for showing interest in this event!',
-												ToastAndroid.SHORT
+												{ duration: Toast.durations.SHORT }
 											);
 											vibrateHeavy();
 										}
@@ -356,6 +351,8 @@ const EventScreen = () => {
 								))
 							) : (
 								<ScrollView
+									showsHorizontalScrollIndicator={false}
+									showsVerticalScrollIndicator={false}
 									horizontal
 									contentContainerStyle={{
 										gap: 10,

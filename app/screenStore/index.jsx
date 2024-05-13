@@ -11,6 +11,7 @@ import { colors } from '@/constants';
 import axios from 'axios';
 import LoadingComp from '@/components/Loading';
 import Header from '@/components/Header';
+import { FlexGrid, ResponsiveGrid } from 'react-native-flexible-grid';
 
 const ScreenStore = ({ navigation }) => {
 	const { userToken } = useContext(AuthContext);
@@ -18,6 +19,7 @@ const ScreenStore = ({ navigation }) => {
 	const [loading, setLoading] = useState(true);
 
 	const getVouchers = async () => {
+		setLoading(true);
 		try {
 			const response = await axios.get(
 				'https://cioleader.azurewebsites.net/api/voucher/all',
@@ -30,43 +32,50 @@ const ScreenStore = ({ navigation }) => {
 			setVouchers(response.data);
 		} catch (error) {
 			console.error(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		setLoading(true);
 		getVouchers();
-		setLoading(false);
 	}, []);
 
-	return loading ? (
-		<LoadingComp />
-	) : (
+	return (
 		<SafeAreaView
 			edges={['top', 'left', 'right']}
 			style={{ flex: 1 }}
 		>
 			<Header title='Store' />
 
-			<ScrollView
-				flex={0.7}
-				marginTop={10}
-				alignSelf='center'
-			>
-				<View
-					backgroundColor={'#FFF'}
-					width={wW - 20}
-					marginHorizontal={10}
-					justifyContent={'space-between'}
-					flexDirection={'row'}
-					flexWrap={'wrap'}
-					gap={10}
-				>
-					{vouchers.map((v, idx) => (
-						<VoucherCard data={v} />
-					))}
+			{loading && vouchers.length > 0 ? (
+				<LoadingComp small />
+			) : (
+				<View flex={1}>
+					<ResponsiveGrid
+						keyExtractor={(item) => item.id.toString()}
+						maxItemsPerColumn={2}
+						itemUnitHeight={wH * 0.4}
+						data={vouchers}
+						renderItem={({ item, index }) => {
+							return (
+								<View
+									padding={5}
+									key={index}
+									flex={1}
+								>
+									<VoucherCard
+										key={index}
+										data={item}
+									/>
+								</View>
+							);
+						}}
+						showScrollIndicator={false}
+						style={{ flex: 1 }}
+					/>
 				</View>
-			</ScrollView>
+			)}
 		</SafeAreaView>
 	);
 };

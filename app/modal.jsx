@@ -9,7 +9,9 @@ import gift from '@/assets/images/gift.png';
 import done from '@/assets/images/done.png';
 import ImageTriangles from '@/components/ImageTriangles';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { X } from '@tamagui/lucide-icons';
+import { WifiOff, X } from '@tamagui/lucide-icons';
+import { colors } from '@/constants';
+import { refresh } from '@react-native-community/netinfo';
 
 export default function Modal() {
 	const { status } = useLocalSearchParams();
@@ -109,12 +111,15 @@ export default function Modal() {
 				alignItems={'center'}
 				justifyContent={'center'}
 				backgroundColor={'#fff'}
-				onLayout={() => {
-					setTimeout(() => {
-						router.push('/');
-					}, 10000);
-				}}
 			>
+				<X
+					color={'#000'}
+					size='$3'
+					position='absolute'
+					top={50}
+					right={20}
+					onPress={() => navigation.goBack()}
+				/>
 				<Image
 					source={logo}
 					resizeMode='contain'

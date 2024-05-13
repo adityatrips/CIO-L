@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AuthContext } from '@/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ImageTriangles from '@/components/ImageTriangles';
-import { BackHandler, Dimensions, ToastAndroid, Vibration } from 'react-native';
+import { BackHandler, Dimensions, Vibration } from 'react-native';
 import {
 	Button,
 	Image,
@@ -24,6 +24,7 @@ import good from '@/assets/images/good.png';
 import okay from '@/assets/images/okay.png';
 import bad from '@/assets/images/bad.png';
 import terrible from '@/assets/images/terrible.png';
+import Toast from 'react-native-root-toast';
 
 const ScreenFeeback = () => {
 	const { id } = useLocalSearchParams();
@@ -72,7 +73,7 @@ const ScreenFeeback = () => {
 			attendNextEvent === null ||
 			feebackRating === null
 		) {
-			ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT);
+			Toast.show('Please fill all fields', { duration: Toast.durations.SHORT });
 			vibrateHeavy();
 			return;
 		} else {
@@ -102,10 +103,9 @@ const ScreenFeeback = () => {
 			} catch (error) {
 				if (error.code === 'ERR_BAD_REQUEST') {
 					vibrateHeavy();
-					ToastAndroid.show(
-						'You have already given your precious feedback.',
-						ToastAndroid.SHORT
-					);
+					Toast.show('You have already given your precious feedback.', {
+						duration: Toast.durations.SHORT,
+					});
 					router.push({
 						pathname: '/modal',
 						params: { status: 'FeedbackAlreadyGiven' },
@@ -127,7 +127,11 @@ const ScreenFeeback = () => {
 		>
 			<HeaderComp title='Feedback' />
 			<ImageTriangles />
-			<ScrollView flex={1}>
+			<ScrollView
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
+				flex={1}
+			>
 				<View
 					backgroundColor={'#fff'}
 					padding={20}

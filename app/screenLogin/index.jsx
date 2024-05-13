@@ -11,32 +11,31 @@ import {
 	ActivityIndicator,
 	Dimensions,
 	KeyboardAvoidingView,
-	ToastAndroid,
 	Vibration,
 } from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
 import isEmail from 'validator/lib/isEmail';
 import { isMobilePhone, isMobilePhoneLocales, isNumeric } from 'validator';
+import Toast from 'react-native-root-toast';
 
 const ScreenLogin = () => {
 	const router = useRouter();
 	const { lookupUser } = useContext(AuthContext);
-	const [username, setUsername] = useState('yashdakshita123@gmail.com');
+	const [username, setUsername] = useState('');
 
 	const [isLoading, setIsLoading] = useState(false);
 
 	const handleLookupUser = async () => {
 		if (username.length === 0) {
-			ToastAndroid.show(
-				'Please enter your email or mobile number',
-				ToastAndroid.SHORT
-			);
+			Toast.show('Please enter your email or mobile number', {
+				duration: Toast.durations.SHORT,
+			});
 			vibrateHeavy();
 		} else if (
 			(isEmail(username) === false && !isNumeric(username)) ||
 			(isMobilePhone(username, 'en-IN') === false && !isEmail(username))
 		) {
-			ToastAndroid.show('Invalid username', ToastAndroid.SHORT);
+			Toast.show('Invalid username', { duration: Toast.durations.SHORT });
 			vibrateHeavy();
 		} else {
 			try {
@@ -50,10 +49,9 @@ const ScreenLogin = () => {
 				});
 			} catch (error) {
 				vibrateHeavy();
-				ToastAndroid.show(
-					"Can't find user, please sign up.",
-					ToastAndroid.SHORT
-				);
+				Toast.show("Can't find user, please sign up.", {
+					duration: Toast.durations.SHORT,
+				});
 			} finally {
 				setIsLoading(false);
 			}
@@ -78,6 +76,8 @@ const ScreenLogin = () => {
 				}}
 			>
 				<ScrollView
+					showsHorizontalScrollIndicator={false}
+					showsVerticalScrollIndicator={false}
 					contentContainerStyle={{
 						alignItems: 'center',
 						justifyContent: 'flex-start',

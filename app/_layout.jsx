@@ -1,17 +1,31 @@
 import { ThemeProvider } from '@react-navigation/native';
-import { Slot, SplashScreen, Stack } from 'expo-router';
-import { TamaguiProvider, createFont, createTamagui } from 'tamagui';
+import { Slot, SplashScreen, Stack, useFocusEffect } from 'expo-router';
+import {
+	Button,
+	TamaguiProvider,
+	View,
+	createFont,
+	createTamagui,
+} from 'tamagui';
 import * as SecureStore from 'expo-secure-store';
 import { AuthProvider } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
 import { useFonts } from 'expo-font';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import config from '@/tamagui.config';
 import { colors } from '@/constants';
 import { StatusBar } from 'expo-status-bar';
 export { ErrorBoundary } from 'expo-router';
 import * as Linking from 'expo-linking';
-
+import { RootSiblingParent } from 'react-native-root-siblings';
+import { useNetInfoInstance } from '@react-native-community/netinfo';
+import { Wifi, WifiOff, X } from '@tamagui/lucide-icons';
+import ImageTriangles from '@/components/ImageTriangles';
+import { Image } from 'tamagui';
+import logo from '@/assets/images/Logo_GreenBlack.png';
+import { Text } from 'tamagui';
+import { Dimensions, SafeAreaView } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -53,8 +67,14 @@ function RootLayoutNav() {
 		}
 	};
 
+	const netInfo = useNetInfoInstance();
+
 	useEffect(() => {
-		checkAuth();
+		if (netInfo.netInfo.isInternetReachable) {
+			checkAuth();
+		} else {
+			return;
+		}
 	}, []);
 
 	const DarkTheme = {
@@ -76,34 +96,73 @@ function RootLayoutNav() {
 				defaultTheme='dark'
 			>
 				<StatusBar style='dark' />
-				<ThemeProvider value={DarkTheme}>
-					<Stack
-						screenOptions={{
-							headerShown: false,
+				{netInfo.netInfo.isInternetReachable ? (
+					<ThemeProvider value={DarkTheme}>
+						<RootSiblingParent key={1}>
+							<Stack
+								screenOptions={{
+									headerShown: false,
+								}}
+							>
+								<Stack.Screen name='index' />
+								<Stack.Screen name='pdf' />
+								<Stack.Screen name='selfie' />
+								<Stack.Screen name='(authUser)' />
+
+								<Stack.Screen name='screenLogin/index' />
+								<Stack.Screen name='screenPassword/index' />
+								<Stack.Screen name='screenRegister/index' />
+								<Stack.Screen name='screenEditProfile/index' />
+								<Stack.Screen name='screenStore/index' />
+								<Stack.Screen name='screenFeedback/[id]/index' />
+								<Stack.Screen
+									name='modal'
+									options={{
+										presentation: 'containedTransparentModal',
+										animation: 'slide_from_bottom',
+										customAnimationOnGesture: true,
+										contentStyle: {},
+									}}
+								/>
+							</Stack>
+						</RootSiblingParent>
+					</ThemeProvider>
+				) : (
+					<View
+						style={{
+							flex: 1,
+							alignItems: 'center',
 						}}
 					>
-						<Stack.Screen name='index' />
-						<Stack.Screen name='pdf' />
-						<Stack.Screen name='selfie' />
-						<Stack.Screen name='(authUser)' />
-
-						<Stack.Screen name='screenLogin/index' />
-						<Stack.Screen name='screenPassword/index' />
-						<Stack.Screen name='screenRegister/index' />
-						<Stack.Screen name='screenEditProfile/index' />
-						<Stack.Screen name='screenStore/index' />
-						<Stack.Screen name='screenFeedback/[id]/index' />
-						<Stack.Screen
-							name='modal'
-							options={{
-								presentation: 'containedTransparentModal',
-								animation: 'slide_from_bottom',
-								customAnimationOnGesture: true,
-								contentStyle: {},
-							}}
+						<ImageTriangles
+							bottom={-75}
+							height='120%'
 						/>
-					</Stack>
-				</ThemeProvider>
+						<Image
+							source={logo}
+							resizeMode='contain'
+							width={Dimensions.get('window').width * 0.75}
+							height={Dimensions.get('window').height * 0.15}
+							marginBottom={'10%'}
+							marginTop={50}
+						/>
+						<WifiOff
+							color={colors.primary}
+							size='$17'
+						/>
+						<Text
+							fontSize={29}
+							fontFamily={'InterBold'}
+							color='#444'
+							marginTop={40}
+							textAlign='center'
+							w={Dimensions.get('window').width * 0.8}
+						>
+							Oops! Seems like you're not connected. Try again later.
+						</Text>
+						<StatusBar style='light' />
+					</View>
+				)}
 			</TamaguiProvider>
 		</AuthProvider>
 	);

@@ -14,11 +14,17 @@ const ShareSelfie = () => {
 	const router = useRouter();
 
 	const getSelfie = async () => {
-		const response = await launchCamera({
+		launchCamera({
 			mediaType: 'photo',
 			cameraType: 'front',
-		});
-		setSelfie(response.assets[0]);
+		})
+			.then((res) => {
+				setSelfie(res.assets[0]);
+			})
+			.catch(() => {
+				setSelfie(null);
+				return;
+			});
 	};
 
 	useEffect(() => {

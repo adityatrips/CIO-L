@@ -8,15 +8,8 @@ import Online from '@/assets/images/Online.png';
 import Offline from '@/assets/images/Offline.png';
 import { useRouter } from 'expo-router';
 import moment from 'moment';
-import axios from 'axios';
 
-const UpcomingEventCard = ({
-	data,
-	registered = false,
-	missed = false,
-	attended = false,
-	srcRoute = 'EvtCard',
-}) => {
+const RegisteredCard = ({ data }) => {
 	const [loading, setLoading] = useState(false);
 
 	const router = useRouter();
@@ -64,32 +57,30 @@ const UpcomingEventCard = ({
 					aspectRatio={16 / 9}
 					resizeMode='contain'
 				/>
-				{srcRoute !== 'Profile' && (
-					<View
-						backgroundColor={'#FFFFFF80'}
-						flexDirection='row'
-						alignItems='center'
-						justifyContent='center'
-						position='absolute'
-						bottom={0}
-						left={0}
-						width={'100%'}
-						gap={5}
+				<View
+					backgroundColor={'#FFFFFF80'}
+					flexDirection='row'
+					alignItems='center'
+					justifyContent='center'
+					position='absolute'
+					bottom={0}
+					left={0}
+					width={'100%'}
+					gap={5}
+				>
+					<Text
+						fontSize={10}
+						color={'#fff'}
+						fontFamily={'InterBold'}
 					>
-						<Text
-							fontSize={10}
-							color={'#fff'}
-							fontFamily={'InterBold'}
-						>
-							Earn upto +{data.totalpoints}
-						</Text>
-						<Image
-							source={coin}
-							height={25}
-							width={25}
-						/>
-					</View>
-				)}
+						Earn upto +{data.totalpoints}
+					</Text>
+					<Image
+						source={coin}
+						height={25}
+						width={25}
+					/>
+				</View>
 			</View>
 			<View
 				position={'absolute'}
@@ -191,140 +182,40 @@ const UpcomingEventCard = ({
 						<Text fontSize={10}>{data.address}</Text>
 					</View>
 				</View>
-				{attended ? (
-					<View gap={5}>
-						<Button
-							justifyContent='space-between'
-							borderRadius={100 / 2}
-							disabled={missed}
-							backgroundColor={colors.primaryDark}
-							borderColor={colors.primaryDark}
-							pressStyle={{
-								borderColor: colors.primaryDark,
-								backgroundColor: colors.primary,
-							}}
-							height={30}
-							onPress={() => {
-								router.push({
-									pathname: `/screenFeedback/${data.id}`,
-									state: { srcRoute: srcRoute },
-								});
-							}}
-						>
-							<View
-								flexDirection='row'
-								alignItems='center'
-								gap={5}
-							>
-								<Text
-									fontSize={10}
-									fontFamily={'InterBold'}
-								>
-									FEEDBACK
-								</Text>
-								<Image
-									source={coin}
-									width={25}
-									height={25}
-								/>
-								<Text
-									fontSize={10}
-									fontFamily={'InterBold'}
-									color='#fff'
-								>
-									+{data.feedbackpoint}
-								</Text>
-							</View>
-						</Button>
-						<Button
-							justifyContent='space-between'
-							borderRadius={100 / 2}
-							disabled={missed}
-							backgroundColor={colors.primaryDark}
-							borderColor={colors.primaryDark}
-							pressStyle={{
-								borderColor: colors.primaryDark,
-								backgroundColor: colors.primary,
-							}}
-							height={30}
-							onPress={() => {
-								router.push({
-									pathname: '/selfie',
-									params: {
-										event: data.id,
-									},
-								});
-							}}
-						>
-							<View
-								flexDirection='row'
-								alignItems='center'
-								gap={5}
-							>
-								<Text
-									fontSize={10}
-									fontFamily={'InterBold'}
-								>
-									ADD SELFIE
-								</Text>
-								<Image
-									source={coin}
-									width={25}
-									height={25}
-								/>
-								<Text
-									fontSize={10}
-									fontFamily={'InterBold'}
-								>
-									+{data.selfiepoint}
-								</Text>
-							</View>
-						</Button>
-					</View>
-				) : (
+
+				<View gap={5}>
 					<Button
+						justifyContent='space-between'
 						borderRadius={100 / 2}
-						backgroundColor={
-							registered ? '#7a7a7a' : missed ? '#CE3426' : colors.primaryDark
-						}
-						borderColor={
-							registered ? '#7a7a7a' : missed ? '#CE3426' : colors.primaryDark
-						}
-						disabled={missed || attended ? true : false}
+						disabled
+						backgroundColor='#7a7a7a'
+						borderColor='#7a7a7a'
 						pressStyle={{
-							backgroundColor: '#01934890',
-							borderColor: '#01934890',
+							borderColor: '#7a7a7a',
+							backgroundColor: '#7a7a7a',
 						}}
 						height={30}
 						onPress={() => {
-							if (!(missed || attended)) {
-								setLoading(true);
-								router.push({
-									pathname: `/event/${data.id}`,
-									state: { srcRoute: srcRoute },
-								});
-								setLoading(false);
-							}
+							router.push({
+								pathname: `/screenFeedback/${data.id}`,
+								state: { srcRoute: srcRoute },
+							});
 						}}
 					>
-						{loading ? (
-							<ActivityIndicator
-								size='small'
-								color='#fff'
-							/>
-						) : (
-							<Text
-								fontSize={10}
-								fontFamily={'InterBold'}
-							>
-								{registered ? 'REGISTERED' : missed ? 'MISSED' : 'KNOW MORE'}
-							</Text>
-						)}
+						<Text
+							fontSize={10}
+							fontFamily={'InterBold'}
+							color='#fff'
+							textAlign='center'
+							width='100%'
+						>
+							REGISTERED
+						</Text>
 					</Button>
-				)}
+				</View>
 			</View>
 		</View>
 	);
 };
 
-export default UpcomingEventCard;
+export default RegisteredCard;

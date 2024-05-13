@@ -1,16 +1,13 @@
 import React, { useContext } from 'react';
-import {
-	Dimensions,
-	ToastAndroid,
-	TouchableOpacity,
-	Vibration,
-} from 'react-native';
+import { Dimensions, TouchableOpacity, Vibration } from 'react-native';
 import { Image, Text, Button, View, ButtonFrame } from 'tamagui';
 import coin from '@/assets/images/Coin1.png';
 import { colors, vibrateHeavy } from '@/constants';
 import axios from 'axios';
 import { AuthContext } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
+import Toast from 'react-native-root-toast';
+import { FlexGrid } from 'react-native-flexible-grid';
 
 const wW = Dimensions.get('window').width;
 const wH = Dimensions.get('window').height;
@@ -22,23 +19,19 @@ const VoucherCard = ({ data }) => {
 
 	return (
 		<View
-			width={wW * 0.5 - 20}
 			borderColor={'#515151'}
 			borderWidth={1}
-			height={wH * 0.385}
-			marginBottom={10}
 			borderRadius={20}
 			alignItems={'center'}
 			justifyContent='space-between'
 			padding={20}
-			gap={5}
+			flex={1}
 		>
 			<Image
 				width={'90%'}
 				aspectRatio={4 / 3}
 				height={wH * 0.125}
 				resizeMode='contain'
-				borderColor={'#515151'}
 				borderRadius={10}
 				source={{
 					uri: data.image,
@@ -145,7 +138,7 @@ const VoucherCard = ({ data }) => {
 					backgroundColor: colors.primary,
 					borderColor: colors.primary,
 				}}
-				width={wW * 0.4}
+				w={'90%'}
 				borderRadius={100 / 2}
 				height={30}
 				fontSize={10}
@@ -176,7 +169,9 @@ const VoucherCard = ({ data }) => {
 						}
 					} catch (error) {
 						if (error.code === 'ERR_BAD_REQUEST') {
-							ToastAndroid.show('Not enough points', ToastAndroid.SHORT);
+							Toast.show('Not enough points', {
+								duration: Toast.durations.SHORT,
+							});
 							vibrateHeavy();
 						}
 					}

@@ -8,7 +8,7 @@ import {
 	Button,
 	Image,
 } from 'tamagui';
-import { Dimensions, ToastAndroid, Vibration } from 'react-native';
+import { Dimensions, Vibration } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, vibrateHeavy } from '@/constants';
 import { AuthContext } from '@/context/AuthContext';
@@ -18,6 +18,7 @@ import axios from 'axios';
 import Divider from '@/components/Divider';
 import Header from '@/components/Header';
 import triangle from '@/assets/images/triangle.png';
+import Toast from 'react-native-root-toast';
 
 const MCQScreen = () => {
 	const [quiz, setQuiz] = React.useState([]);
@@ -102,7 +103,7 @@ const MCQScreen = () => {
 					},
 				});
 			} else if (error === 'Please answer all the questions') {
-				ToastAndroid.show(error, ToastAndroid.SHORT);
+				Toast.show(error, { duration: Toast.durations.SHORT });
 				vibrateHeavy();
 			}
 		}
@@ -122,7 +123,11 @@ const MCQScreen = () => {
 			}}
 		>
 			<Header title='Quiz' />
-			<ScrollView flex={1}>
+			<ScrollView
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
+				flex={1}
+			>
 				<Text
 					fontSize={20}
 					fontFamily={'InterBold'}

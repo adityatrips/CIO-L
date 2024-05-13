@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Image, Text, View } from 'tamagui';
-import { ChevronRight, Key } from '@tamagui/lucide-icons';
+import { ChevronRight } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import ImageTriangles from '@/components/ImageTriangles';
 import logo from '@/assets/images/Logo_White.png';
@@ -11,9 +11,8 @@ import { colors } from '@/constants';
 import { KeyboardAvoidingView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-const Component = () => {
+const RootAppComponent = () => {
 	const { height, width } = Dimensions.get('screen');
-
 	const router = useRouter();
 
 	return (
@@ -96,4 +95,4 @@ const Component = () => {
 	);
 };
 
-export default Component;
+export default RootAppComponent;
